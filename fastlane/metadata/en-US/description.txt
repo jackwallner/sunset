@@ -1,0 +1,32 @@
+Sunset tells you how good tonight's sunset should be, hours before it happens, so you can be outside for the great ones instead of hearing about them tomorrow.
+
+EVERY EVENING GETS A SCORE
+Sunset reads the cloud, humidity and visibility forecast for the exact minute the sun goes down and turns it into a 0 to 100 score with a plain-English summary: thin high clouds over an open horizon, a bank of low cloud to the west, rain at sunset, or a clear sky and a clean gold fade.
+
+WHY TONIGHT WILL OR WON'T LIGHT UP
+Four factors show what is driving the score:
+• Color: high and mid clouds that catch the light
+• Streaks: thin cirrus with room to glow
+• Horizon: open sky toward the sun, including the low cloud 80 km to the west that decides whether the light gets through at all
+• Clarity: dry, clean air for vivid tones
+
+SUNSET TIME AND BEST LIGHT
+See tonight's sunset time and the window when the color peaks, for wherever you are.
+
+WIDGET
+Tonight's score and sunset time on your Home Screen.
+
+SUNSET+
+• Alerts before sunset on the evenings worth going out for, at the score threshold and lead time you choose
+• Alerts rebuilt as the forecast changes, so a day that clouds over loses its alert
+• The full week of sunset scores
+
+Sunset+ is available as a monthly or yearly subscription with a free trial for new subscribers, or as a one-time lifetime purchase. Prices are shown in the app before you buy and vary by region. Payment is charged to your Apple ID account at confirmation of purchase, or at the end of the free trial if one is offered. Subscriptions renew automatically unless cancelled at least 24 hours before the end of the current period, and your account is charged for renewal within 24 hours of that time. Manage or cancel in your Apple ID account settings at any time.
+
+PRIVACY
+Sunset asks for your approximate location once and sends only rounded coordinates to the Open-Meteo weather service to fetch the forecast. No account, no tracking, no analytics.
+
+Scores are a forecast of cloud, humidity and visibility, not a promise of a sunset.
+
+Privacy Policy: https://jackwallner.github.io/sunset/privacy-policy.html
+Terms of Use: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
