@@ -118,9 +118,9 @@ struct PaywallView: View {
                 }
                 .padding(22)
             }
-            .background { SkyBackdrop(score: 92, horizon: 0.2) }
+            .background { SkyBackdrop(score: 92, horizon: 0.13) }
             .toolbar {
-                ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } }
+                ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() }.tint(.white) }
             }
         }
         .onAppear {

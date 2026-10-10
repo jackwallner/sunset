@@ -81,12 +81,17 @@ struct TodayView: View {
     @ViewBuilder
     private func content(forecast: SunsetForecast, hero: SunShow) -> some View {
         let zone = forecast.timeZone
-        SkyHero(
-            show: hero,
-            zone: zone,
-            title: SunsetFormat.headline(hero, zone: zone),
-            placeName: forecast.placeName
-        )
+        Button { showHeroDetail = true } label: {
+            SkyHero(
+                show: hero,
+                zone: zone,
+                title: SunsetFormat.headline(hero, zone: zone),
+                placeName: forecast.placeName
+            )
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityHint("Shows cloud cover and the full breakdown")
         .containerRelativeFrame(.vertical) { length, _ in max(260, length * 0.40) }
         .padding(.top, 18)
         .padding(.bottom, 4)
