@@ -9,21 +9,30 @@ struct TodayView: View {
     @Environment(\.requestReview) private var requestReview
     @State private var showPaywall = false
     @State private var showAlertSetup = false
+    @State private var showHeroDetail = false
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                if let forecast = forecastStore.forecast,
-                   let hero = forecast.upcomingShows(settings.watched).first {
-                    content(forecast: forecast, hero: hero)
-                } else {
-                    emptyState
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(spacing: 16) {
+                    if let forecast = forecastStore.forecast,
+                       let hero = forecast.upcomingShows(settings.watched).first {
+                        content(forecast: forecast, hero: hero)
+                    } else {
+                        emptyState
+                    }
                 }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 24)
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 24)
+            .task { await openScreenshotScene(proxy) }
         }
         .background(Theme.background)
+        .navigationDestination(isPresented: $showHeroDetail) {
+            if let forecast = forecastStore.forecast, let hero = forecastStore.nextShow {
+                ShowDetailView(show: hero, zone: forecast.timeZone, placeName: forecast.placeName)
+            }
+        }
         .navigationTitle("Today")
         .navigationBarTitleDisplayMode(.inline)
         .refreshable {
@@ -34,7 +43,8 @@ struct TodayView: View {
         .sheet(isPresented: $showPaywall) { PaywallView(source: "today_sky_events") }
         .sheet(isPresented: $showAlertSetup) { AlertSetupSheet() }
         .onAppear {
-            if let score = forecastStore.nextShow?.score.total, settings.shouldRequestReview(score: score) {
+            if !LaunchArguments.isScreenshotRun,
+               let score = forecastStore.nextShow?.score.total, settings.shouldRequestReview(score: score) {
                 requestReview()
             }
         }
@@ -86,6 +96,7 @@ struct TodayView: View {
         }
 
         skyEventsCard(forecast: forecast)
+            .id("events")
         alertsCard
 
         if let message = forecastStore.errorMessage {
@@ -98,6 +109,21 @@ struct TodayView: View {
         Text("Forecast by Open-Meteo, updated \(SunsetFormat.time(forecast.fetched)).")
             .font(.caption)
             .foregroundStyle(Theme.textSecondary)
+    }
+
+    /// DEBUG `-ScreenshotScene`: `detail`, `events` or `alerts`, so store
+    /// captures need no scrolling or tapping.
+    private func openScreenshotScene(_ proxy: ScrollViewProxy) async {
+        guard let scene = LaunchArguments.screenshotScene else { return }
+        try? await Task.sleep(for: .milliseconds(400))
+        switch scene {
+        case "detail": showHeroDetail = true
+        case "events": proxy.scrollTo("events", anchor: .center)
+        case "alerts":
+            settings.alertsEnabled = true
+            showAlertSetup = true
+        default: break
+        }
     }
 
     private func skyEventsCard(forecast: SunsetForecast) -> some View {

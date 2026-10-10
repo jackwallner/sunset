@@ -85,6 +85,21 @@ enum LaunchArguments {
         #endif
     }
 
+    /// Any store-capture argument. Keeps the review prompt out of captures.
+    static var isScreenshotRun: Bool {
+        screenshotTab != nil || screenshotScene != nil || onboardingStep != nil || paywallSnapshot
+    }
+
+    static var screenshotScene: String? {
+        #if DEBUG
+        let arguments = ProcessInfo.processInfo.arguments
+        guard let index = arguments.firstIndex(of: "-ScreenshotScene"), index + 1 < arguments.count else { return nil }
+        return arguments[index + 1]
+        #else
+        return nil
+        #endif
+    }
+
     static var screenshotTab: Int? {
         #if DEBUG
         let arguments = ProcessInfo.processInfo.arguments

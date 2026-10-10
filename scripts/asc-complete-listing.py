@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Fill the App Store Connect fields fastlane deliver does not create for a first version.
 
-Sets the age rating questionnaire, categories, copyright, content rights, and the
+Sets the age rating questionnaire, free app price, categories, copyright, content rights, and the
 App Review contact on the editable version. The review phone comes from
 ASC_REVIEW_PHONE so it never lives in this repository.
 """
@@ -37,6 +37,57 @@ REVIEW_NOTES = (
     "a custom alert score and lead time. Restore purchases, Privacy Policy, Terms and the Apple Standard EULA are "
     "on the paywall and in Settings. Scores are forecasts, not promises."
 )
+
+
+def ensure_free_pricing(c: A.ASCClient, app_id: str) -> None:
+    has_manual = False
+    try:
+        sched = c.get(f"/apps/{app_id}/appPriceSchedule")
+        sched_id = (sched.get("data") or {}).get("id")
+        if sched_id:
+            mp = c.get(f"/appPriceSchedules/{sched_id}/manualPrices")
+            has_manual = bool(mp.get("data"))
+    except RuntimeError as e:
+        if "404" not in str(e):
+            raise
+    if has_manual:
+        print("app price schedule already has manual prices")
+        return
+
+    points = A.list_all(c, f"/apps/{app_id}/appPricePoints?filter[territory]=USA&limit=200")
+    free = min(
+        (p for p in points if float(p["attributes"]["customerPrice"]) == 0.0),
+        key=lambda p: p["id"],
+        default=None,
+    )
+    if not free:
+        raise SystemExit("error: no free USA app price point")
+    c.post(
+        "/appPriceSchedules",
+        {
+            "data": {
+                "type": "appPriceSchedules",
+                "relationships": {
+                    "app": {"data": {"type": "apps", "id": app_id}},
+                    "baseTerritory": {"data": {"type": "territories", "id": "USA"}},
+                    "manualPrices": {"data": [{"type": "appPrices", "id": "${price0}"}]},
+                },
+            },
+            "included": [
+                {
+                    "type": "appPrices",
+                    "id": "${price0}",
+                    "attributes": {"startDate": None},
+                    "relationships": {
+                        "appPricePoint": {
+                            "data": {"type": "appPricePoints", "id": free["id"]}
+                        },
+                    },
+                }
+            ],
+        },
+    )
+    print("app price set to free (USA base)")
 
 
 def meta(field: str) -> str:
@@ -83,6 +134,8 @@ def main() -> None:
         c.post("/appStoreReviewDetails", {"data": {"type": "appStoreReviewDetails", "attributes": review,
             "relationships": {"appStoreVersion": {"data": {"type": "appStoreVersions", "id": version["id"]}}}}})
     print("review contact set")
+
+    ensure_free_pricing(c, app["id"])
 
 
 if __name__ == "__main__":

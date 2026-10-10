@@ -77,7 +77,8 @@ Store name: `Sunset & Sunrise Forecast`. Display name: `Sunset`.
   60 or more, once. No custom "Enjoying it?" gate (5.6.1).
 - Launch arguments (DEBUG): `-DemoLocation` (Vancouver, WA, skips
   onboarding), `-DemoPro`, `-PaywallSnapshot`, `-ScreenshotTab <n>`,
-  `-OnboardingStep <n>`, `-DemoForecast` (fixed week with sky events).
+  `-OnboardingStep <n>`, `-DemoForecast` (fixed week with sky events),
+  `-ScreenshotScene detail|events|alerts` (Today tab).
 
 ## Deep notes (load on demand)
 

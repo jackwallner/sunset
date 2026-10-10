@@ -47,3 +47,11 @@ paths:
   free alerts, four-page onboarding with the Sun+ offer, Sunset+ renamed Sun+
   (app and ASC localizations). Store name `Sunset & Sunrise Forecast`,
   subtitle `Scores, storm & rainbow alerts`.
+- 2026-10-10: build 3 attached to 1.0; age rating, categories, free price,
+  review contact and listing text set; six 6.9" screenshots from
+  `~/ios/appstore-screenshots/configs/sunset.json` (capture flows use
+  `-DemoForecast` and `-ScreenshotScene`) synced with `asc-sync-screenshots`.
+  IAP review screenshots replaced with the Sun+ paywall. Draft review
+  submission `c4b759f2-13a3-4000-ba7f-25dbead13d73` holds the group, both
+  subscriptions and lifetime. The version itself cannot join until App Privacy
+  answers are published in the web UI (APP_DATA_USAGES_REQUIRED).

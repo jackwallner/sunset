@@ -124,37 +124,46 @@ struct ShowDetailView: View {
     let placeName: String?
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 16) {
-                SkyCard(show: show, zone: zone, title: SunsetFormat.headline(show, zone: zone), placeName: placeName)
-                Card {
-                    Text(show.score.summary)
-                        .fixedSize(horizontal: false, vertical: true)
-                    Divider()
-                    HStack {
-                        detail("Best light", "\(SunsetFormat.time(show.bestWindowStart, zone: zone))–\(SunsetFormat.time(show.bestWindowEnd, zone: zone))")
-                        Spacer()
-                        detail("Rain", "\(show.score.rainChance)%")
+        ScrollViewReader { proxy in
+            ScrollView {
+                VStack(spacing: 16) {
+                    SkyCard(show: show, zone: zone, title: SunsetFormat.headline(show, zone: zone), placeName: placeName)
+                    Card {
+                        Text(show.score.summary)
+                            .fixedSize(horizontal: false, vertical: true)
+                        Divider()
+                        HStack {
+                            detail("Best light", "\(SunsetFormat.time(show.bestWindowStart, zone: zone))–\(SunsetFormat.time(show.bestWindowEnd, zone: zone))")
+                            Spacer()
+                            detail("Rain", "\(show.score.rainChance)%")
+                        }
+                    }
+                    Card {
+                        ForEach(show.score.factors) { factor in
+                            FactorRow(factor: factor, tone: Theme.tone(score: show.score.total))
+                        }
+                    }
+                    .id("factors")
+                    Card {
+                        Text("Cloud cover at \(show.event.title.lowercased())").font(.headline)
+                        cloudRow("High", show.conditions.cloudHigh)
+                        cloudRow("Mid", show.conditions.cloudMid)
+                        cloudRow("Low", show.conditions.cloudLow)
+                        cloudRow("Low, \(show.event.direction) toward the sun", show.conditions.cloudLowTowardSun)
+                        Text("Humidity \(Int(show.conditions.humidity))% · Visibility \(visibilityLabel)")
+                            .font(.caption)
+                            .foregroundStyle(Theme.textSecondary)
                     }
                 }
-                Card {
-                    ForEach(show.score.factors) { factor in
-                        FactorRow(factor: factor, tone: Theme.tone(score: show.score.total))
-                    }
-                }
-                Card {
-                    Text("Cloud cover at \(show.event.title.lowercased())").font(.headline)
-                    cloudRow("High", show.conditions.cloudHigh)
-                    cloudRow("Mid", show.conditions.cloudMid)
-                    cloudRow("Low", show.conditions.cloudLow)
-                    cloudRow("Low, \(show.event.direction) toward the sun", show.conditions.cloudLowTowardSun)
-                    Text("Humidity \(Int(show.conditions.humidity))% · Visibility \(visibilityLabel)")
-                        .font(.caption)
-                        .foregroundStyle(Theme.textSecondary)
-                }
+                .padding(.horizontal, 16)
+                .padding(.bottom, 24)
             }
-            .padding(.horizontal, 16)
-            .padding(.bottom, 24)
+            .task {
+                // DEBUG store capture: open on the factors and cloud cover.
+                guard LaunchArguments.screenshotScene == "detail" else { return }
+                try? await Task.sleep(for: .milliseconds(500))
+                proxy.scrollTo("factors", anchor: .top)
+            }
         }
         .background(Theme.background)
         .navigationTitle(SunsetFormat.monthDay(show.time, zone: zone))
