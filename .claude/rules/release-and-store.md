@@ -60,3 +60,12 @@ paths:
   Swift 6 isolation check. Register with `using: .main`. ASO: name `Sunset &
   Sunrise Prediction` ("sunset prediction" pop 16, diff 21 in Astro, app 136),
   subtitle `Golden Hour Forecast & Alerts` ("golden hour app" 13/17).
+- 2026-10-10: forecast-sky redesign and the fleet trial page (Get Started,
+  monthly billed amount as the largest price, monthly trial CTA). Builds 5
+  and 6; build 6 attached. Screenshots re-rendered on a dusk theme and synced.
+  Review notes rewritten to pre-empt 4.3(a): independent build, the six
+  verifiable differences, tap paths, and Daylight named as unrelated. The
+  draft's API-created version item (type 6) was removed so screenshots could
+  change, then re-added; the UI-attached IAP items stayed. Submitted
+  2026-10-10 18:44 UTC, WAITING_FOR_REVIEW. The IAP review screenshots still
+  show the old light paywall (locked while in the submission).
