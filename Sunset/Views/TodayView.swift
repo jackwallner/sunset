@@ -31,6 +31,27 @@ struct TodayView: View {
             SkyBackdrop(score: hero?.score.total ?? 40, event: hero?.event ?? .sunset, horizon: 0.46)
         }
         .toolbar(.hidden, for: .navigationBar)
+        // With no bar, fade the status bar strip into the night at the top
+        // of the sky, so cards scrolling under the clock dissolve instead of
+        // colliding with it.
+        .overlay(alignment: .top) {
+            GeometryReader { geometry in
+                let top = geometry.safeAreaInsets.top
+                let night = Theme.backdropStops(score: hero?.score.total ?? 40, event: hero?.event ?? .sunset, horizon: 0.46)[0].color
+                LinearGradient(
+                    stops: [
+                        .init(color: night, location: 0),
+                        .init(color: night, location: top / (top + 24)),
+                        .init(color: night.opacity(0), location: 1),
+                    ],
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                .frame(height: top + 24)
+                .offset(y: -geometry.safeAreaInsets.top)
+            }
+            .allowsHitTesting(false)
+        }
         .navigationDestination(isPresented: $showHeroDetail) {
             if let forecast = forecastStore.forecast, let hero = forecastStore.nextShow {
                 ShowDetailView(show: hero, zone: forecast.timeZone, placeName: forecast.placeName)
@@ -67,7 +88,8 @@ struct TodayView: View {
             placeName: forecast.placeName
         )
         .containerRelativeFrame(.vertical) { length, _ in max(260, length * 0.40) }
-        .padding(.bottom, 12)
+        .padding(.top, 18)
+        .padding(.bottom, 4)
 
         Card {
             Text(hero.score.summary)

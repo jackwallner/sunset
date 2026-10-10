@@ -201,6 +201,8 @@ struct ShowDetailView: View {
             }
         }
         .background { SkyBackdrop(score: show.score.total, event: show.event, horizon: 0.42) }
+        .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+        .toolbarBackground(.visible, for: .navigationBar)
         .navigationTitle(SunsetFormat.monthDay(show.time, zone: zone))
         .navigationBarTitleDisplayMode(.inline)
     }
