@@ -1,1 +1,1 @@
-prediction,predictor,golden hour,sky,clouds,photography,weather,thunderstorm,lightning,fog,dusk,dawn
+rainbow,lightning,tracker,storm,thunderstorm,fog,sky,clouds,dawn,dusk,magic,photography,weather,time

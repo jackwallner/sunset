@@ -9,7 +9,11 @@ enum BackgroundRefresh {
     static let identifier = "com.jackwallner.sunset.refresh"
 
     static func register() {
-        BGTaskScheduler.shared.register(forTaskWithIdentifier: identifier, using: nil) { task in
+        // The handler closure inherits this enum's main-actor isolation, and
+        // Swift 6 traps if it runs anywhere else. `nil` hands it to a
+        // background queue, which crashed every background refresh (TestFlight
+        // build 2), so deliver it on the main queue.
+        BGTaskScheduler.shared.register(forTaskWithIdentifier: identifier, using: .main) { task in
             guard let refresh = task as? BGAppRefreshTask else { return }
             Task { @MainActor in await handle(refresh) }
         }
@@ -27,7 +31,9 @@ enum BackgroundRefresh {
             guard let location = ForecastCache.location else { return }
             await ForecastStore.shared.load(location: location)
         }
-        task.expirationHandler = { work.cancel() }
+        // iOS calls this on a queue of its choosing, so it must not inherit
+        // main-actor isolation either.
+        task.expirationHandler = { @Sendable in work.cancel() }
         await work.value
         task.setTaskCompleted(success: !work.isCancelled)
     }

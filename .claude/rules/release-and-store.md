@@ -55,3 +55,8 @@ paths:
   submission `c4b759f2-13a3-4000-ba7f-25dbead13d73` holds the group, both
   subscriptions and lifetime. The version itself cannot join until App Privacy
   answers are published in the web UI (APP_DATA_USAGES_REQUIRED).
+- 2026-10-10: TestFlight crash on build 2 and 3: the BGAppRefresh handler
+  inherited main-actor isolation and ran on a background queue, tripping the
+  Swift 6 isolation check. Register with `using: .main`. ASO: name `Sunset &
+  Sunrise Prediction` ("sunset prediction" pop 16, diff 21 in Astro, app 136),
+  subtitle `Golden Hour Forecast & Alerts` ("golden hour app" 13/17).

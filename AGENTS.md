@@ -25,7 +25,7 @@ sunset alerts at the default score (70) and lead time (45 min).
 Sun+ (was "Sunset+"): the full week (blurred for free users), storm,
 rainbow and fog alerts, custom alert score and lead time.
 
-Store name: `Sunset & Sunrise Forecast`. Display name: `Sunset`.
+Store name: `Sunset & Sunrise Prediction` (subtitle `Golden Hour Forecast & Alerts`). Display name: `Sunset`.
 
 ## Tech stack and identifiers
 
