@@ -27,14 +27,13 @@ enum ConversionCopy {
         return "\(priceLabel). \(renew)"
     }
 
-    /// The same terms in three short lines, for the onboarding offer where
-    /// the slot above the button has a fixed height.
+    /// The onboarding offer's one-line terms under the billed amount: what
+    /// the trial is, what it becomes, that it renews. Terms carries the rest.
     static func compactDisclosure(trialLabel: String?, priceLabel: String) -> String {
-        let renew = "Auto-renews unless cancelled at least 24 hours before renewal. Cancel in Settings › Apple ID › Subscriptions."
         if let trialLabel, !trialLabel.isEmpty {
-            return "\(trialLabel.prefix(1).uppercased() + trialLabel.dropFirst()), then \(priceLabel). \(renew)"
+            return "\(trialLabel.prefix(1).uppercased() + trialLabel.dropFirst()), then \(priceLabel). Auto-renews until canceled."
         }
-        return "\(priceLabel). \(renew)"
+        return "Auto-renews until canceled. Cancel anytime in Settings."
     }
 
     static func purchaseCancelledMessage(eligibleForTrial: Bool) -> String {

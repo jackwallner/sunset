@@ -30,7 +30,9 @@ struct OutlookView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 24)
         }
-        .background(Theme.background)
+        .background {
+            SkyBackdrop(score: forecastStore.nextShow?.score.total ?? 60, event: forecastStore.nextShow?.event ?? .sunset, horizon: 0.14)
+        }
         .navigationTitle("Outlook")
         .sheet(isPresented: $showPaywall) { PaywallView(source: "outlook") }
     }
@@ -62,7 +64,7 @@ struct OutlookView: View {
                     .buttonStyle(PrimaryButtonStyle())
             }
             .padding(20)
-            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: Theme.cardRadius))
+            .glass(tint: 0.3)
             .padding(.top, 40)
             .padding(.horizontal, 8)
         }
@@ -84,10 +86,10 @@ private struct DayCard: View {
         let zone = forecast.timeZone
         let shows = SunEvent.allCases.filter(watched.contains).map(day.show)
         let events = forecast.skyEvents(on: day)
-        Card {
-            HStack {
+        VStack(alignment: .leading, spacing: 14) {
+            HStack(alignment: .firstTextBaseline) {
                 Text(SunsetFormat.dayLabel(day.sunset.time, zone: zone))
-                    .font(.headline)
+                    .font(.title3.weight(.semibold))
                 Spacer()
                 Text(SunsetFormat.monthDay(day.sunset.time, zone: zone))
                     .font(.subheadline)
@@ -115,6 +117,37 @@ private struct DayCard: View {
                 }
             }
         }
+        .padding(18)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background { DaySky(show: lead) }
+        .clipShape(RoundedRectangle(cornerRadius: Theme.cardRadius))
+        .overlay(RoundedRectangle(cornerRadius: Theme.cardRadius).strokeBorder(.white.opacity(0.14), lineWidth: 1))
+    }
+
+    /// The show that colours the card: the sunset when it is watched,
+    /// otherwise the sunrise.
+    private var lead: SunShow {
+        watched.contains(.sunset) || watched.isEmpty ? day.sunset : day.sunrise
+    }
+}
+
+/// A day's own forecast sky, darkened on the side the text sits on.
+private struct DaySky: View {
+    let show: SunShow
+
+    var body: some View {
+        ZStack {
+            LinearGradient(
+                colors: Theme.sky(score: show.score.total, event: show.event),
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
+            )
+            LinearGradient(
+                colors: [.black.opacity(0.42), .black.opacity(0.18)],
+                startPoint: .leading,
+                endPoint: .trailing
+            )
+        }
     }
 }
 
@@ -127,7 +160,9 @@ struct ShowDetailView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 VStack(spacing: 16) {
-                    SkyCard(show: show, zone: zone, title: SunsetFormat.headline(show, zone: zone), placeName: placeName)
+                    SkyHero(show: show, zone: zone, title: SunsetFormat.headline(show, zone: zone), placeName: placeName)
+                        .containerRelativeFrame(.vertical) { length, _ in max(240, length * 0.34) }
+                        .padding(.bottom, 12)
                     Card {
                         Text(show.score.summary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -165,7 +200,7 @@ struct ShowDetailView: View {
                 proxy.scrollTo("factors", anchor: .top)
             }
         }
-        .background(Theme.background)
+        .background { SkyBackdrop(score: show.score.total, event: show.event, horizon: 0.42) }
         .navigationTitle(SunsetFormat.monthDay(show.time, zone: zone))
         .navigationBarTitleDisplayMode(.inline)
     }

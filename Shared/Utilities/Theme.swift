@@ -2,12 +2,14 @@ import SwiftUI
 import UIKit
 
 enum Theme {
-    static let background = Color(light: .init(0.99, 0.97, 0.95), dark: .init(0.06, 0.05, 0.09))
-    static let surface = Color(light: .init(1, 1, 1), dark: .init(0.12, 0.10, 0.16))
-    static let elevated = Color(light: .init(0.97, 0.93, 0.90), dark: .init(0.18, 0.15, 0.23))
-    static let textPrimary = Color(light: .init(0.14, 0.10, 0.12), dark: .init(1, 1, 1))
-    static let textSecondary = Color(light: .init(0.48, 0.42, 0.45), dark: .init(0.74, 0.70, 0.76))
-    static let hairline = Color(light: .init(0.90, 0.86, 0.84), dark: .init(0.24, 0.21, 0.29))
+    /// Every screen sits on a forecast sky, so text is light everywhere.
+    static let textPrimary = Color.white
+    static let textSecondary = Color.white.opacity(0.74)
+    static let hairline = Color.white.opacity(0.18)
+    /// A list row over the sky.
+    static let row = Color.black.opacity(0.24)
+    /// Text on the white primary button.
+    static let ink = Color(red: 0.17, green: 0.10, blue: 0.24)
 
     static let ember = Color(red: 0.96, green: 0.45, blue: 0.22)
     static let gold = Color(red: 1.0, green: 0.78, blue: 0.32)
@@ -64,6 +66,35 @@ enum Theme {
         LinearGradient(colors: sky(score: score, event: event), startPoint: .top, endPoint: .bottom)
     }
 
+    /// A full-screen sky for a score: night overhead, the forecast colours
+    /// down to a glowing horizon at `horizon` (0 top, 1 bottom), then the
+    /// same sky reflected in still water below it, dimmer and deepening, so
+    /// cards over it read cleanly but still carry the evening's colour.
+    static func backdropStops(score: Int, event: SunEvent, horizon: Double) -> [Gradient.Stop] {
+        let sky = skyRGB(score: score, event: event)
+        let night = RGB(0.06, 0.05, 0.14)
+        let deep = RGB(0.05, 0.04, 0.10)
+        // Dull skies are pale greys; dim them so white text still reads.
+        let dim = 0.62 + 0.30 * Double(min(100, max(0, score))) / 100
+        let h = min(0.95, max(0.08, horizon))
+        let water = 1 - h
+        let stops: [(RGB, Double)] = [
+            (night.mixed(with: sky[0], 0.35), 0),
+            (sky[0].scaled(dim), h * 0.45),
+            (sky[1].scaled(dim), h * 0.82),
+            (sky[2].scaled(min(1, dim + 0.08)), h),
+            (sky[2].scaled(0.5), h + 0.01),
+            (sky[1].scaled(0.42), h + water * 0.22),
+            (sky[0].scaled(0.36), h + water * 0.55),
+            (deep, 1),
+        ]
+        return stops.map { .init(color: $0.0.color, location: min(1, $0.1)) }
+    }
+
+    static func glow(score: Int, event: SunEvent) -> Color {
+        skyRGB(score: score, event: event)[2].color
+    }
+
     /// Solid colour for chips and bars, the warmest stop of the sky.
     static func tone(score: Int) -> Color {
         sky(score: score)[1]
@@ -80,13 +111,17 @@ struct RGB: Sendable {
         self.green = green
         self.blue = blue
     }
-}
 
-extension Color {
-    init(light: RGB, dark: RGB) {
-        self.init(uiColor: UIColor { traits in
-            let rgb = traits.userInterfaceStyle == .dark ? dark : light
-            return UIColor(red: rgb.red, green: rgb.green, blue: rgb.blue, alpha: 1)
-        })
+    var color: Color { Color(red: red, green: green, blue: blue) }
+
+    func scaled(_ factor: Double) -> RGB {
+        RGB(red * factor, green * factor, blue * factor)
+    }
+
+    /// `amount` of the way from this colour to `other`.
+    func mixed(with other: RGB, _ amount: Double) -> RGB {
+        RGB(red + (other.red - red) * amount,
+            green + (other.green - green) * amount,
+            blue + (other.blue - blue) * amount)
     }
 }

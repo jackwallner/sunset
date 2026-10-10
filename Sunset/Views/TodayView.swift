@@ -27,7 +27,10 @@ struct TodayView: View {
             }
             .task { await openScreenshotScene(proxy) }
         }
-        .background(Theme.background)
+        .background {
+            SkyBackdrop(score: hero?.score.total ?? 40, event: hero?.event ?? .sunset, horizon: 0.46)
+        }
+        .toolbar(.hidden, for: .navigationBar)
         .navigationDestination(isPresented: $showHeroDetail) {
             if let forecast = forecastStore.forecast, let hero = forecastStore.nextShow {
                 ShowDetailView(show: hero, zone: forecast.timeZone, placeName: forecast.placeName)
@@ -50,15 +53,21 @@ struct TodayView: View {
         }
     }
 
+    private var hero: SunShow? {
+        forecastStore.forecast?.upcomingShows(settings.watched).first
+    }
+
     @ViewBuilder
     private func content(forecast: SunsetForecast, hero: SunShow) -> some View {
         let zone = forecast.timeZone
-        SkyCard(
+        SkyHero(
             show: hero,
             zone: zone,
             title: SunsetFormat.headline(hero, zone: zone),
             placeName: forecast.placeName
         )
+        .containerRelativeFrame(.vertical) { length, _ in max(260, length * 0.40) }
+        .padding(.bottom, 12)
 
         Card {
             Text(hero.score.summary)
@@ -245,75 +254,82 @@ struct AlertSetupSheet: View {
     var body: some View {
         NavigationStack {
             Form {
-                Section {
-                    Toggle("Alerts", isOn: $settings.alertsEnabled)
-                } footer: {
-                    Text("Alerts are rebuilt from the latest forecast each time the app refreshes, so a sky that clouds over loses its alert. Sunrise alerts arrive the evening before.")
-                }
-
-                Section {
-                    if store.isPro {
-                        Picker("Score", selection: $settings.threshold) {
-                            ForEach(AlertSettings.thresholds, id: \.self) { value in
-                                Text("\(value) · \(SunsetScore.Grade(total: value).rawValue)").tag(value)
-                            }
-                        }
-                        .pickerStyle(.inline)
-                        .labelsHidden()
-                    } else {
-                        lockedRow("Score", value: "\(AlertSettings.defaultThreshold) · Great")
+                Group {
+                    Section {
+                        Toggle("Alerts", isOn: $settings.alertsEnabled)
+                    } footer: {
+                        Text("Alerts are rebuilt from the latest forecast each time the app refreshes, so a sky that clouds over loses its alert. Sunrise alerts arrive the evening before.")
                     }
-                } header: {
-                    Text("Alert me when the score is at least")
-                }
 
-                Section("How far before sunset") {
-                    if store.isPro {
-                        Picker("Lead time", selection: $settings.leadMinutes) {
-                            ForEach(AlertSettings.leadOptions, id: \.self) { value in
-                                Text(SunsetFormat.minutes(value)).tag(value)
-                            }
-                        }
-                        .pickerStyle(.segmented)
-                    } else {
-                        lockedRow("Lead time", value: SunsetFormat.minutes(AlertSettings.defaultLead))
-                    }
-                }
-
-                Section {
-                    ForEach(SkyEvent.Kind.allCases, id: \.self) { kind in
+                    Section {
                         if store.isPro {
-                            Toggle(isOn: skyEventBinding(kind)) {
-                                Label(kind.title, systemImage: kind.symbol)
-                            }
-                        } else {
-                            Button { showPaywall = true } label: {
-                                HStack {
-                                    Label(kind.title, systemImage: kind.symbol)
-                                    Spacer()
-                                    PlusCapsule()
+                            Picker("Score", selection: $settings.threshold) {
+                                ForEach(AlertSettings.thresholds, id: \.self) { value in
+                                    Text("\(value) · \(SunsetScore.Grade(total: value).rawValue)").tag(value)
                                 }
                             }
-                            .foregroundStyle(Theme.textPrimary)
+                            .pickerStyle(.inline)
+                            .labelsHidden()
+                        } else {
+                            lockedRow("Score", value: "\(AlertSettings.defaultThreshold) · Great")
+                        }
+                    } header: {
+                        Text("Alert me when the score is at least")
+                    }
+
+                    Section("How far before sunset") {
+                        if store.isPro {
+                            Picker("Lead time", selection: $settings.leadMinutes) {
+                                ForEach(AlertSettings.leadOptions, id: \.self) { value in
+                                    Text(SunsetFormat.minutes(value)).tag(value)
+                                }
+                            }
+                            .pickerStyle(.segmented)
+                        } else {
+                            lockedRow("Lead time", value: SunsetFormat.minutes(AlertSettings.defaultLead))
                         }
                     }
-                } header: {
-                    Text("Sky events")
-                } footer: {
-                    Text("An hour's warning before storms, rainbow chances and fog, moved to the evening before when they fall overnight.")
-                }
 
-                if denied {
                     Section {
-                        Text("Notifications are turned off for Sunset. Enable them in Settings to receive alerts.")
-                            .foregroundStyle(Theme.textSecondary)
-                        Button("Open Settings") {
-                            if let url = URL(string: UIApplication.openSettingsURLString) {
-                                UIApplication.shared.open(url)
+                        ForEach(SkyEvent.Kind.allCases, id: \.self) { kind in
+                            if store.isPro {
+                                Toggle(isOn: skyEventBinding(kind)) {
+                                    Label(kind.title, systemImage: kind.symbol)
+                                }
+                            } else {
+                                Button { showPaywall = true } label: {
+                                    HStack {
+                                        Label(kind.title, systemImage: kind.symbol)
+                                        Spacer()
+                                        PlusCapsule()
+                                    }
+                                }
+                                .foregroundStyle(Theme.textPrimary)
+                            }
+                        }
+                    } header: {
+                        Text("Sky events")
+                    } footer: {
+                        Text("An hour's warning before storms, rainbow chances and fog, moved to the evening before when they fall overnight.")
+                    }
+
+                    if denied {
+                        Section {
+                            Text("Notifications are turned off for Sunset. Enable them in Settings to receive alerts.")
+                                .foregroundStyle(Theme.textSecondary)
+                            Button("Open Settings") {
+                                if let url = URL(string: UIApplication.openSettingsURLString) {
+                                    UIApplication.shared.open(url)
+                                }
                             }
                         }
                     }
                 }
+                .listRowBackground(Theme.row)
+            }
+            .scrollContentBackground(.hidden)
+            .background {
+                SkyBackdrop(score: forecastStore.nextShow?.score.total ?? 70, event: forecastStore.nextShow?.event ?? .sunset, horizon: 0.14)
             }
             .navigationTitle("Alerts")
             .navigationBarTitleDisplayMode(.inline)

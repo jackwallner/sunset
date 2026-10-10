@@ -133,6 +133,7 @@ final class StoreService: NSObject, ObservableObject, PurchasesDelegate {
     }
 
     var yearlyPackage: Package? { packages.first { $0.kind == .yearly } }
+    var monthlyPackage: Package? { packages.first { $0.kind == .monthly } }
 
     func isEligibleForIntroOffer(_ package: Package) -> Bool {
         guard package.introOfferLabel != nil, introEligibilityResolved else { return false }

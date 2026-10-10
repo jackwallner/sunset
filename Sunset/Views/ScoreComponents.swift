@@ -1,7 +1,41 @@
 import SwiftUI
 
-/// The hero: the next sunrise or sunset as a gradient with the score on it.
-struct SkyCard: View {
+/// The forecast sky behind a whole screen. The colours are the score's own
+/// sky, so a dull evening looks grey and an epic one burns.
+struct SkyBackdrop: View {
+    let score: Int
+    var event: SunEvent = .sunset
+    /// Where the glowing horizon sits, 0 top to 1 bottom.
+    var horizon: Double = 0.42
+
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack {
+                LinearGradient(
+                    stops: Theme.backdropStops(score: score, event: event, horizon: horizon),
+                    startPoint: .top,
+                    endPoint: .bottom
+                )
+                // The sun just under the horizon: a warm bloom that grows
+                // with the score.
+                RadialGradient(
+                    colors: [Theme.glow(score: score, event: event).opacity(0.25 + 0.4 * Double(score) / 100), .clear],
+                    center: UnitPoint(x: 0.5, y: horizon),
+                    startRadius: 0,
+                    endRadius: geometry.size.width * 0.75
+                )
+                .blendMode(.screen)
+            }
+        }
+        .ignoresSafeArea()
+        .animation(.easeInOut(duration: 0.6), value: score)
+        .animation(.easeInOut(duration: 0.6), value: horizon)
+        .accessibilityHidden(true)
+    }
+}
+
+/// The hero: the next sunrise or sunset written straight onto its sky.
+struct SkyHero: View {
     let show: SunShow
     let zone: TimeZone
     let title: String
@@ -9,44 +43,37 @@ struct SkyCard: View {
     var height: CGFloat = 300
 
     var body: some View {
-        ZStack(alignment: .bottomLeading) {
-            RoundedRectangle(cornerRadius: Theme.cardRadius)
-                .fill(Theme.skyGradient(score: show.score.total, event: show.event))
-            Horizon()
-                .fill(Color.black.opacity(0.18))
-                .frame(height: 70)
-                .frame(maxHeight: .infinity, alignment: .bottom)
-            VStack(alignment: .leading, spacing: 0) {
-                HStack(alignment: .firstTextBaseline) {
-                    Text(title)
-                        .font(.headline)
-                    Spacer()
-                    if let placeName {
-                        Label(placeName, systemImage: "location.fill")
-                            .font(.subheadline.weight(.medium))
-                            .labelStyle(.titleAndIcon)
-                            .lineLimit(1)
-                    }
-                }
-                .foregroundStyle(.white.opacity(0.92))
+        VStack(alignment: .leading, spacing: 0) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(title)
+                    .font(.headline)
                 Spacer()
-                HStack(alignment: .lastTextBaseline, spacing: 8) {
-                    Text("\(show.score.total)")
-                        .font(.system(size: 88, weight: .bold, design: .rounded))
-                        .contentTransition(.numericText())
-                    Text(show.score.grade.rawValue)
-                        .font(.title.weight(.semibold))
-                        .padding(.bottom, 14)
+                if let placeName {
+                    Label(placeName, systemImage: "location.fill")
+                        .font(.subheadline.weight(.medium))
+                        .labelStyle(.titleAndIcon)
+                        .lineLimit(1)
                 }
-                .foregroundStyle(.white)
-                Label("\(show.event.title) \(SunsetFormat.time(show.time, zone: zone))", systemImage: show.event.symbol)
-                    .font(.title3.weight(.medium))
-                    .foregroundStyle(.white.opacity(0.92))
             }
-            .padding(22)
+            .foregroundStyle(.white.opacity(0.9))
+            Spacer(minLength: 0)
+            HStack(alignment: .lastTextBaseline, spacing: 10) {
+                Text("\(show.score.total)")
+                    .font(.system(size: 112, weight: .bold, design: .rounded))
+                    .contentTransition(.numericText())
+                Text(show.score.grade.rawValue)
+                    .font(.system(.title, design: .rounded).weight(.semibold))
+                    .padding(.bottom, 18)
+            }
+            .foregroundStyle(.white)
+            .shadow(color: .black.opacity(0.18), radius: 12, y: 4)
+            Label("\(show.event.title) \(SunsetFormat.time(show.time, zone: zone))", systemImage: show.event.symbol)
+                .font(.title3.weight(.medium))
+                .foregroundStyle(.white.opacity(0.92))
         }
+        .padding(.horizontal, 6)
+        .padding(.vertical, 8)
         .frame(height: height)
-        .clipShape(RoundedRectangle(cornerRadius: Theme.cardRadius))
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title), score \(show.score.total), \(show.score.grade.rawValue). \(show.event.title) at \(SunsetFormat.time(show.time, zone: zone))")
     }
@@ -65,6 +92,7 @@ struct ShowRow: View {
                 .fill(Theme.skyGradient(score: show.score.total, event: show.event))
                 .frame(width: 44, height: 44)
                 .overlay(Image(systemName: show.event.symbol).foregroundStyle(.white.opacity(0.9)))
+                .overlay(RoundedRectangle(cornerRadius: 10).strokeBorder(.white.opacity(0.2), lineWidth: 1))
             VStack(alignment: .leading, spacing: 3) {
                 Text(title ?? show.event.title)
                     .font(.headline)
@@ -94,10 +122,10 @@ struct SkyEventRow: View {
         HStack(spacing: 14) {
             Image(systemName: event.kind.symbol)
                 .symbolRenderingMode(event.kind == .fog ? .hierarchical : .multicolor)
-                .foregroundStyle(Theme.textSecondary)
+                .foregroundStyle(.white)
                 .font(.title3)
                 .frame(width: 44, height: 44)
-                .background(Theme.elevated, in: RoundedRectangle(cornerRadius: 10))
+                .background(.white.opacity(0.12), in: RoundedRectangle(cornerRadius: 10))
             VStack(alignment: .leading, spacing: 3) {
                 Text(event.kind.title).font(.headline)
                 Text("\(SunsetFormat.dayLabel(event.start, zone: zone)), \(SunsetFormat.time(event.start, zone: zone))–\(SunsetFormat.time(event.end, zone: zone))")
@@ -107,21 +135,6 @@ struct SkyEventRow: View {
             Spacer()
         }
         .accessibilityElement(children: .combine)
-    }
-}
-
-private struct Horizon: Shape {
-    func path(in rect: CGRect) -> Path {
-        var path = Path()
-        path.move(to: CGPoint(x: rect.minX, y: rect.maxY))
-        path.addLine(to: CGPoint(x: rect.minX, y: rect.minY + 24))
-        path.addQuadCurve(
-            to: CGPoint(x: rect.maxX, y: rect.minY + 10),
-            control: CGPoint(x: rect.midX, y: rect.minY - 18)
-        )
-        path.addLine(to: CGPoint(x: rect.maxX, y: rect.maxY))
-        path.closeSubpath()
-        return path
     }
 }
 
@@ -166,6 +179,7 @@ struct ScoreChip: View {
             .padding(.horizontal, 10)
             .padding(.vertical, 5)
             .background(Theme.tone(score: score.total), in: Capsule())
+            .overlay(Capsule().strokeBorder(.white.opacity(0.25), lineWidth: 1))
             .accessibilityLabel("Score \(score.total), \(score.grade.rawValue)")
     }
 }
@@ -177,7 +191,20 @@ struct Card<Content: View>: View {
         VStack(alignment: .leading, spacing: 14) { content }
             .padding(18)
             .frame(maxWidth: .infinity, alignment: .leading)
-            .background(Theme.surface, in: RoundedRectangle(cornerRadius: Theme.cardRadius))
+            .glass()
+    }
+}
+
+extension View {
+    /// Frosted glass over the sky: blurred, a touch darker, with a fine
+    /// light edge.
+    func glass(cornerRadius: CGFloat = Theme.cardRadius, tint: Double = 0.2) -> some View {
+        background {
+            RoundedRectangle(cornerRadius: cornerRadius)
+                .fill(.ultraThinMaterial)
+                .overlay(RoundedRectangle(cornerRadius: cornerRadius).fill(.black.opacity(tint)))
+                .overlay(RoundedRectangle(cornerRadius: cornerRadius).strokeBorder(.white.opacity(0.12), lineWidth: 1))
+        }
     }
 }
 
@@ -185,12 +212,13 @@ struct PrimaryButtonStyle: SwiftUI.ButtonStyle {
     func makeBody(configuration: SwiftUI.ButtonStyleConfiguration) -> some View {
         configuration.label
             .font(.headline)
-            .foregroundStyle(.white)
+            .foregroundStyle(Theme.ink)
             .frame(maxWidth: .infinity)
             .padding(.vertical, 15)
             .padding(.horizontal, 18)
-            .background(Theme.accent, in: RoundedRectangle(cornerRadius: 17))
-            .opacity(configuration.isPressed ? 0.9 : 1)
+            .background(.white, in: RoundedRectangle(cornerRadius: 17))
+            .shadow(color: .black.opacity(0.18), radius: 10, y: 4)
+            .opacity(configuration.isPressed ? 0.85 : 1)
     }
 }
 

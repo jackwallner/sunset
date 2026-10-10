@@ -14,7 +14,16 @@ comes from. The hourly forecast also yields sky events: thunderstorms,
 rainbow chances and fog.
 
 Onboarding (four pages, CTA at a fixed y): welcome, pick sunrise and/or
-sunset, free alerts (notification prompt), Sun+ offer with "Not now".
+sunset, free alerts (notification prompt), Sun+ offer. The offer follows the
+fleet trial page: "Get Started" free exit above, the monthly billed amount as
+the largest pricing element (no box, 3.1.2(c)), one terms line, then "Start
+7-day free trial" buying monthly (the fleet's best converters all do).
+
+Look: no light or dark theme. Every screen sits on a forecast sky
+(`SkyBackdrop`): the score's own colours down to a glowing horizon, the sky
+reflected in water below it, frosted glass cards on top, light text, white
+primary buttons. Today uses the hero show, each Outlook day card its own sky.
+The app forces `.dark` so system chrome matches.
 
 Three tabs: Today (next watched show as the hero, summary, factors, up next,
 sky events, alerts card), Outlook (the week), Settings (watch toggles,

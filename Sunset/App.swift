@@ -21,6 +21,9 @@ struct SunsetApp: App {
                 .environmentObject(forecastStore)
                 .environmentObject(location)
                 .tint(Theme.ember)
+                // Every screen is drawn on a forecast sky with light text, so
+                // the system chrome always matches it.
+                .preferredColorScheme(.dark)
                 .task {
                     store.start()
                     settings.recordOpen()

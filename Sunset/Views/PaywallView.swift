@@ -13,15 +13,11 @@ struct PaywallView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-                    RoundedRectangle(cornerRadius: 18)
-                        .fill(Theme.skyGradient(score: 92))
-                        .frame(height: 110)
-                        .overlay(alignment: .bottomLeading) {
-                            Text("Sun+")
-                                .font(.largeTitle.bold())
-                                .foregroundStyle(.white)
-                                .padding(16)
-                        }
+                    Text("Sun+")
+                        .font(.system(size: 56, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                        .shadow(color: .black.opacity(0.18), radius: 12, y: 4)
+                        .padding(.top, 36)
                     Text("See further and catch more. Today, tomorrow and your sunrise and sunset alerts stay free.")
                         .multilineTextAlignment(.center)
                         .foregroundStyle(Theme.textSecondary)
@@ -122,7 +118,7 @@ struct PaywallView: View {
                 }
                 .padding(22)
             }
-            .background(Theme.background)
+            .background { SkyBackdrop(score: 92, horizon: 0.2) }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() } }
             }
@@ -165,7 +161,7 @@ struct PaywallView: View {
     private func benefit(_ symbol: String, _ text: String) -> some View {
         HStack(alignment: .top, spacing: 12) {
             Image(systemName: symbol)
-                .foregroundStyle(Theme.ember)
+                .foregroundStyle(Theme.gold)
                 .frame(width: 24)
             Text(text).font(.subheadline)
         }
@@ -182,7 +178,7 @@ private struct PlanCard: View {
         HStack(spacing: 12) {
             Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                 .font(.title3)
-                .foregroundStyle(isSelected ? Theme.ember : Theme.textSecondary)
+                .foregroundStyle(isSelected ? Theme.gold : Theme.textSecondary)
             VStack(alignment: .leading, spacing: 4) {
                 Text(title).font(.headline)
                 if let detail {
@@ -193,10 +189,10 @@ private struct PlanCard: View {
             Text(price).fontWeight(.semibold)
         }
         .padding(18)
-        .background(Theme.surface, in: RoundedRectangle(cornerRadius: 18))
+        .glass(cornerRadius: 18, tint: 0.24)
         .overlay {
             RoundedRectangle(cornerRadius: 18)
-                .stroke(isSelected ? Theme.ember : .clear, lineWidth: 2)
+                .strokeBorder(isSelected ? Theme.gold : .clear, lineWidth: 2)
         }
         .contentShape(RoundedRectangle(cornerRadius: 18))
         .accessibilityElement(children: .combine)

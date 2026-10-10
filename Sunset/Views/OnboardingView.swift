@@ -1,8 +1,11 @@
 import RevenueCat
 import SwiftUI
 
-/// Four short pages: what the app does, which shows to watch, free alerts,
-/// then the Sun+ offer with a free way out.
+/// Four short pages on a forecast sky: what the app does, which shows to
+/// watch, free alerts, then the Sun+ offer with "Get Started" as the free way
+/// in. The offer buys the monthly plan, like the fleet's best converters
+/// (StatScout, Mahj, Cribbage): someone who has not used the app yet reacts to
+/// the recurring number, and the monthly one is the small one.
 ///
 /// The bottom bar is laid out identically on every page: a fixed slot above
 /// the button, the button, and a fixed slot below it. Each slot reserves its
@@ -47,7 +50,10 @@ struct OnboardingView: View {
             .clipped()
             bottomBar
         }
-        .background(Theme.background.ignoresSafeArea())
+        .background {
+            SkyBackdrop(score: step == .plus ? 92 : Self.preview.score.total, horizon: step == .alerts ? 0.56 : 0.4)
+        }
+        .preferredColorScheme(.dark)
         .sheet(isPresented: $showPlans, onDismiss: { if store.isPro { finish() } }) {
             PaywallView(source: "onboarding_plans")
         }
@@ -73,9 +79,9 @@ struct OnboardingView: View {
     }
 
     private var welcomePage: some View {
-        VStack(spacing: 24) {
-            Spacer(minLength: 12)
-            SkyCard(show: Self.preview, zone: .current, title: "Example", placeName: nil, height: 240)
+        VStack(spacing: 0) {
+            SkyHero(show: Self.preview, zone: .current, title: "Example", placeName: nil)
+                .containerRelativeFrame(.vertical) { length, _ in length * 0.42 }
                 .accessibilityHidden(true)
             VStack(spacing: 10) {
                 Text("Know before you go")
@@ -85,6 +91,7 @@ struct OnboardingView: View {
                     .multilineTextAlignment(.center)
                     .foregroundStyle(Theme.textSecondary)
             }
+            .padding(.top, 28)
             Spacer(minLength: 0)
         }
         .padding(.horizontal, 22)
@@ -114,8 +121,8 @@ struct OnboardingView: View {
             Spacer(minLength: 12)
             Image(systemName: "bell.badge.fill")
                 .font(.system(size: 54))
-                .symbolRenderingMode(.multicolor)
-                .foregroundStyle(Theme.accent)
+                .symbolRenderingMode(.palette)
+                .foregroundStyle(Theme.gold, .white)
             pageHeader(
                 "Get a heads-up, free",
                 alertsPitch
@@ -129,26 +136,9 @@ struct OnboardingView: View {
     private var plusPage: some View {
         ScrollView {
             VStack(spacing: 18) {
-                RoundedRectangle(cornerRadius: 18)
-                    .fill(Theme.skyGradient(score: 92))
-                    .frame(height: 96)
-                    .overlay(alignment: .bottomLeading) {
-                        Text("Sun+")
-                            .font(.largeTitle.bold())
-                            .foregroundStyle(.white)
-                            .padding(16)
-                    }
-                    .overlay(alignment: .topTrailing) {
-                        if let trial = trialLabel {
-                            Text(trial.uppercased())
-                                .font(.caption.weight(.bold))
-                                .foregroundStyle(Theme.ember)
-                                .padding(.horizontal, 10)
-                                .padding(.vertical, 5)
-                                .background(.white, in: Capsule())
-                                .padding(12)
-                        }
-                    }
+                Text("Sun+")
+                    .font(.system(size: 56, weight: .bold, design: .rounded))
+                    .shadow(color: .black.opacity(0.18), radius: 12, y: 4)
                 Text("The whole week, and the rest of the sky")
                     .font(.title2.bold())
                     .multilineTextAlignment(.center)
@@ -156,16 +146,18 @@ struct OnboardingView: View {
                     ForEach(PlusBenefit.all) { item in
                         HStack(alignment: .top, spacing: 12) {
                             Image(systemName: item.symbol)
-                                .foregroundStyle(Theme.ember)
+                                .foregroundStyle(Theme.gold)
                                 .frame(width: 24)
                             Text(item.text).font(.subheadline)
                         }
                     }
                 }
+                .padding(18)
                 .frame(maxWidth: .infinity, alignment: .leading)
+                .glass()
             }
             .padding(.horizontal, 22)
-            .padding(.top, 12)
+            .padding(.top, 28)
         }
         .scrollBounceBehavior(.basedOnSize)
     }
@@ -177,8 +169,9 @@ struct OnboardingView: View {
                 .multilineTextAlignment(.center)
             Text(subtitle)
                 .multilineTextAlignment(.center)
-                .foregroundStyle(Theme.textSecondary)
+                .foregroundStyle(.white.opacity(0.86))
         }
+        .shadow(color: .black.opacity(0.25), radius: 8, y: 2)
     }
 
     private var alertsPitch: String {
@@ -192,7 +185,7 @@ struct OnboardingView: View {
         HStack(spacing: 6) {
             ForEach(Step.allCases, id: \.self) { item in
                 Capsule()
-                    .fill(item.rawValue <= step.rawValue ? AnyShapeStyle(Theme.accent) : AnyShapeStyle(Theme.hairline))
+                    .fill(item.rawValue <= step.rawValue ? AnyShapeStyle(.white) : AnyShapeStyle(Theme.hairline))
                     .frame(width: item == step ? 22 : 8, height: 8)
             }
         }
@@ -204,7 +197,7 @@ struct OnboardingView: View {
     private var bottomBar: some View {
         VStack(spacing: 10) {
             aboveButton
-                .frame(height: 84, alignment: .bottom)
+                .frame(height: 104, alignment: .bottom)
             primaryButton
             belowButton
                 .frame(height: 22)
@@ -225,20 +218,24 @@ struct OnboardingView: View {
         case .alerts:
             secondaryButton("Not now") { advance() }
         case .plus:
-            VStack(spacing: 6) {
-                if let purchaseError {
-                    Text(purchaseError)
-                        .font(.caption)
-                        .foregroundStyle(.red)
-                        .multilineTextAlignment(.center)
-                } else {
-                    Text(disclosure)
-                        .font(.caption2)
-                        .foregroundStyle(Theme.textSecondary)
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
+            // Fleet trial-page order: the free way in, then the billed amount
+            // as the largest pricing element on the page (App Review
+            // 3.1.2(c)), then one line of terms. Plain type, no box.
+            VStack(spacing: 4) {
+                secondaryButton("Get Started") { finish() }
+                Text(package?.priceLabel ?? " ")
+                    .font(.system(.title2, design: .rounded).weight(.semibold))
+                    .foregroundStyle(.white)
+                Group {
+                    if let purchaseError {
+                        Text(purchaseError).foregroundStyle(Theme.gold)
+                    } else {
+                        Text(disclosure).foregroundStyle(Theme.textSecondary)
+                    }
                 }
-                secondaryButton("Not now") { finish() }
+                .font(.caption2)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
@@ -247,7 +244,14 @@ struct OnboardingView: View {
     private var belowButton: some View {
         if step == .plus {
             HStack(spacing: 8) {
-                Button("Restore") { Task { await store.restore() } }
+                Button("Restore") {
+                    Task {
+                        await store.restore()
+                        // Success flips isPro, which finishes onboarding.
+                        if !store.isPro { purchaseError = store.errorMessage }
+                        store.clearError()
+                    }
+                }
                 Text("·")
                 Link("Terms", destination: SunsetLinks.standardEULA)
                 Text("·")
@@ -285,7 +289,7 @@ struct OnboardingView: View {
         case .alerts: "Turn on alerts"
         case .plus:
             if package == nil { "See Sun+ plans" }
-            else if trialLabel != nil { "Start free trial" }
+            else if let trialLabel { "Start \(trialLabel)" }
             else { ConversionCopy.ctaLabel }
         }
     }
@@ -299,7 +303,7 @@ struct OnboardingView: View {
 
     // MARK: Store
 
-    private var package: Package? { store.yearlyPackage ?? store.packages.first }
+    private var package: Package? { store.monthlyPackage ?? store.yearlyPackage }
 
     private var ctaReady: Bool {
         guard let package else { return false }
@@ -394,12 +398,12 @@ private struct WatchChoice: View {
                 Spacer()
                 Image(systemName: isOn ? "checkmark.circle.fill" : "circle")
                     .font(.title2)
-                    .foregroundStyle(isOn ? Theme.ember : Theme.textSecondary)
+                    .foregroundStyle(isOn ? Theme.gold : Theme.textSecondary)
             }
             .padding(16)
-            .background(Theme.surface, in: RoundedRectangle(cornerRadius: 18))
+            .glass(cornerRadius: 18)
             .overlay {
-                RoundedRectangle(cornerRadius: 18).stroke(isOn ? Theme.ember : .clear, lineWidth: 2)
+                RoundedRectangle(cornerRadius: 18).strokeBorder(isOn ? Theme.gold : .clear, lineWidth: 2)
             }
             .contentShape(RoundedRectangle(cornerRadius: 18))
         }
@@ -436,7 +440,7 @@ private struct AlertPreview: View {
             }
         }
         .padding(14)
-        .background(Theme.surface, in: RoundedRectangle(cornerRadius: 20))
+        .glass(cornerRadius: 20)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Example alert")
     }
