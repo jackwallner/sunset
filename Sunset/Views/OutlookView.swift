@@ -1,38 +1,28 @@
 import SwiftUI
 
-/// The week ahead. Tonight and tomorrow are free; the rest is Sunset+.
+/// The week ahead. Today and tomorrow are free; the rest is Sun+, shown
+/// blurred so the free tier can see what it is missing.
 struct OutlookView: View {
     @EnvironmentObject private var forecastStore: ForecastStore
+    @EnvironmentObject private var settings: AlertSettings
     @EnvironmentObject private var store: StoreService
     @State private var showPaywall = false
 
-    private let freeDays = 2
+    static let freeDays = 2
 
     var body: some View {
         ScrollView {
             VStack(spacing: 12) {
                 if let forecast = forecastStore.forecast {
-                    let days = upcomingDays(forecast)
-                    ForEach(Array(days.enumerated()), id: \.element.id) { index, day in
-                        if store.isPro || index < freeDays {
-                            NavigationLink {
-                                DayDetailView(day: day, zone: forecast.timeZone, placeName: forecast.placeName)
-                            } label: {
-                                OutlookRow(day: day, zone: forecast.timeZone)
-                            }
-                            .buttonStyle(.plain)
-                        } else {
-                            LockedRow(day: day, zone: forecast.timeZone)
-                                .onTapGesture { showPaywall = true }
-                        }
+                    let days = Array(forecast.upcomingDays().prefix(7))
+                    ForEach(days.prefix(store.isPro ? days.count : Self.freeDays)) { day in
+                        DayCard(day: day, forecast: forecast, watched: settings.watched)
                     }
-                    if !store.isPro, days.count > freeDays {
-                        Button("See the whole week") { showPaywall = true }
-                            .buttonStyle(PrimaryButtonStyle())
-                            .padding(.top, 6)
+                    if !store.isPro, days.count > Self.freeDays {
+                        lockedWeek(Array(days.dropFirst(Self.freeDays)), forecast: forecast)
                     }
                 } else {
-                    Text("The outlook appears once tonight's forecast has loaded.")
+                    Text("The outlook appears once the forecast has loaded.")
                         .foregroundStyle(Theme.textSecondary)
                         .padding(.top, 60)
                 }
@@ -45,101 +35,120 @@ struct OutlookView: View {
         .sheet(isPresented: $showPaywall) { PaywallView(source: "outlook") }
     }
 
-    private func upcomingDays(_ forecast: SunsetForecast) -> [SunsetDay] {
-        guard let first = forecast.upcoming(), let index = forecast.days.firstIndex(of: first) else { return [] }
-        return Array(forecast.days[index...].prefix(7))
+    /// The real days, blurred past reading, under one unlock card.
+    private func lockedWeek(_ days: [SunsetDay], forecast: SunsetForecast) -> some View {
+        VStack(spacing: 12) {
+            // Three days are enough to show what is behind the lock without a
+            // long scroll of blur under the card.
+            ForEach(days.prefix(3)) { day in
+                DayCard(day: day, forecast: forecast, watched: settings.watched, isLinked: false)
+            }
+        }
+        .blur(radius: 9, opaque: false)
+        .allowsHitTesting(false)
+        .accessibilityHidden(true)
+        .overlay(alignment: .top) {
+            VStack(spacing: 12) {
+                Image(systemName: "lock.fill")
+                    .font(.title2)
+                    .foregroundStyle(Theme.ember)
+                Text("The rest of the week")
+                    .font(.title3.weight(.semibold))
+                Text("Every sunrise and sunset score through \(lastDayName(days, forecast: forecast)), plus storm, rainbow and fog alerts.")
+                    .font(.subheadline)
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(Theme.textSecondary)
+                Button("Unlock with Sun+") { showPaywall = true }
+                    .buttonStyle(PrimaryButtonStyle())
+            }
+            .padding(20)
+            .background(.regularMaterial, in: RoundedRectangle(cornerRadius: Theme.cardRadius))
+            .padding(.top, 40)
+            .padding(.horizontal, 8)
+        }
+    }
+
+    private func lastDayName(_ days: [SunsetDay], forecast: SunsetForecast) -> String {
+        guard let last = days.last else { return "the week" }
+        return SunsetFormat.weekday(last.sunset.time, zone: forecast.timeZone)
     }
 }
 
-private struct OutlookRow: View {
+private struct DayCard: View {
     let day: SunsetDay
-    let zone: TimeZone
+    let forecast: SunsetForecast
+    let watched: Set<SunEvent>
+    var isLinked = true
 
     var body: some View {
-        HStack(spacing: 14) {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Theme.skyGradient(score: day.score.total))
-                .frame(width: 44, height: 44)
-            VStack(alignment: .leading, spacing: 3) {
-                Text(SunsetFormat.dayLabel(day.sunset, zone: zone))
+        let zone = forecast.timeZone
+        let shows = SunEvent.allCases.filter(watched.contains).map(day.show)
+        let events = forecast.skyEvents(on: day)
+        Card {
+            HStack {
+                Text(SunsetFormat.dayLabel(day.sunset.time, zone: zone))
                     .font(.headline)
-                Text("Sunset \(SunsetFormat.time(day.sunset, zone: zone)) · \(day.score.grade.rawValue)")
+                Spacer()
+                Text(SunsetFormat.monthDay(day.sunset.time, zone: zone))
                     .font(.subheadline)
                     .foregroundStyle(Theme.textSecondary)
             }
-            Spacer()
-            ScoreChip(score: day.score)
-            Image(systemName: "chevron.right")
-                .font(.footnote.weight(.semibold))
-                .foregroundStyle(Theme.textSecondary)
-        }
-        .padding(14)
-        .background(Theme.surface, in: RoundedRectangle(cornerRadius: 18))
-        .accessibilityElement(children: .combine)
-    }
-}
-
-private struct LockedRow: View {
-    let day: SunsetDay
-    let zone: TimeZone
-
-    var body: some View {
-        HStack(spacing: 14) {
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Theme.hairline)
-                .frame(width: 44, height: 44)
-                .overlay(Image(systemName: "lock.fill").foregroundStyle(Theme.textSecondary))
-            VStack(alignment: .leading, spacing: 3) {
-                Text(SunsetFormat.dayLabel(day.sunset, zone: zone))
-                    .font(.headline)
-                Text("Sunset \(SunsetFormat.time(day.sunset, zone: zone))")
-                    .font(.subheadline)
-                    .foregroundStyle(Theme.textSecondary)
+            ForEach(shows) { show in
+                if isLinked {
+                    NavigationLink {
+                        ShowDetailView(show: show, zone: zone, placeName: forecast.placeName)
+                    } label: {
+                        ShowRow(show: show, zone: zone)
+                    }
+                    .buttonStyle(.plain)
+                } else {
+                    ShowRow(show: show, zone: zone, showsChevron: false)
+                }
             }
-            Spacer()
-            PlusCapsule()
+            if !events.isEmpty {
+                HStack(spacing: 14) {
+                    ForEach(events) { event in
+                        Label("\(event.kind.title) \(SunsetFormat.time(event.start, zone: zone))", systemImage: event.kind.symbol)
+                            .font(.caption.weight(.medium))
+                            .foregroundStyle(Theme.textSecondary)
+                    }
+                }
+            }
         }
-        .padding(14)
-        .background(Theme.surface, in: RoundedRectangle(cornerRadius: 18))
-        .contentShape(RoundedRectangle(cornerRadius: 18))
-        .accessibilityElement(children: .combine)
-        .accessibilityHint("Unlock with Sunset+")
     }
 }
 
-struct DayDetailView: View {
-    let day: SunsetDay
+struct ShowDetailView: View {
+    let show: SunShow
     let zone: TimeZone
     let placeName: String?
 
     var body: some View {
         ScrollView {
             VStack(spacing: 16) {
-                SkyCard(day: day, zone: zone, title: SunsetFormat.dayLabel(day.sunset, zone: zone), placeName: placeName)
+                SkyCard(show: show, zone: zone, title: SunsetFormat.headline(show, zone: zone), placeName: placeName)
                 Card {
-                    Text(day.score.summary)
+                    Text(show.score.summary)
                         .fixedSize(horizontal: false, vertical: true)
                     Divider()
                     HStack {
-                        detail("Sunrise", SunsetFormat.time(day.sunrise, zone: zone))
+                        detail("Best light", "\(SunsetFormat.time(show.bestWindowStart, zone: zone))–\(SunsetFormat.time(show.bestWindowEnd, zone: zone))")
                         Spacer()
-                        detail("Sunset", SunsetFormat.time(day.sunset, zone: zone))
-                        Spacer()
-                        detail("Rain", "\(day.score.rainChance)%")
+                        detail("Rain", "\(show.score.rainChance)%")
                     }
                 }
                 Card {
-                    ForEach(day.score.factors) { factor in
-                        FactorRow(factor: factor, tone: Theme.tone(score: day.score.total))
+                    ForEach(show.score.factors) { factor in
+                        FactorRow(factor: factor, tone: Theme.tone(score: show.score.total))
                     }
                 }
                 Card {
-                    Text("Cloud cover at sunset").font(.headline)
-                    cloudRow("High", day.conditions.cloudHigh)
-                    cloudRow("Mid", day.conditions.cloudMid)
-                    cloudRow("Low", day.conditions.cloudLow)
-                    cloudRow("Low, toward the sun", day.conditions.cloudLowWest)
-                    Text("Humidity \(Int(day.conditions.humidity))% · Visibility \(visibilityLabel)")
+                    Text("Cloud cover at \(show.event.title.lowercased())").font(.headline)
+                    cloudRow("High", show.conditions.cloudHigh)
+                    cloudRow("Mid", show.conditions.cloudMid)
+                    cloudRow("Low", show.conditions.cloudLow)
+                    cloudRow("Low, \(show.event.direction) toward the sun", show.conditions.cloudLowTowardSun)
+                    Text("Humidity \(Int(show.conditions.humidity))% · Visibility \(visibilityLabel)")
                         .font(.caption)
                         .foregroundStyle(Theme.textSecondary)
                 }
@@ -148,12 +157,12 @@ struct DayDetailView: View {
             .padding(.bottom, 24)
         }
         .background(Theme.background)
-        .navigationTitle(SunsetFormat.monthDay(day.sunset, zone: zone))
+        .navigationTitle(SunsetFormat.monthDay(show.time, zone: zone))
         .navigationBarTitleDisplayMode(.inline)
     }
 
     private var visibilityLabel: String {
-        let km = day.conditions.visibility / 1000
+        let km = show.conditions.visibility / 1000
         return km >= 10 ? "\(Int(km)) km" : String(format: "%.1f km", km)
     }
 

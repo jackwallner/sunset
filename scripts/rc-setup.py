@@ -22,7 +22,7 @@ BASE = "https://api.revenuecat.com/v2"
 BUNDLE_ID = "com.jackwallner.sunset"
 PROJECT_NAMES = {"sunset", "sunset forecast", "sunset forecast & alerts"}
 ENTITLEMENT_KEY = "pro"
-ENTITLEMENT_NAME = "Sunset+"
+ENTITLEMENT_NAME = "Sun+"
 # Mirrors RevenueCatConfig.publicSDKKey; the run warns if the project hands back
 # a different production key.
 EXPECTED_PUBLIC_KEY = "appl_PWhTgZRZYAmuffZiWmlDPcYCneg"
@@ -176,7 +176,7 @@ def ensure_offering(project_id: str) -> dict:
     offering = request(
         "POST",
         f"/projects/{project_id}/offerings",
-        {"lookup_key": "default", "display_name": "Sunset+", "is_current": True},
+        {"lookup_key": "default", "display_name": "Sun+", "is_current": True},
     )
     print("  created offering 'default'")
     return offering

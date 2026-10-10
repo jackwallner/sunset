@@ -12,7 +12,7 @@ struct SettingsView: View {
         List {
             Section {
                 if store.isPro {
-                    Label("Sunset+ is on", systemImage: "checkmark.seal.fill")
+                    Label("Sun+ is on", systemImage: "checkmark.seal.fill")
                         .foregroundStyle(Theme.mint)
                 } else {
                     Button {
@@ -20,8 +20,8 @@ struct SettingsView: View {
                     } label: {
                         HStack {
                             VStack(alignment: .leading, spacing: 3) {
-                                Text("Sunset+").font(.headline)
-                                Text("Alerts and the full week ahead")
+                                Text("Sun+").font(.headline)
+                                Text("The full week, storm, rainbow and fog alerts")
                                     .font(.subheadline)
                                     .foregroundStyle(Theme.textSecondary)
                             }
@@ -33,12 +33,28 @@ struct SettingsView: View {
                 }
             }
 
+            Section {
+                ForEach(SunEvent.allCases, id: \.self) { event in
+                    Toggle(isOn: Binding(
+                        get: { settings.watched.contains(event) },
+                        set: { _ in settings.toggle(event) }
+                    )) {
+                        Label(event.title, systemImage: event.symbol)
+                    }
+                    .disabled(settings.watched == [event])
+                }
+            } header: {
+                Text("Watch")
+            } footer: {
+                Text("Today, the outlook, the widget and alerts follow what you watch.")
+            }
+
             Section("Alerts") {
                 Button {
-                    if store.isPro { showAlertSetup = true } else { showPaywall = true }
+                    showAlertSetup = true
                 } label: {
                     HStack {
-                        Text("Sunset alerts")
+                        Text("Alerts")
                         Spacer()
                         Text(alertsStatus)
                             .foregroundStyle(Theme.textSecondary)
@@ -70,7 +86,7 @@ struct SettingsView: View {
 
             #if DEBUG
             Section("Developer") {
-                Toggle("Sunset+ override", isOn: Binding(
+                Toggle("Sun+ override", isOn: Binding(
                     get: { store.isPro },
                     set: { store.setLocalOverride(isPro: $0) }
                 ))
@@ -78,7 +94,7 @@ struct SettingsView: View {
             #endif
 
             Section {
-                Text("Scores are a forecast of cloud, humidity and visibility at sunset, not a promise. Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")")
+                Text("Scores are a forecast of cloud, humidity and visibility at sunrise and sunset, not a promise. Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")")
                     .font(.footnote)
                     .foregroundStyle(Theme.textSecondary)
             }
@@ -99,7 +115,7 @@ struct SettingsView: View {
     }
 
     private var alertsStatus: String {
-        guard store.isPro else { return "Sunset+" }
-        return settings.alertsEnabled ? "\(settings.threshold)+ · \(SunsetFormat.minutes(settings.leadMinutes)) before" : "Off"
+        guard settings.alertsEnabled else { return "Off" }
+        return "\(settings.effectiveThreshold(isPro: store.isPro))+ · \(SunsetFormat.minutes(settings.effectiveLead(isPro: store.isPro))) before"
     }
 }

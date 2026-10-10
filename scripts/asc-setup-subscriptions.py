@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Create Sunset+ subscriptions, trials, localizations, and Vitals PPP prices."""
+"""Create Sun+ subscriptions, trials, localizations, and Vitals PPP prices."""
 from __future__ import annotations
 
 import json
@@ -16,11 +16,11 @@ BUNDLE = "com.jackwallner.sunset"
 # for the 49 locales that have none: falling back to the reference name is what
 # put "<App> Plus Monthly" in front of every non-English storefront.
 GROUP_REFERENCE_NAME = "Sunset Plus"
-GROUP_DISPLAY_NAME = "Sunset+"
+GROUP_DISPLAY_NAME = "Sun+"
 SUBS = [
     # (product id, reference name, display name, period, USD price, description, group level)
-    ("com.jackwallner.sunset.yearly", "Sunset Plus Yearly", "Sunset+ Yearly", "ONE_YEAR", "14.99", "Yearly access to Sunset+.", 1),
-    ("com.jackwallner.sunset.monthly", "Sunset Plus Monthly", "Sunset+ Monthly", "ONE_MONTH", "1.99", "Monthly access to Sunset+.", 2),
+    ("com.jackwallner.sunset.yearly", "Sunset Plus Yearly", "Sun+ Yearly", "ONE_YEAR", "14.99", "Yearly access to Sun+.", 1),
+    ("com.jackwallner.sunset.monthly", "Sunset Plus Monthly", "Sun+ Monthly", "ONE_MONTH", "1.99", "Monthly access to Sun+.", 2),
 ]
 TIERS = {
     "IND": ("4.99", "0.69"), "PAK": ("4.99", "0.69"), "BGD": ("4.99", "0.69"), "IDN": ("4.99", "0.69"),
@@ -112,7 +112,7 @@ def main() -> None:
     for pid, name, display_name, period, price, description, level in SUBS:
         sub = existing.get(pid)
         if not sub:
-            sub = c.post("/subscriptions", {"data": {"type": "subscriptions", "attributes": {"name": name, "productId": pid, "subscriptionPeriod": period, "familySharable": False, "groupLevel": level, "reviewNote": "Unlocks Sunset+: sunset alerts at a chosen score threshold and lead time, and the full seven-day outlook. Tonight's score, tomorrow's score, the factor breakdown, and the Home Screen widget are free."}, "relationships": {"group": {"data": {"type": "subscriptionGroups", "id": group_id}}}}})["data"]
+            sub = c.post("/subscriptions", {"data": {"type": "subscriptions", "attributes": {"name": name, "productId": pid, "subscriptionPeriod": period, "familySharable": False, "groupLevel": level, "reviewNote": "Unlocks Sun+: the full seven-day sunrise and sunset outlook, alerts before thunderstorms, rainbow chances and fog, and a custom alert score and lead time. Today and tomorrow, the factor breakdown, default sunrise and sunset alerts, and the widget are free."}, "relationships": {"group": {"data": {"type": "subscriptionGroups", "id": group_id}}}}})["data"]
         sid = sub["id"]
         locs = {x["attributes"]["locale"]: x for x in asc_lib.list_all(c, f"/subscriptions/{sid}/subscriptionLocalizations")}
         product_prefix = "monthly" if period == "ONE_MONTH" else "yearly"

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Idempotently create the Sunset+ Lifetime non-consumable in App Store Connect.
+"""Idempotently create the Sun+ Lifetime non-consumable in App Store Connect.
 
 Extracted from VO2 Max's `asc-setup-release.py`, which also rewrites the app
 name, genre, age rating, and review notes. Those belong to a submission pass;
@@ -21,10 +21,10 @@ import asc_lib
 BUNDLE = "com.jackwallner.sunset"
 PRODUCT_ID = "com.jackwallner.sunset.lifetime"
 # App Store Connect's internal reference name is immutable after creation.
-# The localized customer-facing name is Sunset+ Lifetime.
+# The localized customer-facing name is Sun+ Lifetime.
 PRODUCT_REFERENCE_NAME = "Sunset Plus Lifetime"
-PRODUCT_DISPLAY_NAME = "Sunset+ Lifetime"
-PRODUCT_DESCRIPTION = "Unlock Sunset+ forever. One payment."
+PRODUCT_DISPLAY_NAME = "Sun+ Lifetime"
+PRODUCT_DESCRIPTION = "Unlock Sun+ forever. One payment."
 PRICE = "29.99"
 
 V1 = "https://api.appstoreconnect.apple.com/v1"
@@ -52,7 +52,7 @@ def main() -> None:
                             "name": PRODUCT_REFERENCE_NAME,
                             "productId": PRODUCT_ID,
                             "inAppPurchaseType": "NON_CONSUMABLE",
-                            "reviewNote": "One-time purchase. Unlocks Sunset+: sunset alerts at a chosen score threshold and lead time, and the full seven-day outlook. Tonight's score, tomorrow's score, the factor breakdown, and the Home Screen widget are free.",
+                            "reviewNote": "One-time purchase. Unlocks Sun+: the full seven-day sunrise and sunset outlook, alerts before thunderstorms, rainbow chances and fog, and a custom alert score and lead time. Today and tomorrow, the factor breakdown, default sunrise and sunset alerts, and the widget are free.",
                         },
                         "relationships": {"app": {"data": {"type": "apps", "id": app_id}}},
                     }

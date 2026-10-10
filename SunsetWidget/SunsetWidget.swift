@@ -1,19 +1,19 @@
 import SwiftUI
 import WidgetKit
 
-/// Tonight's score on the Home Screen. Reads the App Group cache the app
+/// The next watched sunrise or sunset on the Home Screen. Reads the App Group cache the app
 /// writes; when that is stale and a location is cached it fetches on its own,
 /// so the widget stays right even if the app has not been opened for days.
 struct SunsetEntry: TimelineEntry {
     let date: Date
-    let day: SunsetDay?
+    let show: SunShow?
     let zone: TimeZone
     let placeName: String?
 }
 
 struct SunsetProvider: TimelineProvider {
     func placeholder(in context: Context) -> SunsetEntry {
-        SunsetEntry(date: .now, day: Self.sample, zone: .current, placeName: "Tonight")
+        SunsetEntry(date: .now, show: Self.sample, zone: .current, placeName: nil)
     }
 
     func getSnapshot(in context: Context, completion: @escaping (SunsetEntry) -> Void) {
@@ -35,8 +35,8 @@ struct SunsetProvider: TimelineProvider {
                 forecast = fresh
             }
             let entry = Self.entry(from: forecast)
-            // Roll to the next day half an hour after sunset, or retry in 3h.
-            let next = entry.day.map { $0.sunset.addingTimeInterval(31 * 60) }
+            // Roll to the next show half an hour after this one, or retry in 3h.
+            let next = entry.show.map { $0.time.addingTimeInterval(31 * 60) }
                 .map { max($0, Date(timeIntervalSinceNow: 15 * 60)) }
                 ?? Date(timeIntervalSinceNow: 3 * 3600)
             finish.value(Timeline(entries: [entry], policy: .after(min(next, Date(timeIntervalSinceNow: 3 * 3600)))))
@@ -46,18 +46,18 @@ struct SunsetProvider: TimelineProvider {
     static func entry(from forecast: SunsetForecast?) -> SunsetEntry {
         SunsetEntry(
             date: .now,
-            day: forecast?.upcoming(),
+            show: forecast?.upcomingShows(ForecastCache.watchedEvents).first,
             zone: forecast?.timeZone ?? .current,
             placeName: forecast?.placeName
         )
     }
 
-    static let sample = SunsetDay(
-        sunrise: .now,
-        sunset: Calendar.current.date(bySettingHour: 18, minute: 31, second: 0, of: .now) ?? .now,
+    static let sample = SunShow(
+        event: .sunset,
+        time: Calendar.current.date(bySettingHour: 18, minute: 31, second: 0, of: .now) ?? .now,
         conditions: .clear,
         score: SunsetScorer.score(SkyConditions(
-            cloudLow: 5, cloudMid: 25, cloudHigh: 50, cloudLowWest: 8,
+            cloudLow: 5, cloudMid: 25, cloudHigh: 50, cloudLowTowardSun: 8,
             humidity: 45, visibility: 30_000, precipitationChance: 5
         ))
     )
@@ -75,15 +75,15 @@ struct SunsetWidgetView: View {
     let entry: SunsetEntry
 
     var body: some View {
-        if let day = entry.day {
-            content(day)
+        if let show = entry.show {
+            content(show)
                 .containerBackground(for: .widget) {
-                    LinearGradient(colors: Theme.sky(score: day.score.total), startPoint: .top, endPoint: .bottom)
+                    LinearGradient(colors: Theme.sky(score: show.score.total, event: show.event), startPoint: .top, endPoint: .bottom)
                 }
         } else {
             VStack(spacing: 6) {
                 Image(systemName: "sun.horizon.fill").font(.title2)
-                Text("Open Sunset to load tonight's score")
+                Text("Open Sunset to load today's score")
                     .font(.caption)
                     .multilineTextAlignment(.center)
             }
@@ -95,25 +95,27 @@ struct SunsetWidgetView: View {
     }
 
     @ViewBuilder
-    private func content(_ day: SunsetDay) -> some View {
+    private func content(_ show: SunShow) -> some View {
         VStack(alignment: .leading, spacing: 2) {
-            Text(SunsetFormat.dayLabel(day.sunset, zone: entry.zone, now: entry.date))
+            Text(SunsetFormat.headline(show, zone: entry.zone, now: entry.date))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
                 .font(.caption.weight(.semibold))
                 .foregroundStyle(.white.opacity(0.9))
             Spacer(minLength: 0)
             HStack(alignment: .lastTextBaseline, spacing: 4) {
-                Text("\(day.score.total)")
+                Text("\(show.score.total)")
                     .font(.system(size: family == .systemSmall ? 44 : 52, weight: .bold, design: .rounded))
-                Text(day.score.grade.rawValue)
+                Text(show.score.grade.rawValue)
                     .font(.headline)
                     .padding(.bottom, 6)
             }
             .foregroundStyle(.white)
-            Text("Sunset \(SunsetFormat.time(day.sunset, zone: entry.zone))")
+            Text("\(show.event.title) \(SunsetFormat.time(show.time, zone: entry.zone))")
                 .font(.footnote.weight(.medium))
                 .foregroundStyle(.white.opacity(0.92))
             if family != .systemSmall {
-                Text(day.score.summary)
+                Text(show.score.summary)
                     .font(.caption)
                     .foregroundStyle(.white.opacity(0.85))
                     .lineLimit(2)
@@ -130,8 +132,8 @@ struct SunsetWidget: Widget {
         StaticConfiguration(kind: "SunsetTonight", provider: SunsetProvider()) { entry in
             SunsetWidgetView(entry: entry)
         }
-        .configurationDisplayName("Tonight's Sunset")
-        .description("The score and time for tonight's sunset.")
+        .configurationDisplayName("Next Sunrise or Sunset")
+        .description("The score and time for the next sunrise or sunset you watch.")
         .supportedFamilies([.systemSmall, .systemMedium])
     }
 }

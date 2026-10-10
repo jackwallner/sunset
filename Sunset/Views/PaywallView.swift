@@ -17,20 +17,19 @@ struct PaywallView: View {
                         .fill(Theme.skyGradient(score: 92))
                         .frame(height: 110)
                         .overlay(alignment: .bottomLeading) {
-                            Text("Sunset+")
+                            Text("Sun+")
                                 .font(.largeTitle.bold())
                                 .foregroundStyle(.white)
                                 .padding(16)
                         }
-                    Text("Never miss the good ones. Tonight's score and tomorrow's stay free.")
+                    Text("See further and catch more. Today, tomorrow and your sunrise and sunset alerts stay free.")
                         .multilineTextAlignment(.center)
                         .foregroundStyle(Theme.textSecondary)
 
                     VStack(alignment: .leading, spacing: 12) {
-                        benefit("bell.badge.fill", "An alert before sunset when the sky will be worth it")
-                        benefit("slider.horizontal.3", "Your own score threshold and lead time")
-                        benefit("calendar", "The full week of sunset scores")
-                        benefit("arrow.clockwise", "Alerts rebuilt as the forecast changes")
+                        ForEach(PlusBenefit.all) { item in
+                            benefit(item.symbol, item.text)
+                        }
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
 
@@ -204,4 +203,19 @@ private struct PlanCard: View {
         .accessibilityLabel("\(title), \(price)")
         .accessibilityValue(isSelected ? "Selected" : "Not selected")
     }
+}
+
+/// What Sun+ adds, in the order the paywall and onboarding list it.
+struct PlusBenefit: Identifiable {
+    let symbol: String
+    let text: String
+    var id: String { symbol }
+
+    static let all = [
+        PlusBenefit(symbol: "calendar", text: "Every sunrise and sunset score for the week ahead"),
+        PlusBenefit(symbol: "cloud.bolt.fill", text: "Alerts before thunderstorms roll in"),
+        PlusBenefit(symbol: "rainbow", text: "A heads-up when showers and low sun could make a rainbow"),
+        PlusBenefit(symbol: "cloud.fog.fill", text: "Fog alerts for soft, moody light"),
+        PlusBenefit(symbol: "slider.horizontal.3", text: "Your own alert score and lead time"),
+    ]
 }

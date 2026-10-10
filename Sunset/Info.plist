@@ -15,7 +15,7 @@
     <key>NSLocationWhenInUseUsageDescription</key><string>Sunset uses your approximate location to fetch the cloud forecast for your horizon and work out tonight's sunset time. Only rounded coordinates are sent to the weather service, and nothing is stored or shared.</string>
     <key>BGTaskSchedulerPermittedIdentifiers</key><array><string>com.jackwallner.sunset.refresh</string></array>
     <key>UIBackgroundModes</key><array><string>fetch</string></array>
-    <key>UILaunchScreen</key><dict/>
+    <key>UILaunchScreen</key><dict><key>UIColorName</key><string>LaunchBackground</string></dict>
     <key>UISupportedInterfaceOrientations</key><array><string>UIInterfaceOrientationPortrait</string></array>
 </dict>
 </plist>

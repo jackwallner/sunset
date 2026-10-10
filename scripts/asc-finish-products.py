@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Clear MISSING_METADATA on the Sunset+ products.
+"""Clear MISSING_METADATA on the Sun+ products.
 
 Subscriptions need an availability record (all territories) and an App Review
 screenshot; the lifetime non-consumable needs only the screenshot.

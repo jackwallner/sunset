@@ -24,7 +24,13 @@ enum Theme {
 
     /// The sky a score promises, top to bottom. Dull evenings are grey-blue,
     /// an epic one runs violet through crimson into gold at the horizon.
-    static func sky(score: Int) -> [Color] {
+    static func sky(score: Int, event: SunEvent = .sunset) -> [Color] {
+        skyRGB(score: score, event: event).map { Color(red: $0.red, green: $0.green, blue: $0.blue) }
+    }
+
+    /// Dawn is cooler than dusk: the same score at sunrise leans pink and
+    /// blue at the top instead of violet.
+    private static func skyRGB(score: Int, event: SunEvent) -> [RGB] {
         let t = Double(min(100, max(0, score))) / 100
         let stops: [(Double, [RGB])] = [
             (0.0, [.init(0.55, 0.60, 0.68), .init(0.72, 0.74, 0.78), .init(0.86, 0.85, 0.84)]),
@@ -42,15 +48,20 @@ enum Theme {
         }
         let span = upper.0 - lower.0
         let w = span == 0 ? 0 : (t - lower.0) / span
-        return zip(lower.1, upper.1).map { a, b in
-            Color(red: a.red + (b.red - a.red) * w,
-                  green: a.green + (b.green - a.green) * w,
-                  blue: a.blue + (b.blue - a.blue) * w)
+        let colors = zip(lower.1, upper.1).map { a, b in
+            RGB(a.red + (b.red - a.red) * w,
+                a.green + (b.green - a.green) * w,
+                a.blue + (b.blue - a.blue) * w)
+        }
+        guard event == .sunrise else { return colors }
+        let dawn = [RGB(0.40, 0.52, 0.80), RGB(0.98, 0.60, 0.62), RGB(1.00, 0.84, 0.60)]
+        return zip(colors, dawn).map { c, d in
+            RGB(c.red * 0.6 + d.red * 0.4, c.green * 0.6 + d.green * 0.4, c.blue * 0.6 + d.blue * 0.4)
         }
     }
 
-    static func skyGradient(score: Int) -> LinearGradient {
-        LinearGradient(colors: sky(score: score), startPoint: .top, endPoint: .bottom)
+    static func skyGradient(score: Int, event: SunEvent = .sunset) -> LinearGradient {
+        LinearGradient(colors: sky(score: score, event: event), startPoint: .top, endPoint: .bottom)
     }
 
     /// Solid colour for chips and bars, the warmest stop of the sky.
@@ -59,7 +70,7 @@ enum Theme {
     }
 }
 
-struct RGB {
+struct RGB: Sendable {
     let red: Double
     let green: Double
     let blue: Double

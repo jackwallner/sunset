@@ -6,7 +6,7 @@ import Foundation
 enum ConversionCopy {
     /// The button carries no price so the billed amount above it stays the
     /// loudest pricing element (Apple 3.1.2).
-    static let ctaLabel = "Continue with Sunset+"
+    static let ctaLabel = "Continue with Sun+"
 
     static func billedAmount(priceLabel: String) -> String {
         priceLabel.replacingOccurrences(of: " / ", with: " per ")
@@ -27,6 +27,16 @@ enum ConversionCopy {
         return "\(priceLabel). \(renew)"
     }
 
+    /// The same terms in three short lines, for the onboarding offer where
+    /// the slot above the button has a fixed height.
+    static func compactDisclosure(trialLabel: String?, priceLabel: String) -> String {
+        let renew = "Auto-renews unless cancelled at least 24 hours before renewal. Cancel in Settings › Apple ID › Subscriptions."
+        if let trialLabel, !trialLabel.isEmpty {
+            return "\(trialLabel.prefix(1).uppercased() + trialLabel.dropFirst()), then \(priceLabel). \(renew)"
+        }
+        return "\(priceLabel). \(renew)"
+    }
+
     static func purchaseCancelledMessage(eligibleForTrial: Bool) -> String {
         eligibleForTrial
             ? "Trial wasn't started. Tap again to continue."
@@ -40,5 +50,5 @@ enum ConversionCopy {
     }
 
     static let purchasePendingMessage =
-        "Waiting on Apple to confirm this purchase. Sunset+ turns on by itself as soon as it goes through."
+        "Waiting on Apple to confirm this purchase. Sun+ turns on by itself as soon as it goes through."
 }

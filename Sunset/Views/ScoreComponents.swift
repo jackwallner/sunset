@@ -1,8 +1,8 @@
 import SwiftUI
 
-/// The hero: tonight's sky as a gradient with the score on it.
+/// The hero: the next sunrise or sunset as a gradient with the score on it.
 struct SkyCard: View {
-    let day: SunsetDay
+    let show: SunShow
     let zone: TimeZone
     let title: String
     let placeName: String?
@@ -11,7 +11,7 @@ struct SkyCard: View {
     var body: some View {
         ZStack(alignment: .bottomLeading) {
             RoundedRectangle(cornerRadius: Theme.cardRadius)
-                .fill(Theme.skyGradient(score: day.score.total))
+                .fill(Theme.skyGradient(score: show.score.total, event: show.event))
             Horizon()
                 .fill(Color.black.opacity(0.18))
                 .frame(height: 70)
@@ -25,20 +25,21 @@ struct SkyCard: View {
                         Label(placeName, systemImage: "location.fill")
                             .font(.subheadline.weight(.medium))
                             .labelStyle(.titleAndIcon)
+                            .lineLimit(1)
                     }
                 }
                 .foregroundStyle(.white.opacity(0.92))
                 Spacer()
                 HStack(alignment: .lastTextBaseline, spacing: 8) {
-                    Text("\(day.score.total)")
+                    Text("\(show.score.total)")
                         .font(.system(size: 88, weight: .bold, design: .rounded))
                         .contentTransition(.numericText())
-                    Text(day.score.grade.rawValue)
+                    Text(show.score.grade.rawValue)
                         .font(.title.weight(.semibold))
                         .padding(.bottom, 14)
                 }
                 .foregroundStyle(.white)
-                Text("Sunset \(SunsetFormat.time(day.sunset, zone: zone))")
+                Label("\(show.event.title) \(SunsetFormat.time(show.time, zone: zone))", systemImage: show.event.symbol)
                     .font(.title3.weight(.medium))
                     .foregroundStyle(.white.opacity(0.92))
             }
@@ -47,7 +48,65 @@ struct SkyCard: View {
         .frame(height: height)
         .clipShape(RoundedRectangle(cornerRadius: Theme.cardRadius))
         .accessibilityElement(children: .combine)
-        .accessibilityLabel("\(title), sunset score \(day.score.total), \(day.score.grade.rawValue). Sunset at \(SunsetFormat.time(day.sunset, zone: zone))")
+        .accessibilityLabel("\(title), score \(show.score.total), \(show.score.grade.rawValue). \(show.event.title) at \(SunsetFormat.time(show.time, zone: zone))")
+    }
+}
+
+/// A sunrise or sunset as one row: swatch, when, grade, score.
+struct ShowRow: View {
+    let show: SunShow
+    let zone: TimeZone
+    var title: String?
+    var showsChevron = true
+
+    var body: some View {
+        HStack(spacing: 14) {
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Theme.skyGradient(score: show.score.total, event: show.event))
+                .frame(width: 44, height: 44)
+                .overlay(Image(systemName: show.event.symbol).foregroundStyle(.white.opacity(0.9)))
+            VStack(alignment: .leading, spacing: 3) {
+                Text(title ?? show.event.title)
+                    .font(.headline)
+                Text("\(SunsetFormat.time(show.time, zone: zone)) · \(show.score.grade.rawValue)")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.textSecondary)
+            }
+            Spacer()
+            ScoreChip(score: show.score)
+            if showsChevron {
+                Image(systemName: "chevron.right")
+                    .font(.footnote.weight(.semibold))
+                    .foregroundStyle(Theme.textSecondary)
+            }
+        }
+        .contentShape(Rectangle())
+        .accessibilityElement(children: .combine)
+    }
+}
+
+/// A storm, rainbow chance or fog, with when.
+struct SkyEventRow: View {
+    let event: SkyEvent
+    let zone: TimeZone
+
+    var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: event.kind.symbol)
+                .symbolRenderingMode(event.kind == .fog ? .hierarchical : .multicolor)
+                .foregroundStyle(Theme.textSecondary)
+                .font(.title3)
+                .frame(width: 44, height: 44)
+                .background(Theme.elevated, in: RoundedRectangle(cornerRadius: 10))
+            VStack(alignment: .leading, spacing: 3) {
+                Text(event.kind.title).font(.headline)
+                Text("\(SunsetFormat.dayLabel(event.start, zone: zone)), \(SunsetFormat.time(event.start, zone: zone))–\(SunsetFormat.time(event.end, zone: zone))")
+                    .font(.subheadline)
+                    .foregroundStyle(Theme.textSecondary)
+            }
+            Spacer()
+        }
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -137,7 +196,7 @@ struct PrimaryButtonStyle: SwiftUI.ButtonStyle {
 
 struct PlusCapsule: View {
     var body: some View {
-        Text("Sunset+")
+        Text("Sun+")
             .font(.caption.weight(.bold))
             .foregroundStyle(.white)
             .padding(.horizontal, 9)

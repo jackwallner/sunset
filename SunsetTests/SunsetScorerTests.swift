@@ -4,7 +4,7 @@ import XCTest
 final class SunsetScorerTests: XCTestCase {
     private func sky(low: Double = 0, mid: Double = 0, high: Double = 0, west: Double? = nil,
                      humidity: Double = 45, visibility: Double = 30_000, rain: Double = 0) -> SkyConditions {
-        SkyConditions(cloudLow: low, cloudMid: mid, cloudHigh: high, cloudLowWest: west ?? low,
+        SkyConditions(cloudLow: low, cloudMid: mid, cloudHigh: high, cloudLowTowardSun: west ?? low,
                       humidity: humidity, visibility: visibility, precipitationChance: rain)
     }
 
@@ -75,5 +75,21 @@ final class SunsetScorerTests: XCTestCase {
         let after = sky(high: 100)
         XCTAssertEqual(SunsetScorer.interpolate(before, after, weight: 0.75).cloudHigh, 75, accuracy: 0.001)
         XCTAssertEqual(SunsetScorer.interpolate(before, after, weight: 2).cloudHigh, 100)
+    }
+}
+
+final class SunriseScoringTests: XCTestCase {
+    func testSunriseSummaryLooksEast() {
+        let sky = SkyConditions(cloudLow: 0, cloudMid: 20, cloudHigh: 50, cloudLowTowardSun: 95,
+                                humidity: 50, visibility: 30_000, precipitationChance: 0)
+        let score = SunsetScorer.score(sky, event: .sunrise)
+        XCTAssertTrue(score.summary.contains("east"))
+        XCTAssertTrue(score.summary.contains("first light"))
+    }
+
+    func testRainSummaryNamesTheMoment() {
+        let sky = SkyConditions(cloudLow: 0, cloudMid: 0, cloudHigh: 0, cloudLowTowardSun: 0,
+                                humidity: 50, visibility: 30_000, precipitationChance: 90)
+        XCTAssertTrue(SunsetScorer.score(sky, event: .sunrise).summary.contains("at sunrise"))
     }
 }

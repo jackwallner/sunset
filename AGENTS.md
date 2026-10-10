@@ -1,23 +1,31 @@
 # Sunset, Project Guide
 
-A score for tonight's sunset and an alert before the good ones. XcodeGen
+A score for every sunrise and sunset, and an alert before the good ones. XcodeGen
 project/scheme: `Sunset`, sim lease owner `sunset`.
 
 ## Product
 
-Every evening gets a 0 to 100 score from the forecast sky at sunset: high and
-mid cloud that can light up (Color), thin cirrus (Streaks), an open horizon
-toward the sun (Horizon), and dry clean air (Clarity), with a rain penalty.
-Low cloud about 80 km toward the sunset counts more than low cloud overhead,
-because that is where the last light comes from.
+Every sunrise and sunset gets a 0 to 100 score from the forecast sky at that
+moment: high and mid cloud that can light up (Color), thin cirrus (Streaks),
+an open horizon toward the sun (Horizon), and dry clean air (Clarity), with a
+rain penalty. Low cloud about 80 km toward the sun (west at sunset, east at
+sunrise) counts more than low cloud overhead, because that is where the light
+comes from. The hourly forecast also yields sky events: thunderstorms,
+rainbow chances and fog.
 
-Three tabs: Tonight (hero score, summary, factors, alerts card), Outlook (the
-week), Settings. A Home Screen widget shows tonight's score.
+Onboarding (four pages, CTA at a fixed y): welcome, pick sunrise and/or
+sunset, free alerts (notification prompt), Sun+ offer with "Not now".
 
-Free: tonight and tomorrow, the factor breakdown, the widget.
-Sunset+: alerts (threshold and lead time), the full week.
+Three tabs: Today (next watched show as the hero, summary, factors, up next,
+sky events, alerts card), Outlook (the week), Settings (watch toggles,
+alerts). A Home Screen widget shows the next watched show.
 
-Store name: `Sunset Forecast & Alerts`. Display name: `Sunset`.
+Free: today and tomorrow, the factor breakdown, the widget, sunrise and
+sunset alerts at the default score (70) and lead time (45 min).
+Sun+ (was "Sunset+"): the full week (blurred for free users), storm,
+rainbow and fog alerts, custom alert score and lead time.
+
+Store name: `Sunset & Sunrise Forecast`. Display name: `Sunset`.
 
 ## Tech stack and identifiers
 
@@ -37,32 +45,39 @@ Store name: `Sunset Forecast & Alerts`. Display name: `Sunset`.
 
 ## Architecture
 
-- `Shared/Models/SunsetForecast.swift`: `SkyConditions`, `SunsetScore`,
-  `SunsetDay`, `SunsetForecast`. Pure, Codable, widget-safe.
+- `Shared/Models/SunsetForecast.swift`: `SunEvent`, `SkyConditions`,
+  `SunsetScore`, `SunShow` (one sunrise or sunset), `SkyEvent`, `SunsetDay`,
+  `SunsetForecast`. Pure, Codable, widget-safe.
 - `Shared/Utilities/SunsetScorer.swift`: the scoring model and the one-line
   summary. Pure and pinned by `SunsetTests/SunsetScorerTests.swift`.
-- `Shared/Services/ForecastService.swift`: Open-Meteo request (two points in
-  one call: here and 80 km west), parse, interpolate to the sunset minute.
+- `Shared/Utilities/SkyEventDetector.swift`: hourly storms, rainbow chances,
+  fog, plus `SolarPosition`. Pure and pinned by tests.
+- `Shared/Services/ForecastService.swift`: Open-Meteo request (three points
+  in one call: here, 80 km west, 80 km east), parse, interpolate to the
+  sunrise and sunset minute.
 - `Shared/Services/ForecastCache.swift`: App Group snapshot, cached location,
   cached Pro flag. The widget reads this and fetches itself when stale.
 - `Shared/Services/ForecastStore.swift`: the observable the UI reads. Every
   successful fetch rewrites alerts and reloads widgets.
 - `Shared/Services/NotificationService.swift`: rebuilds every pending alert
-  from the forecast. Pro and `alertsEnabled` gate it.
+  from the forecast. `alertsEnabled` gates it; Pro adds sky events and the
+  custom threshold and lead. Sunrise alerts and overnight sky events fire at
+  8 pm the evening before; nothing fires 10 pm to 7 am. `plan` is pure.
 - `Shared/Services/BackgroundRefresh.swift`: BGAppRefresh every ~3h.
 - `Shared/Services/StoreService.swift`: RevenueCat. Simulator never
   configures the SDK; StoreKit Testing or fixtures render the paywall.
 
 ## Rules that hold everywhere
 
-- Scores are forecasts. Copy never promises a sunset, and nothing claims
+- Scores are forecasts. Copy never promises a sunrise or sunset, and nothing claims
   health or mood benefits.
 - Only rounded coordinates go to Open-Meteo. No account, no analytics, no
   location stored anywhere but the App Group.
 - Review prompt: `requestReview()` directly on the third open with a score of
   60 or more, once. No custom "Enjoying it?" gate (5.6.1).
 - Launch arguments (DEBUG): `-DemoLocation` (Vancouver, WA, skips
-  onboarding), `-DemoPro`, `-PaywallSnapshot`, `-ScreenshotTab <n>`.
+  onboarding), `-DemoPro`, `-PaywallSnapshot`, `-ScreenshotTab <n>`,
+  `-OnboardingStep <n>`, `-DemoForecast` (fixed week with sky events).
 
 ## Deep notes (load on demand)
 

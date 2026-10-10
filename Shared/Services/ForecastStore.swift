@@ -19,13 +19,22 @@ final class ForecastStore: ObservableObject {
 
     private init() {
         forecast = ForecastCache.forecast
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-DemoForecast") {
+            forecast = DemoForecast.make()
+        }
+        #endif
     }
 
-    var tonight: SunsetDay? { forecast?.upcoming() }
+    /// The next watched sunrise or sunset that is not over yet.
+    var nextShow: SunShow? { forecast?.upcomingShows(AlertSettings.shared.watched).first }
 
     /// Refreshes when the cache is older than three hours or the location
     /// moved. `force` skips both checks for pull-to-refresh.
     func refresh(location: ForecastCache.Location, force: Bool = false) {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-DemoForecast") { return }
+        #endif
         if !force, let forecast, !forecast.isStale(), forecast.isSameLocation(as: location) {
             apply(placeName: location.placeName)
             return
@@ -35,6 +44,9 @@ final class ForecastStore: ObservableObject {
     }
 
     func load(location: ForecastCache.Location) async {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-DemoForecast") { return }
+        #endif
         isLoading = true
         defer { isLoading = false; inFlight = nil }
         do {

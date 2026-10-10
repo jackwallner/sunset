@@ -26,8 +26,13 @@ paths:
 - Pricing: Vitals structure. Monthly $1.99 and yearly $14.99 both carry a
   1-week free trial; lifetime $29.99. Apply the PPP ladder with
   `~/ios/pricing/` once the products exist.
+- Listing fields fastlane does not set (age rating, categories Weather +
+  Photo & Video, copyright, content rights, review contact and notes):
+  `ASC_REVIEW_PHONE=... scripts/asc-complete-listing.py`. Customer-facing
+  product names and review notes: `scripts/asc-rebrand-sun-plus.py`.
 - First IAP submission must be attached to the version in the ASC web UI
-  (`ios-dev` skill, "Submitting IAPs with a version").
+  (`ios-dev` skill, "Submitting IAPs with a version"). The group reference name
+  stays `Sunset Plus` (immutable); every localized name says Sun+.
 - TestFlight: `./scripts/testflight.sh` bumps the build, archives, uploads,
   and commits the bump.
 
@@ -38,3 +43,7 @@ paths:
   the Open-Meteo parser.
 - 2026-10-09: ASC record, products, and RevenueCat project created. Launch
   no longer fires the location prompt before onboarding's button.
+- 2026-10-09: sunrise scoring, sky events (storms, rainbow chances, fog),
+  free alerts, four-page onboarding with the Sun+ offer, Sunset+ renamed Sun+
+  (app and ASC localizations). Store name `Sunset & Sunrise Forecast`,
+  subtitle `Scores, storm & rainbow alerts`.

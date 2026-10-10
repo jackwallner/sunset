@@ -181,7 +181,7 @@ final class StoreService: NSObject, ObservableObject, PurchasesDelegate {
         defer { isLoading = false }
         do {
             update(customerInfo: try await Purchases.shared.restorePurchases())
-            errorMessage = isPro ? nil : "No active Sunset+ purchase was found for this Apple ID."
+            errorMessage = isPro ? nil : "No active Sun+ purchase was found for this Apple ID."
         } catch {
             errorMessage = "Restore failed. Please try again."
         }
@@ -324,21 +324,21 @@ final class StoreService: NSObject, ObservableObject, PurchasesDelegate {
         }
         return [
             TestStoreProduct(
-                localizedTitle: "Sunset+ Monthly", price: 1.99, currencyCode: "USD",
+                localizedTitle: "Sun+ Monthly", price: 1.99, currencyCode: "USD",
                 localizedPriceString: "$1.99", productIdentifier: SunsetProduct.monthly,
-                productType: .autoRenewableSubscription, localizedDescription: "Sunset+, billed monthly.",
+                productType: .autoRenewableSubscription, localizedDescription: "Sun+, billed monthly.",
                 subscriptionPeriod: .init(value: 1, unit: .month), introductoryDiscount: weekTrial(), locale: locale
             ).toStoreProduct(),
             TestStoreProduct(
-                localizedTitle: "Sunset+ Yearly", price: 14.99, currencyCode: "USD",
+                localizedTitle: "Sun+ Yearly", price: 14.99, currencyCode: "USD",
                 localizedPriceString: "$14.99", productIdentifier: SunsetProduct.yearly,
-                productType: .autoRenewableSubscription, localizedDescription: "Sunset+, billed yearly.",
+                productType: .autoRenewableSubscription, localizedDescription: "Sun+, billed yearly.",
                 subscriptionPeriod: .init(value: 1, unit: .year), introductoryDiscount: weekTrial(), locale: locale
             ).toStoreProduct(),
             TestStoreProduct(
-                localizedTitle: "Sunset+ Lifetime", price: 29.99, currencyCode: "USD",
+                localizedTitle: "Sun+ Lifetime", price: 29.99, currencyCode: "USD",
                 localizedPriceString: "$29.99", productIdentifier: SunsetProduct.lifetime,
-                productType: .nonConsumable, localizedDescription: "Sunset+, one-time purchase.",
+                productType: .nonConsumable, localizedDescription: "Sun+, one-time purchase.",
                 subscriptionPeriod: nil, introductoryDiscount: nil, locale: locale
             ).toStoreProduct(),
         ]

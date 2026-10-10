@@ -29,6 +29,9 @@ struct SunsetApp: App {
                         settings.hasOnboarded = true
                         location.useDemoLocation()
                     }
+                    if LaunchArguments.onboardingStep != nil {
+                        settings.hasOnboarded = false
+                    }
                     #endif
                     // Before onboarding, the system prompt waits for the
                     // "Use my location" tap instead of covering the pitch.
@@ -71,6 +74,17 @@ enum LaunchArguments {
         #endif
     }
 
+    /// Opens onboarding on a given page (0 welcome ... 3 Sun+) for captures.
+    static var onboardingStep: Int? {
+        #if DEBUG
+        let arguments = ProcessInfo.processInfo.arguments
+        guard let index = arguments.firstIndex(of: "-OnboardingStep"), index + 1 < arguments.count else { return nil }
+        return Int(arguments[index + 1])
+        #else
+        return nil
+        #endif
+    }
+
     static var screenshotTab: Int? {
         #if DEBUG
         let arguments = ProcessInfo.processInfo.arguments
@@ -105,8 +119,8 @@ struct MainTabView: View {
 
     var body: some View {
         TabView(selection: $selection) {
-            NavigationStack { TonightView() }
-                .tabItem { Label("Tonight", systemImage: "sun.horizon.fill") }
+            NavigationStack { TodayView() }
+                .tabItem { Label("Today", systemImage: "sun.horizon.fill") }
                 .tag(0)
             NavigationStack { OutlookView() }
                 .tabItem { Label("Outlook", systemImage: "calendar") }
