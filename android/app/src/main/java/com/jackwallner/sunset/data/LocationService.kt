@@ -94,7 +94,9 @@ class LocationService(
     }
 
     private suspend fun store(latitude: Double, longitude: Double) {
-        val place = withContext(Dispatchers.IO) { placeName(latitude, longitude) } ?: cache.location?.placeName
+        // Only the rounded point (about a kilometre) goes to the system geocoder, as to Open-Meteo.
+        val (lat, lon) = ForecastService.rounded(latitude, longitude)
+        val place = withContext(Dispatchers.IO) { placeName(lat, lon) } ?: cache.location?.placeName
         val fix = ForecastCache.Location(latitude, longitude, place)
         cache.location = fix
         status = Status.Located(fix)

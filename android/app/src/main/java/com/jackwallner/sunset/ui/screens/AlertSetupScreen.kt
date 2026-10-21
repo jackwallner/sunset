@@ -59,7 +59,7 @@ fun AlertSetupScreen(activity: Activity, onClose: () -> Unit) {
     val paywall = { graph.navigator.push(Overlay.Paywall("alert_settings")) }
 
     LaunchedEffect(Unit) {
-        if (settings.alertsEnabled) denied = !graph.alerts.isAuthorized
+        if (settings.alertsEnabled) denied = graph.alerts.isDenied
     }
 
     fun setEnabled(on: Boolean) {

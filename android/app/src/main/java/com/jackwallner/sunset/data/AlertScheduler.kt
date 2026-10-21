@@ -38,10 +38,15 @@ class AlertScheduler(private val context: Context, private val defaults: KeyValu
             return NotificationManagerCompat.from(context).areNotificationsEnabled()
         }
 
+    /** Refused, as opposed to never asked: iOS `.denied` versus `.notDetermined`. */
+    val isDenied: Boolean get() = !isAuthorized && (Build.VERSION.SDK_INT < 33 || defaults.getBoolean(ASKED))
+
     suspend fun requestAuthorization(): Boolean {
         if (isAuthorized) return true
         if (Build.VERSION.SDK_INT < 33) return false
-        return requestPermission?.invoke() ?: false
+        val ask = requestPermission ?: return false
+        defaults.putBoolean(ASKED, true)
+        return ask()
     }
 
     fun reschedule(forecast: SunsetForecast?, settings: AlertSettings, isPro: Boolean, now: Instant = Instant.now()) {
@@ -83,6 +88,7 @@ class AlertScheduler(private val context: Context, private val defaults: KeyValu
         const val EXTRA_TITLE = "title"
         const val EXTRA_BODY = "body"
         private const val SCHEDULED = "sunset.alerts.scheduled"
+        private const val ASKED = "sunset.notifications.asked"
         private const val WINDOW_MS = 10 * 60 * 1000L
 
         fun ensureChannel(context: Context) {
