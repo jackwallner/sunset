@@ -162,6 +162,7 @@ fun SettingsScreen(activity: Activity) {
                     .combinedClickable(onClick = {}, onLongClick = { reviewerEntry = true }, onClickLabel = null),
             )
         }
+        StatusBarFade(next?.score?.total ?: 70, next?.event ?: SunEvent.SUNSET)
     }
 
     restoreMessage?.let { message ->

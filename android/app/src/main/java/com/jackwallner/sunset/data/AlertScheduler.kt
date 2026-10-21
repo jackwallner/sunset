@@ -129,9 +129,17 @@ class AlertReceiver : BroadcastReceiver() {
     }
 }
 
+private val RESCHEDULE_ACTIONS = setOf(
+    Intent.ACTION_BOOT_COMPLETED,
+    Intent.ACTION_MY_PACKAGE_REPLACED,
+    Intent.ACTION_TIMEZONE_CHANGED,
+    Intent.ACTION_TIME_CHANGED,
+)
+
 /** Alarms die with a reboot or an app update; rebuild them from the cached forecast. */
 class AlertRescheduler : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
+        if (intent.action !in RESCHEDULE_ACTIONS) return
         val graph = (context.applicationContext as SunsetApplication).graph
         graph.rescheduleAlerts()
         RefreshWorker.schedule(context)
