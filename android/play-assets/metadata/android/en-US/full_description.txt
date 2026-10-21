@@ -1,0 +1,34 @@
+Sunset scores every sunrise and sunset, hours before it happens, so you can be outside for the great ones instead of hearing about them later.
+
+EVERY SUNRISE AND SUNSET GETS A SCORE
+Sunset reads the cloud, humidity and visibility forecast for the exact minute the sun comes up or goes down and turns it into a 0 to 100 score with a plain-English summary: thin high clouds over an open horizon, a bank of low cloud toward the sun, rain at the moment, or a clear sky and a clean gold glow. Watch sunrises, sunsets, or both.
+
+WHY THE SKY WILL OR WON'T LIGHT UP
+Four factors show what is driving the score:
+• Color: high and mid clouds that catch the light
+• Streaks: thin cirrus with room to glow
+• Horizon: open sky toward the sun, including the low cloud 80 km to the east or west that decides whether the light gets through at all
+• Clarity: dry, clean air for vivid tones
+
+FREE ALERTS
+A notification before the sunsets worth going out for, and the evening before a great sunrise, so you can set an alarm. Alerts are rebuilt as the forecast changes, so a sky that clouds over loses its alert.
+
+BEST LIGHT AND WIDGET
+See each sunrise and sunset time and the window when the color peaks, for wherever you are. A home screen widget shows the next score.
+
+SUN+
+• Every sunrise and sunset score for the week ahead
+• Alerts before thunderstorms roll in
+• A heads-up when showers and a low sun could make a rainbow
+• Fog alerts for soft, moody light
+• Your own alert score and lead time
+
+Sun+ is available as a monthly or yearly subscription with a free trial for new subscribers, or as a one-time lifetime purchase. Prices are shown in the app before you buy and vary by region. Payment is charged to your Google Play account. Subscriptions renew automatically unless cancelled before the end of the current period. Manage or cancel any time in Google Play under Payments & subscriptions.
+
+PRIVACY
+Sunset asks for your approximate location once and sends only rounded coordinates to the Open-Meteo weather service to fetch the forecast. No account, no tracking, no analytics.
+
+Scores and sky events are forecasts of cloud, humidity, visibility and rain, not a promise of what the sky will do. Stay indoors during thunderstorms.
+
+Privacy Policy: https://jackwallner.github.io/sunset/privacy-policy.html
+Terms of Use: https://jackwallner.github.io/sunset/terms.html

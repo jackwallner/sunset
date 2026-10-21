@@ -95,6 +95,7 @@ Store name: `Sunset & Sunrise Prediction` (subtitle `Golden Hour Forecast & Aler
 |---|---|---|
 | `.claude/rules/scoring.md` | Why the weights are what they are | Touching `SunsetScorer` |
 | `.claude/rules/release-and-store.md` | ASC, RevenueCat, TestFlight history | Releasing |
+| `.claude/rules/android.md` | Android port: parity fixture, platform equivalents, billing, build, Play state | Touching `android/` or Android scripts |
 
 ---
 Shared iOS conventions (build, simulator, release/TestFlight, ASC key, signing, review funnel, gotchas):

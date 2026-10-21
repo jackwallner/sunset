@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Sunset" parent="android:style/Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">#0F0D24</item>
+        <item name="android:windowBackground">#0F0D24</item>
+        <item name="android:colorAccent">#F57338</item>
+        <!-- The launch splash sits on the same night sky as every screen. -->
+        <item name="android:windowSplashScreenBackground">#0F0D24</item>
+    </style>
+</resources>

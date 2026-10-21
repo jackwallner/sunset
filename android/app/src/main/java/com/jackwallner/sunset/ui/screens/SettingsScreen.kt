@@ -30,7 +30,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTagsAsResourceId
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
@@ -54,7 +57,7 @@ import com.jackwallner.sunset.ui.theme.ToggleRow
 import kotlinx.coroutines.launch
 
 /** `SettingsView.swift`: Sun+, what to watch, alerts, location, about. */
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun SettingsScreen(activity: Activity) {
     val graph = LocalGraph.current
@@ -166,7 +169,7 @@ fun SettingsScreen(activity: Activity) {
             onDismissRequest = { restoreMessage = null },
             confirmButton = { TextButton(onClick = { restoreMessage = null }) { Text("OK", color = Sky.ember) } },
             title = { Text("Restore purchases") },
-            text = { Text(message, modifier = Modifier.testTag("restore-message")) },
+            text = { Text(message, modifier = Modifier.semantics { testTagsAsResourceId = true }.testTag("restore-message")) },
         )
     }
     if (reviewerEntry) ReviewerAccessDialog(onDismiss = { reviewerEntry = false })
@@ -180,6 +183,7 @@ private fun LinkRow(label: String, tag: String? = null, onClick: () -> Unit) {
 }
 
 /** Play review access: a code from the App access notes unlocks Sun+ on this install. */
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 private fun ReviewerAccessDialog(onDismiss: () -> Unit) {
     val graph = LocalGraph.current
@@ -188,15 +192,16 @@ private fun ReviewerAccessDialog(onDismiss: () -> Unit) {
     AlertDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
+            // A dialog is its own window: test tags need resource ids again here.
             TextButton(
                 onClick = { if (graph.subscriptions.activateReviewAccess(code)) onDismiss() else failed = true },
-                modifier = Modifier.testTag("reviewer-unlock"),
+                modifier = Modifier.semantics { testTagsAsResourceId = true }.testTag("reviewer-unlock"),
             ) { Text("Unlock", color = Sky.ember) }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text("Cancel", color = Sky.textSecondary) } },
         title = { Text("Reviewer access") },
         text = {
-            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            Column(Modifier.semantics { testTagsAsResourceId = true }, verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 OutlinedTextField(
                     value = code,
                     onValueChange = { code = it; failed = false },
