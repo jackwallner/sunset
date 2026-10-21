@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Sunset</string>
+    <string name="widget_description">The score and time for the next sunrise or sunset you watch.</string>
+    <string name="widget_empty">Open Sunset to load today\'s score</string>
+    <string name="notification_channel">Sky alerts</string>
+    <string name="notification_channel_description">Heads-ups before good sunrises and sunsets, and Sun+ sky events.</string>
+</resources>
