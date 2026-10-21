@@ -57,8 +57,8 @@ paths:
   base plans `monthly` / `yearly`, 7-day free-trial offer `trial-7d`) and
   `.lifetime` (one-time product). Debug builds use `REVENUECAT_TEST_KEY`,
   release needs `REVENUECAT_PLAY_KEY` (`goog_`); neither runs in the other.
-  As of 2026-10-20 neither key exists: no Test Store or Play app in the
-  RevenueCat project. Debug runs use `previewStore` (the `Sunset.storekit`
+  As of 2026-10-21 the project has a Test Store app (its key is not yet in
+  any `local.properties`) but no Play app, so no `goog_` key. Debug runs use `previewStore` (the `Sunset.storekit`
   prices) until a Test Store key is added.
 - Reviewer access: Settings > long-press the version line, code
   `PLAY_REVIEW_CODE` in jmbp `~/.sunset_credentials` (created 2026-10-20);
@@ -96,6 +96,16 @@ paths:
   image), build and lint clean (0 errors), QA (R8) build ignores debug hooks
   and runs onboarding to a live forecast. No Play app, upload key, RevenueCat
   Play or Test Store app, Play products or upload yet.
+- Air packaging attempt 2026-10-21 (run shift-android-package-sunset-1-1792572830):
+  blocked, no artifacts. Signed `assembleRelease bundleRelease` on the Air
+  (`ANDROID_HOME=~/Library/Android/sdk`, JDK 17) stops at
+  `validateReleaseConfiguration`: no `REVENUECAT_PLAY_KEY`. Also missing:
+  `~/.android/keystores/sunset-upload.p12` (no backup either),
+  `android/local.properties`, `~/.sunset_credentials` with
+  `PLAY_REVIEW_CODE`. RevenueCat `proj2164a1b0` now has `test_store` and
+  `app_store` apps but no `play_store` app. Play Console: no app record, so
+  nothing staged and nothing in review. Rerun the package task after steps
+  1 to 4; evidence in `~/fleet-evidence/shift-android-package-sunset-1-1792572830`.
 - Remaining, in order (Air release worker / Console):
   1. Jack: the Android US price (keep iOS $1.99 / $14.99 / $29.99, or the
      fleet's about 20% lower ladder).
