@@ -83,6 +83,7 @@ fun OutlookScreen() {
                 }
             }
         }
+        StatusBarFade(next?.score?.total ?: 60, next?.event ?: SunEvent.SUNSET)
     }
 }
 

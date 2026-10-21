@@ -187,8 +187,10 @@ class SmokeTest {
         find(tag("reviewer-failed"))
         find(tag("reviewer-code")).text = code
         find(tag("reviewer-unlock")).click()
-        device.findObject(By.scrollable(true))?.scroll(Direction.UP, 1f)
-        device.findObject(By.scrollable(true))?.scroll(Direction.UP, 1f)
+        repeat(8) {
+            if (device.wait(Until.findObject(tag("pro-on")), 1_000) != null) return
+            device.findObject(By.scrollable(true))?.scroll(Direction.UP, 0.8f)
+        }
         find(tag("pro-on"))
     }
 
