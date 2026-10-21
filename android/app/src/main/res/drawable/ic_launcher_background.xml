@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- scripts/generate_icon.py: violet to rose to gold, a dark horizon at 70. -->
+    <path android:pathData="M0,0h108v70h-108z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0" android:startY="0"
+                android:endX="0" android:endY="70">
+                <item android:offset="0" android:color="#FF331A6B" />
+                <item android:offset="0.55" android:color="#FFDB3870" />
+                <item android:offset="1" android:color="#FFFF9E33" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:pathData="M0,70h108v38h-108z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="linear"
+                android:startX="0" android:startY="70"
+                android:endX="0" android:endY="108">
+                <item android:offset="0" android:color="#FF24183E" />
+                <item android:offset="1" android:color="#FF16102A" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>

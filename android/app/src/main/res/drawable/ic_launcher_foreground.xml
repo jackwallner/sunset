@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- A soft glow, then the half-set sun clipped by the horizon. -->
+    <path android:pathData="M24,70a30,30 0 0,1 60,0z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:type="radial"
+                android:centerX="54" android:centerY="70"
+                android:gradientRadius="30">
+                <item android:offset="0.6" android:color="#55FFE28A" />
+                <item android:offset="1" android:color="#00FFE28A" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:fillColor="#FFFFE28A" android:pathData="M35,70a19,19 0 0,1 38,0z" />
+</vector>
