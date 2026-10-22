@@ -1,3 +1,4 @@
+import os
 import StoreKit
 import SwiftUI
 
@@ -125,7 +126,7 @@ private struct RootView: View {
         } else {
             MainTabView(initialTab: LaunchArguments.screenshotTab ?? 0)
                 #if DEBUG
-                .onOpenURL { ScreenshotRouter.shared.open($0) }
+                .task { await ScreenshotRouter.shared.runTour() }
                 #endif
         }
     }
@@ -199,19 +200,38 @@ struct MainTabView: View {
 }
 
 #if DEBUG
-/// Store captures: `com.jackwallner.sunset://<scene>` moves the running app
-/// to a scene (`detail`, `events`, `day`, `outlook`, `settings`, `alerts`,
-/// `today`), so one launch can shoot every screen on both Duo displays.
-/// `-ScreenshotScene` sets the first one.
+/// Store captures. `-ScreenshotScene <scene>` opens one scene; `-DuoTour`
+/// walks them all on a timer, because `simctl openurl` raises a confirmation
+/// alert and an unattended capture job cannot tap it. Scenes: `today`,
+/// `detail`, `day`, `events`, `settings`, `outlook`, `alerts`.
+/// `-DuoTourFirst <s>` delays the first scene, `-DuoTourStep <s>` is the
+/// dwell on each, and every step logs a `DUOTOUR` line that maps captures to
+/// scenes. The walk repeats.
 @MainActor
 final class ScreenshotRouter: ObservableObject {
     static let shared = ScreenshotRouter()
 
     @Published var scene = LaunchArguments.screenshotScene
 
-    func open(_ url: URL) {
-        guard url.scheme == "com.jackwallner.sunset", let host = url.host() else { return }
-        scene = host
+    private static let tour = ["today", "detail", "day", "events", "settings", "outlook"]
+    private let logger = Logger(subsystem: "com.jackwallner.sunset", category: "DuoTour")
+
+    func runTour() async {
+        let arguments = ProcessInfo.processInfo.arguments
+        guard arguments.contains("-DuoTour") else { return }
+        func seconds(_ key: String, _ fallback: Double) -> Double {
+            guard let i = arguments.firstIndex(of: key), i + 1 < arguments.count else { return fallback }
+            return Double(arguments[i + 1]) ?? fallback
+        }
+        try? await Task.sleep(for: .seconds(seconds("-DuoTourFirst", 2)))
+        let step = seconds("-DuoTourStep", 10)
+        while !Task.isCancelled {
+            for scene in Self.tour {
+                self.scene = scene
+                logger.notice("DUOTOUR \(scene, privacy: .public) \(Date.now.timeIntervalSince1970, privacy: .public)")
+                try? await Task.sleep(for: .seconds(step))
+            }
+        }
     }
 }
 #endif

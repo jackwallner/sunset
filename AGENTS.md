@@ -88,8 +88,8 @@ Store name: `Sunset & Sunrise Prediction` (subtitle `Golden Hour Forecast & Aler
 - Launch arguments (DEBUG): `-DemoLocation` (Vancouver, WA, skips
   onboarding), `-DemoPro`, `-PaywallSnapshot`, `-ScreenshotTab <n>`,
   `-OnboardingStep <n>`, `-DemoForecast` (fixed week with sky events),
-  `-ScreenshotScene detail|events|alerts` (Today tab). DEBUG URLs
-  `com.jackwallner.sunset://<scene>` switch scenes in a running app.
+  `-ScreenshotScene detail|events|alerts` (Today tab). `-DuoTour`
+  walks every scene on a timer for unattended captures.
 
 ## Deep notes (load on demand)
 

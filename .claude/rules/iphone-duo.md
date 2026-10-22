@@ -23,7 +23,8 @@ paths:
   their sky, so the column sits in the leading pane and the sky still fills
   the display.
 - Captures: one `gh-sim all --device 'iPhone Duo'` run with
-  `-DemoLocation -DemoForecast -DemoPro -ScreenshotTab 0` and DEBUG scene URLs
-  `com.jackwallner.sunset://<scene>` (`events`, `detail`, `day`, `settings`,
-  `outlook`, `alerts`, `today`) shoots both displays. Inner 2853x2007
-  landscape, outer 1398x2034.
+  `-DemoLocation -DemoForecast -DemoPro -ScreenshotTab 0 -DuoTour` and
+  `noop://N` URLs as shutter ticks shoots both displays (`ScreenshotRouter`
+  walks the scenes on a timer). Custom-scheme `simctl openurl` raises an
+  "Open in Sunset?" alert the job cannot tap, so never drive captures by URL.
+  Inner 2853x2007 landscape, outer 1398x2034.
