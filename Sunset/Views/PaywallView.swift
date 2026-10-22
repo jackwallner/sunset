@@ -117,6 +117,7 @@ struct PaywallView: View {
                     .foregroundStyle(Theme.textSecondary)
                 }
                 .padding(22)
+                .leadingPaneColumn()
             }
             .background { SkyBackdrop(score: 92, horizon: 0.13) }
             .toolbar {

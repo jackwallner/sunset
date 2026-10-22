@@ -7,6 +7,10 @@ struct OutlookView: View {
     @EnvironmentObject private var settings: AlertSettings
     @EnvironmentObject private var store: StoreService
     @State private var showPaywall = false
+    #if DEBUG
+    @State private var capturedShow: SunShow?
+    @ObservedObject private var screenshots = ScreenshotRouter.shared
+    #endif
 
     static let freeDays = 2
 
@@ -35,6 +39,23 @@ struct OutlookView: View {
         }
         .navigationTitle("Outlook")
         .sheet(isPresented: $showPaywall) { PaywallView(source: "outlook") }
+        #if DEBUG
+        .navigationDestination(isPresented: Binding(
+            get: { capturedShow != nil },
+            set: { if !$0 { capturedShow = nil } }
+        )) {
+            if let show = capturedShow, let forecast = forecastStore.forecast {
+                ShowDetailView(show: show, zone: forecast.timeZone, placeName: forecast.placeName)
+            }
+        }
+        // Store captures: `day` opens the best show after the next one.
+        .task(id: screenshots.scene) {
+            try? await Task.sleep(for: .milliseconds(400))
+            capturedShow = screenshots.scene == "day"
+                ? forecastStore.forecast?.upcomingShows(settings.watched).dropFirst().max { $0.score.total < $1.score.total }
+                : nil
+        }
+        #endif
     }
 
     /// The real days, blurred past reading, under one unlock card.
@@ -193,12 +214,14 @@ struct ShowDetailView: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
             }
+            #if DEBUG
             .task {
-                // DEBUG store capture: open on the factors and cloud cover.
-                guard LaunchArguments.screenshotScene == "detail" else { return }
+                // Store capture: open on the factors and cloud cover.
+                guard ScreenshotRouter.shared.scene == "detail" else { return }
                 try? await Task.sleep(for: .milliseconds(500))
                 proxy.scrollTo("factors", anchor: .top)
             }
+            #endif
         }
         .background { SkyBackdrop(score: show.score.total, event: show.event, horizon: 0.42) }
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)

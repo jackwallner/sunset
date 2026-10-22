@@ -50,6 +50,7 @@ struct OnboardingView: View {
             .clipped()
             bottomBar
         }
+        .leadingPaneColumn()
         .background {
             SkyBackdrop(score: step == .plus ? 92 : Self.preview.score.total, horizon: step == .alerts ? 0.56 : 0.4)
         }
