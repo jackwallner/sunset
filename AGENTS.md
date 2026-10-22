@@ -27,7 +27,8 @@ The app forces `.dark` so system chrome matches.
 
 Three tabs: Today (next watched show as the hero, summary, factors, up next,
 sky events, alerts card), Outlook (the week), Settings (watch toggles,
-alerts). A Home Screen widget shows the next watched show.
+alerts). A Home Screen widget shows the next watched show. Unfolded on iPhone Duo,
+Today sits beside the Outlook, one pane either side of the fold.
 
 Free: today and tomorrow, the factor breakdown, the widget, sunrise and
 sunset alerts at the default score (70) and lead time (45 min).
@@ -87,7 +88,8 @@ Store name: `Sunset & Sunrise Prediction` (subtitle `Golden Hour Forecast & Aler
 - Launch arguments (DEBUG): `-DemoLocation` (Vancouver, WA, skips
   onboarding), `-DemoPro`, `-PaywallSnapshot`, `-ScreenshotTab <n>`,
   `-OnboardingStep <n>`, `-DemoForecast` (fixed week with sky events),
-  `-ScreenshotScene detail|events|alerts` (Today tab).
+  `-ScreenshotScene detail|events|alerts` (Today tab). DEBUG URLs
+  `com.jackwallner.sunset://<scene>` switch scenes in a running app.
 
 ## Deep notes (load on demand)
 
@@ -95,6 +97,7 @@ Store name: `Sunset & Sunrise Prediction` (subtitle `Golden Hour Forecast & Aler
 |---|---|---|
 | `.claude/rules/scoring.md` | Why the weights are what they are | Touching `SunsetScorer` |
 | `.claude/rules/release-and-store.md` | ASC, RevenueCat, TestFlight history | Releasing |
+| `.claude/rules/iphone-duo.md` | Unfolded two-pane layout, captures | Touching `MainTabView` or `UnfoldedSplit` |
 | `.claude/rules/android.md` | Android port: parity fixture, platform equivalents, billing, build, Play state | Touching `android/` or Android scripts |
 
 ---
