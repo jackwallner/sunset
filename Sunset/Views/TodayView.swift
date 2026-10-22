@@ -58,7 +58,7 @@ struct TodayView: View {
             }
             .allowsHitTesting(false)
         }
-        .navigationDestination(isPresented: $showHeroDetail) {
+        .navigationDestination(isPresented: heroDetailPresented) {
             if let forecast = forecastStore.forecast, let hero = forecastStore.nextShow {
                 ShowDetailView(show: hero, zone: forecast.timeZone, placeName: forecast.placeName)
             }
@@ -78,6 +78,22 @@ struct TodayView: View {
                 requestReview()
             }
         }
+    }
+
+    /// Captures drive the push from the router, because a `.task` on this
+    /// root is cancelled while a pushed screen covers it.
+    private var heroDetailPresented: Binding<Bool> {
+        #if DEBUG
+        Binding(
+            get: { showHeroDetail || screenshots.scene == "detail" },
+            set: { isPresented in
+                showHeroDetail = isPresented
+                if !isPresented, screenshots.scene == "detail" { screenshots.scene = nil }
+            }
+        )
+        #else
+        $showHeroDetail
+        #endif
     }
 
     private var hero: SunShow? {
@@ -154,12 +170,11 @@ struct TodayView: View {
     }
 
     #if DEBUG
-    /// Store captures (`ScreenshotRouter`): `detail`, `events` or `alerts`
-    /// need no scrolling or tapping; any other scene returns to the top.
+    /// Store captures (`ScreenshotRouter`): `events` and `alerts` need no
+    /// scrolling or tapping; any other scene returns to the top.
     private func openScreenshotScene(_ scene: String?, proxy: ScrollViewProxy) async {
         guard let scene else { return }
         try? await Task.sleep(for: .milliseconds(400))
-        showHeroDetail = scene == "detail"
         switch scene {
         case "events": proxy.scrollTo("events", anchor: .center)
         case "alerts":
