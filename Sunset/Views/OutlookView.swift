@@ -8,7 +8,6 @@ struct OutlookView: View {
     @EnvironmentObject private var store: StoreService
     @State private var showPaywall = false
     #if DEBUG
-    @State private var capturedShow: SunShow?
     @ObservedObject private var screenshots = ScreenshotRouter.shared
     #endif
 
@@ -40,20 +39,15 @@ struct OutlookView: View {
         .navigationTitle("Outlook")
         .sheet(isPresented: $showPaywall) { PaywallView(source: "outlook") }
         #if DEBUG
+        // Store captures: `day` opens the best show after the next one.
         .navigationDestination(isPresented: Binding(
-            get: { capturedShow != nil },
-            set: { if !$0 { capturedShow = nil } }
+            get: { screenshots.scene == "day" },
+            set: { if !$0, screenshots.scene == "day" { screenshots.scene = nil } }
         )) {
-            if let show = capturedShow, let forecast = forecastStore.forecast {
+            if let forecast = forecastStore.forecast,
+               let show = forecast.upcomingShows(settings.watched).dropFirst().max(by: { $0.score.total < $1.score.total }) {
                 ShowDetailView(show: show, zone: forecast.timeZone, placeName: forecast.placeName)
             }
-        }
-        // Store captures: `day` opens the best show after the next one.
-        .task(id: screenshots.scene) {
-            try? await Task.sleep(for: .milliseconds(400))
-            capturedShow = screenshots.scene == "day"
-                ? forecastStore.forecast?.upcomingShows(settings.watched).dropFirst().max { $0.score.total < $1.score.total }
-                : nil
         }
         #endif
     }
