@@ -124,28 +124,94 @@ private struct RootView: View {
             OnboardingView()
         } else {
             MainTabView(initialTab: LaunchArguments.screenshotTab ?? 0)
+                #if DEBUG
+                .onOpenURL { ScreenshotRouter.shared.open($0) }
+                #endif
         }
     }
 }
 
+/// Folded, three tabs. Unfolded (regular width with room for two phone
+/// panes), Today and the tab bar sit on the leading side of the fold and the
+/// Outlook gets the trailing pane, so tonight's score reads beside the week.
+/// Opening or closing the Duo only moves frames: Today and Settings are never
+/// rebuilt, so their scroll and navigation survive.
 struct MainTabView: View {
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var selection: Int
+    @State private var paneGeometry = PaneGeometry()
+    #if DEBUG
+    @ObservedObject private var screenshots = ScreenshotRouter.shared
+    #endif
 
     init(initialTab: Int = 0) {
         _selection = State(initialValue: initialTab)
     }
 
+    private var split: UnfoldedSplit? {
+        UnfoldedSplit.make(paneGeometry, isRegularWidth: horizontalSizeClass == .regular)
+    }
+
+    /// Each unfolded pane is phone-width, so its screen lays out as on a phone.
+    private var paneSizeClass: UserInterfaceSizeClass? {
+        split == nil ? horizontalSizeClass : .compact
+    }
+
     var body: some View {
-        TabView(selection: $selection) {
-            NavigationStack { TodayView() }
-                .tabItem { Label("Today", systemImage: "sun.horizon.fill") }
-                .tag(0)
-            NavigationStack { OutlookView() }
-                .tabItem { Label("Outlook", systemImage: "calendar") }
-                .tag(1)
-            NavigationStack { SettingsView() }
-                .tabItem { Label("Settings", systemImage: "slider.horizontal.3") }
-                .tag(2)
+        ZStack(alignment: .topLeading) {
+            TabView(selection: $selection) {
+                NavigationStack { TodayView() }
+                    .tabItem { Label("Today", systemImage: "sun.horizon.fill") }
+                    .tag(0)
+                if split == nil {
+                    NavigationStack { OutlookView() }
+                        .tabItem { Label("Outlook", systemImage: "calendar") }
+                        .tag(1)
+                }
+                NavigationStack { SettingsView() }
+                    .tabItem { Label("Settings", systemImage: "slider.horizontal.3") }
+                    .tag(2)
+            }
+            .environment(\.horizontalSizeClass, paneSizeClass)
+            .frame(maxWidth: split?.primaryWidth ?? .infinity, maxHeight: .infinity)
+
+            if let split {
+                NavigationStack { OutlookView() }
+                    .environment(\.horizontalSizeClass, .compact)
+                    .frame(maxWidth: split.secondaryWidth, maxHeight: .infinity)
+                    .padding(.leading, split.secondaryX)
+            }
         }
+        .onGeometryChange(for: PaneGeometry.self) { $0.paneGeometry } action: { paneGeometry = $0 }
+        .onChange(of: split != nil) { _, isSplit in
+            if isSplit, selection == 1 { selection = 0 }
+        }
+        #if DEBUG
+        .onChange(of: screenshots.scene) { _, scene in
+            switch scene {
+            case "settings": selection = 2
+            case "outlook", "day": selection = split == nil ? 1 : 0
+            default: selection = 0
+            }
+        }
+        #endif
     }
 }
+
+#if DEBUG
+/// Store captures: `com.jackwallner.sunset://<scene>` moves the running app
+/// to a scene (`detail`, `events`, `day`, `outlook`, `settings`, `alerts`,
+/// `today`), so one launch can shoot every screen on both Duo displays.
+/// `-ScreenshotScene` sets the first one.
+@MainActor
+final class ScreenshotRouter: ObservableObject {
+    static let shared = ScreenshotRouter()
+
+    @Published var scene = LaunchArguments.screenshotScene
+
+    func open(_ url: URL) {
+        guard url.scheme == "com.jackwallner.sunset", let host = url.host() else { return }
+        scene = host
+    }
+}
+#endif

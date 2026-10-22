@@ -10,6 +10,9 @@ struct TodayView: View {
     @State private var showPaywall = false
     @State private var showAlertSetup = false
     @State private var showHeroDetail = false
+    #if DEBUG
+    @ObservedObject private var screenshots = ScreenshotRouter.shared
+    #endif
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -24,8 +27,11 @@ struct TodayView: View {
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
+                .id("top")
             }
-            .task { await openScreenshotScene(proxy) }
+            #if DEBUG
+            .task(id: screenshots.scene) { await openScreenshotScene(screenshots.scene, proxy: proxy) }
+            #endif
         }
         .background {
             SkyBackdrop(score: hero?.score.total ?? 40, event: hero?.event ?? .sunset, horizon: 0.46)
@@ -147,20 +153,22 @@ struct TodayView: View {
             .foregroundStyle(Theme.textSecondary)
     }
 
-    /// DEBUG `-ScreenshotScene`: `detail`, `events` or `alerts`, so store
-    /// captures need no scrolling or tapping.
-    private func openScreenshotScene(_ proxy: ScrollViewProxy) async {
-        guard let scene = LaunchArguments.screenshotScene else { return }
+    #if DEBUG
+    /// Store captures (`ScreenshotRouter`): `detail`, `events` or `alerts`
+    /// need no scrolling or tapping; any other scene returns to the top.
+    private func openScreenshotScene(_ scene: String?, proxy: ScrollViewProxy) async {
+        guard let scene else { return }
         try? await Task.sleep(for: .milliseconds(400))
+        showHeroDetail = scene == "detail"
         switch scene {
-        case "detail": showHeroDetail = true
         case "events": proxy.scrollTo("events", anchor: .center)
         case "alerts":
             settings.alertsEnabled = true
             showAlertSetup = true
-        default: break
+        default: proxy.scrollTo("top", anchor: .top)
         }
     }
+    #endif
 
     private func skyEventsCard(forecast: SunsetForecast) -> some View {
         let events = forecast.upcomingSkyEvents(within: 48 * 3600)
