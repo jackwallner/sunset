@@ -208,6 +208,7 @@ struct ShowDetailView: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
             }
+            .clearsFloatingTabBar()
             #if DEBUG
             .task {
                 // Store capture: open on the factors and cloud cover.

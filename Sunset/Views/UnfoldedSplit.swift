@@ -81,3 +81,47 @@ private struct LeadingPaneColumn: ViewModifier {
             .onGeometryChange(for: PaneGeometry.self) { $0.paneGeometry } action: { geometry = $0 }
     }
 }
+
+extension EnvironmentValues {
+    /// True in the unfolded leading pane, where the tab bar floats over the
+    /// bottom of a narrow screen beside the fold.
+    @Entry var paneHasFloatingTabBar = false
+}
+
+extension View {
+    /// In the unfolded leading pane, fades scroll content out just above the
+    /// floating tab bar, so the bar rests on open sky instead of over a card.
+    /// Folded it changes nothing. Apply it to the scroll view, before the
+    /// screen's sky.
+    func clearsFloatingTabBar() -> some View {
+        modifier(FloatingTabBarClearance())
+    }
+}
+
+private struct FloatingTabBarClearance: ViewModifier {
+    @Environment(\.paneHasFloatingTabBar) private var isActive
+
+    /// The fade above the bar, and how far the opaque mask reaches past the
+    /// scroll view's frame so the status bar strip and the phone's own
+    /// under-bar scrolling are untouched.
+    private static let fade: CGFloat = 36
+    private static let overscan: CGFloat = 2000
+
+    func body(content: Content) -> some View {
+        content
+            .contentMargins(.bottom, isActive ? Self.fade / 2 : nil, for: .scrollContent)
+            .mask {
+                VStack(spacing: 0) {
+                    Color.black
+                    LinearGradient(
+                        colors: [.black, .black.opacity(isActive ? 0 : 1)],
+                        startPoint: .top,
+                        endPoint: .bottom
+                    )
+                    .frame(height: Self.fade)
+                }
+                .padding(.top, -Self.overscan)
+                .padding(.bottom, isActive ? 0 : -Self.overscan)
+            }
+    }
+}

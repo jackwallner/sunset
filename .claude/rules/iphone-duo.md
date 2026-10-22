@@ -19,12 +19,22 @@ paths:
   only the Outlook pane and tab are separate instances.
 - Each pane gets `horizontalSizeClass = .compact`, which also keeps the
   system tab bar at the bottom as on a phone.
+- The floating tab bar never sits over content: in the leading pane
+  (`paneHasFloatingTabBar`), Today, the show detail and Settings apply
+  `.clearsFloatingTabBar()`, which masks scroll content to fade out just
+  above the bar's safe-area edge. Folded, the mask is fully opaque and the
+  phone look is unchanged. A shots review (2026-10-22) rejected captures
+  with the capsule over factor rows.
 - Onboarding and the full-screen paywall use `.leadingPaneColumn()` before
   their sky, so the column sits in the leading pane and the sky still fills
   the display.
-- Captures: one `gh-sim all --device 'iPhone Duo'` run with
-  `-DemoLocation -DemoForecast -DemoPro -ScreenshotTab 0 -DuoTour` and
-  `noop://N` URLs as shutter ticks shoots both displays (`ScreenshotRouter`
-  walks the scenes on a timer). Custom-scheme `simctl openurl` raises an
-  "Open in Sunset?" alert the job cannot tap, so never drive captures by URL.
+- Captures: gh-sim takes one shot per display after `--wait`, and no
+  `--url` (custom-scheme `simctl openurl` raises an "Open in Sunset?" alert
+  the job cannot tap; never pass fake URLs as shutter ticks). So each inner
+  surface is its own `gh-sim launch --device 'iPhone Duo'` with
+  `-DemoLocation -DemoForecast -DemoPro` plus `-ScreenshotScene <scene>`
+  (`detail`, `events`) or `-ScreenshotTab 2 -ScreenshotScene day` (Settings
+  beside the best day). The `all` run adds `-DuoTour` with
+  `--record-seconds 25 --wait 26`: the tour walks detail, day, events and
+  Settings once for the recording, then settles on Today before the shot.
   Inner 2853x2007 landscape, outer 1398x2034.

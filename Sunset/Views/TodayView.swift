@@ -29,6 +29,7 @@ struct TodayView: View {
                 .padding(.bottom, 24)
                 .id("top")
             }
+            .clearsFloatingTabBar()
             #if DEBUG
             .task(id: screenshots.scene) { await openScreenshotScene(screenshots.scene, proxy: proxy) }
             #endif

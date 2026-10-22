@@ -113,6 +113,7 @@ struct SettingsView: View {
             .listRowBackground(Theme.row)
         }
         .scrollContentBackground(.hidden)
+        .clearsFloatingTabBar()
         .background {
             SkyBackdrop(score: forecastStore.nextShow?.score.total ?? 70, event: forecastStore.nextShow?.event ?? .sunset, horizon: 0.14)
         }

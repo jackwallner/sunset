@@ -174,6 +174,7 @@ struct MainTabView: View {
                     .tag(2)
             }
             .environment(\.horizontalSizeClass, paneSizeClass)
+            .environment(\.paneHasFloatingTabBar, split != nil)
             .frame(maxWidth: split?.primaryWidth ?? .infinity, maxHeight: .infinity)
 
             if let split {
@@ -200,20 +201,20 @@ struct MainTabView: View {
 }
 
 #if DEBUG
-/// Store captures. `-ScreenshotScene <scene>` opens one scene; `-DuoTour`
-/// walks them all on a timer, because `simctl openurl` raises a confirmation
-/// alert and an unattended capture job cannot tap it. Scenes: `today`,
-/// `detail`, `day`, `events`, `settings`, `outlook`, `alerts`.
-/// `-DuoTourFirst <s>` delays the first scene, `-DuoTourStep <s>` is the
-/// dwell on each, and every step logs a `DUOTOUR` line that maps captures to
-/// scenes. The walk repeats.
+/// Store captures. `-ScreenshotScene <scene>` opens one scene. gh-sim takes
+/// one shot per display after a fixed wait, so `-DuoTour` walks the other
+/// scenes once for the recording and then settles on that scene (or
+/// `today`) before the shot. Scenes: `today`, `detail`, `day`, `events`,
+/// `settings`, `outlook`, `alerts`. `-DuoTourFirst <s>` delays the walk,
+/// `-DuoTourStep <s>` is the dwell on each, and every step logs a
+/// `DUOTOUR` line that maps recordings to scenes.
 @MainActor
 final class ScreenshotRouter: ObservableObject {
     static let shared = ScreenshotRouter()
 
     @Published var scene = LaunchArguments.screenshotScene
 
-    private static let tour = ["today", "detail", "day", "events", "settings", "outlook"]
+    private static let tour = ["detail", "day", "events", "settings"]
     private let logger = Logger(subsystem: "com.jackwallner.sunset", category: "DuoTour")
 
     func runTour() async {
@@ -223,14 +224,14 @@ final class ScreenshotRouter: ObservableObject {
             guard let i = arguments.firstIndex(of: key), i + 1 < arguments.count else { return fallback }
             return Double(arguments[i + 1]) ?? fallback
         }
-        try? await Task.sleep(for: .seconds(seconds("-DuoTourFirst", 2)))
-        let step = seconds("-DuoTourStep", 10)
-        while !Task.isCancelled {
-            for scene in Self.tour {
-                self.scene = scene
-                logger.notice("DUOTOUR \(scene, privacy: .public) \(Date.now.timeIntervalSince1970, privacy: .public)")
-                try? await Task.sleep(for: .seconds(step))
-            }
+        let final = LaunchArguments.screenshotScene ?? "today"
+        try? await Task.sleep(for: .seconds(seconds("-DuoTourFirst", 3)))
+        let step = seconds("-DuoTourStep", 4)
+        for scene in Self.tour + [final] {
+            guard !Task.isCancelled else { return }
+            self.scene = scene
+            logger.notice("DUOTOUR \(scene, privacy: .public) \(Date.now.timeIntervalSince1970, privacy: .public)")
+            try? await Task.sleep(for: .seconds(step))
         }
     }
 }
