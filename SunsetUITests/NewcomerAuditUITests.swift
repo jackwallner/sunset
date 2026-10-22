@@ -2,8 +2,9 @@ import XCTest
 
 /// Newcomer walk-through used by the persona audit. Every step attaches a
 /// screenshot; touch-target sizes are attached as text.
+@MainActor
 final class NewcomerAuditUITests: XCTestCase {
-    private let springboard = XCUIApplication(bundleIdentifier: "com.apple.springboard")
+    private var springboard: XCUIApplication { XCUIApplication(bundleIdentifier: "com.apple.springboard") }
 
     override func setUp() {
         continueAfterFailure = true
