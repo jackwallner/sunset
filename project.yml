@@ -26,9 +26,11 @@ schemes:
       targets:
         Sunset: all
         SunsetTests: [test]
+        SunsetUITests: [test]
     test:
       targets:
         - SunsetTests
+        - SunsetUITests
       config: Debug
       storeKitConfiguration: Sunset.storekit
     run:
@@ -83,5 +85,17 @@ targets:
       base:
         GENERATE_INFOPLIST_FILE: YES
         PRODUCT_BUNDLE_IDENTIFIER: com.jackwallner.sunset.tests
+    dependencies:
+      - target: Sunset
+
+  SunsetUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: SunsetUITests
+    settings:
+      base:
+        GENERATE_INFOPLIST_FILE: YES
+        PRODUCT_BUNDLE_IDENTIFIER: com.jackwallner.sunset.uitests
     dependencies:
       - target: Sunset
