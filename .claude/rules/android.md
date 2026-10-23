@@ -71,7 +71,8 @@ paths:
 ## Build and test (fleet Pro, jmbp)
 
 - `fm-gradle clean assembleDebug assembleDebugAndroidTest assembleQa lintDebug testDebugUnitTest`
-  from `android/` (runs on jmbp; never `./gradlew` on the Air).
+  from `android/` (runs on jmbp; never `./gradlew` on the Air except signed
+  `assembleRelease bundleRelease`).
 - Connected tests: boot a leased AVD headless (`emulator -avd agent-emu-1
   -port 5556 -no-window -no-audio -no-boot-anim -no-metrics -gpu host -cores 3
   -no-snapshot-save`), then `ANDROID_SERIAL=emulator-5556
@@ -89,7 +90,7 @@ paths:
 - jmbp is an Intel i7-5557U: emulator motion records at about 12 fps, so
   native 60 fps cannot be proven there. Motion review belongs on the Air.
 
-## Release state (2026-10-21)
+## Release state (2026-10-23)
 
 - Engineering acceptance done on jmbp (run shift-android-sunset-1-1792547912):
   46 JVM tests (full iOS parity), 12 device tests on agent-emu-1 (API 36 Play
@@ -100,6 +101,20 @@ paths:
   `~/.sunset_credentials`), `REVENUECAT_TEST_KEY`, `REVENUECAT_PLAY_KEY`,
   `PLAY_UPLOAD_*` and the review code hash in `local.properties` on the Air,
   rc-clean registered on the Air and MBP, listing graphics and screenshots made.
+- Signed release built and verified 2026-10-23 on the Air (run
+  shift-android-package-sunset-3-1792794893, source tree = main 0471a76):
+  `~/fleet-evidence/shift-android-package-sunset-3-1792794893/artifacts/sunset-1.0.1-vc1-release.aab`
+  and `.apk`. `com.jackwallner.sunset`, versionCode 1, 1.0.1, min 26 /
+  target 36, not debuggable, upload cert SHA-256 `c0be5efa...cb217438`
+  (alias `upload`, matches the keystore), APK v2 signed, AAB `jar verified.`,
+  zipalign -P 16 OK, all 8 `libandroidx.graphics.path.so` LOAD aligned 16 KB,
+  no debug launch hooks in the dex, `goog_` key embedded, no `test_` key.
+  Signed builds must run as `./gradlew assembleRelease bundleRelease` on the
+  Air (Temurin 17): `fm-gradle` sends release tasks to clawd-mac and strips
+  the Play key and signing lines, so they fail validation there.
+- Play (last checked 2026-10-21, not rechecked in Console this run): no app
+  record for `com.jackwallner.sunset` (weekly new-app limit), so no products,
+  no track and nothing uploaded. Nothing pending review.
 - Remaining, in order (Air release worker / Console):
   1. Jack: the Android US price (keep iOS $1.99 / $14.99 / $29.99, or the
      fleet's about 20% lower ladder).
@@ -108,11 +123,9 @@ paths:
   3. The three products with `trial-7d` offers, attached to the `default`
      offering packages and the `pro` entitlement without touching the iOS
      ones; grant the RevenueCat service account on the new app.
-  4. Build and verify the signed AAB/APK (package, versionCode 1, targetSdk 36,
-     16 KB alignment of every native library). Listing, graphics, screenshots
-     (composite to 1080 x 1920) and App content answers from
-     `android/play-assets/listing-en-US.md`. Publish the updated
-     `docs/privacy-policy.html` and `docs/terms.html` first.
+  4. Listing, graphics, screenshots (composite to 1080 x 1920) and App
+     content answers from `android/play-assets/listing-en-US.md`. Publish the
+     updated `docs/privacy-policy.html` and `docs/terms.html` first.
   5. Internal track upload, licensed-tester purchase and restore, pre-launch
      report, then a production draft. The production send waits for its
      pacing slot (`~/docs/android/fleet-rollout-2026-10-15.md`).
