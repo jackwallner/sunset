@@ -70,8 +70,8 @@ paths:
 
 ## Build and test (fleet Pro, jmbp)
 
-- `JAVA_HOME=~/jdks/temurin-17/Contents/Home ./gradlew clean assembleDebug assembleDebugAndroidTest assembleQa lintDebug testDebugUnitTest`
-  from `android/`.
+- `fm-gradle clean assembleDebug assembleDebugAndroidTest assembleQa lintDebug testDebugUnitTest`
+  from `android/` (runs on jmbp; never `./gradlew` on the Air).
 - Connected tests: boot a leased AVD headless (`emulator -avd agent-emu-1
   -port 5556 -no-window -no-audio -no-boot-anim -no-metrics -gpu host -cores 3
   -no-snapshot-save`), then `ANDROID_SERIAL=emulator-5556
@@ -89,31 +89,30 @@ paths:
 - jmbp is an Intel i7-5557U: emulator motion records at about 12 fps, so
   native 60 fps cannot be proven there. Motion review belongs on the Air.
 
-## Release state (2026-10-20)
+## Release state (2026-10-21)
 
 - Engineering acceptance done on jmbp (run shift-android-sunset-1-1792547912):
   46 JVM tests (full iOS parity), 12 device tests on agent-emu-1 (API 36 Play
   image), build and lint clean (0 errors), QA (R8) build ignores debug hooks
-  and runs onboarding to a live forecast. No Play app, upload key, RevenueCat
-  Play or Test Store app, Play products or upload yet.
+  and runs onboarding to a live forecast.
+- Done 2026-10-21: RevenueCat Test Store and Play apps in `proj2164a1b0`,
+  upload keystore `~/.android/keystores/sunset-upload.p12` (password in
+  `~/.sunset_credentials`), `REVENUECAT_TEST_KEY`, `REVENUECAT_PLAY_KEY`,
+  `PLAY_UPLOAD_*` and the review code hash in `local.properties` on the Air,
+  rc-clean registered on the Air and MBP, listing graphics and screenshots made.
 - Remaining, in order (Air release worker / Console):
   1. Jack: the Android US price (keep iOS $1.99 / $14.99 / $29.99, or the
      fleet's about 20% lower ladder).
-  2. RevenueCat `proj2164a1b0`: add a Test Store app (its `test_` key goes in
-     `REVENUECAT_TEST_KEY` for debug and agent runs) and a Play app (`goog_`
-     key in `REVENUECAT_PLAY_KEY`); attach the Play products to the `default`
+  2. Play app record (E3 Apps). Play hit its weekly new-app limit on 2026-10-21;
+     retry the next week. The name matches the App Store name.
+  3. The three products with `trial-7d` offers, attached to the `default`
      offering packages and the `pro` entitlement without touching the iOS
-     ones; register the Play app in `~/.rc-clean/apps.json` the same day
-     (android block plus `"ios": {"filter_platform": "iOS"}`).
-  3. Copy `PLAY_REVIEW_CODE` / `PLAY_REVIEW_CODE_SHA256` from jmbp
-     `~/.sunset_credentials` to the Air; create
-     `~/.android/keystores/sunset-upload.p12` and `PLAY_UPLOAD_*`; build and
-     verify the signed AAB/APK (package, versionCode 1, targetSdk 36, 16 KB
-     alignment of every native library).
-  4. Play Console (E3 Apps): create the app, the three products with
-     `trial-7d` offers, listing/graphics/screenshots (composite to 1080 x
-     1920), App content answers from `android/play-assets/listing-en-US.md`.
-     Publish the updated `docs/privacy-policy.html` and `docs/terms.html` first.
+     ones; grant the RevenueCat service account on the new app.
+  4. Build and verify the signed AAB/APK (package, versionCode 1, targetSdk 36,
+     16 KB alignment of every native library). Listing, graphics, screenshots
+     (composite to 1080 x 1920) and App content answers from
+     `android/play-assets/listing-en-US.md`. Publish the updated
+     `docs/privacy-policy.html` and `docs/terms.html` first.
   5. Internal track upload, licensed-tester purchase and restore, pre-launch
      report, then a production draft. The production send waits for its
      pacing slot (`~/docs/android/fleet-rollout-2026-10-15.md`).
