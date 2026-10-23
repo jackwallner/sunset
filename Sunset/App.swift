@@ -162,6 +162,7 @@ struct MainTabView: View {
         ZStack(alignment: .topLeading) {
             TabView(selection: $selection) {
                 NavigationStack { TodayView() }
+                    .horizontalBarsInPane(split != nil)
                     .tabItem { Label("Today", systemImage: "sun.horizon.fill") }
                     .tag(0)
                 if split == nil {
@@ -170,16 +171,20 @@ struct MainTabView: View {
                         .tag(1)
                 }
                 NavigationStack { SettingsView() }
+                    .horizontalBarsInPane(split != nil)
                     .tabItem { Label("Settings", systemImage: "slider.horizontal.3") }
                     .tag(2)
             }
+            .horizontalBarsInPane(split != nil)
             .environment(\.horizontalSizeClass, paneSizeClass)
-            .environment(\.paneHasFloatingTabBar, split != nil)
+            .environment(\.isUnfoldedPane, split != nil)
             .frame(maxWidth: split?.primaryWidth ?? .infinity, maxHeight: .infinity)
 
             if let split {
                 NavigationStack { OutlookView() }
+                    .horizontalBarsInPane(true)
                     .environment(\.horizontalSizeClass, .compact)
+                    .environment(\.isUnfoldedPane, true)
                     .frame(maxWidth: split.secondaryWidth, maxHeight: .infinity)
                     .padding(.leading, split.secondaryX)
             }

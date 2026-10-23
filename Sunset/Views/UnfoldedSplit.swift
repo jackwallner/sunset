@@ -82,46 +82,243 @@ private struct LeadingPaneColumn: ViewModifier {
     }
 }
 
-extension EnvironmentValues {
-    /// True in the unfolded leading pane, where the tab bar floats over the
-    /// bottom of a narrow screen beside the fold.
-    @Entry var paneHasFloatingTabBar = false
-}
+/// How far a pane's content stays above its bottom bar: the floating tab bar
+/// in the leading pane, the home indicator in the trailing one. Split,
+/// content ends `gap` above the bar's safe-area edge, and a bottom scroll
+/// content margin of `gap` lets the last row scroll up to that line. Folded,
+/// nothing is hidden and the phone layout is untouched.
+struct PaneClearance: Equatable, Sendable {
+    /// Masked out from the bottom: the bar's inset plus the gap.
+    var hidden: CGFloat
+    /// Bottom scroll content margin; `nil` keeps the system's.
+    var contentMargin: CGFloat?
 
-extension View {
-    /// In the unfolded leading pane, fades scroll content out just above the
-    /// floating tab bar, so the bar rests on open sky instead of over a card.
-    /// Folded it changes nothing. Apply it to the scroll view, before the
-    /// screen's sky.
-    func clearsFloatingTabBar() -> some View {
-        modifier(FloatingTabBarClearance())
+    static let gap: CGFloat = 12
+
+    static func make(isSplit: Bool, barInset: CGFloat) -> PaneClearance {
+        guard isSplit else { return PaneClearance(hidden: 0, contentMargin: nil) }
+        return PaneClearance(hidden: max(barInset, 0) + gap, contentMargin: gap)
     }
 }
 
-private struct FloatingTabBarClearance: ViewModifier {
-    @Environment(\.paneHasFloatingTabBar) private var isActive
+/// Where a pane's content stops above its bar. A block (a card, a list
+/// section, a caption) the clearance line would slice ends early below its
+/// last whole row, with rounded bottom corners as if it ended there, or
+/// hides whole when not one row fits. So a pane never shows half a row.
+struct PaneCut: Equatable, Sendable {
+    /// In the same space as the blocks' frames.
+    var y: CGFloat
+    /// The block that ends early at `y`, whose corners the cut rounds.
+    var closes: Closing?
 
-    /// The fade above the bar, and how far the opaque mask reaches past the
-    /// scroll view's frame so the status bar strip and the phone's own
-    /// under-bar scrolling are untouched.
-    private static let fade: CGFloat = 36
-    private static let overscan: CGFloat = 2000
+    struct Closing: Equatable, Sendable {
+        var minX: CGFloat
+        var maxX: CGFloat
+        var radius: CGFloat
+    }
+
+    /// A block's corner radius, and the space it keeps below its last row.
+    struct Style: Equatable, Sendable {
+        var radius: CGFloat
+        var padding: CGFloat
+
+        static let card = Style(radius: Theme.cardRadius, padding: 18)
+        /// An inset grouped List section: rows measure their whole cell.
+        static let groupedList = Style(radius: 26, padding: 0)
+    }
+
+    /// One measured view: a block's frame or one of its rows.
+    struct Part: Equatable, Sendable {
+        var block: String
+        var frame: CGRect
+        var isRow: Bool
+        var style: Style
+    }
+
+    struct Block: Equatable, Sendable {
+        var frame: CGRect
+        /// Where the block can end early: below each whole row.
+        var breaks: [CGFloat]
+        var radius: CGFloat
+    }
+
+    static func blocks(from parts: some Sequence<Part>) -> [Block] {
+        Dictionary(grouping: parts, by: \.block).values.map { parts in
+            Block(
+                frame: parts.dropFirst().reduce(parts[0].frame) { $0.union($1.frame) },
+                breaks: parts.filter(\.isRow).map { $0.frame.maxY + $0.style.padding },
+                radius: parts[0].style.radius
+            )
+        }
+    }
+
+    static func make(line: CGFloat, blocks: some Sequence<Block>) -> PaneCut {
+        var cut = PaneCut(y: line, closes: nil)
+        for block in blocks where block.frame.minY < line - 0.5 && block.frame.maxY > line + 0.5 {
+            let end = block.breaks.filter { $0 > block.frame.minY && $0 <= line }.max()
+            let candidate = end.map {
+                PaneCut(y: $0, closes: Closing(minX: block.frame.minX, maxX: block.frame.maxX, radius: block.radius))
+            } ?? PaneCut(y: block.frame.minY, closes: nil)
+            if candidate.y < cut.y { cut = candidate }
+        }
+        return cut
+    }
+}
+
+/// The blocks one pane's scroll view reports, read by its mask.
+@MainActor @Observable
+final class PaneBlocks {
+    var parts: [UUID: PaneCut.Part] = [:]
+}
+
+extension EnvironmentValues {
+    /// True in either pane of the unfolded split.
+    @Entry var isUnfoldedPane = false
+    /// The pane's block frames. `nil` folded, so the phone layout does no
+    /// bookkeeping while it scrolls.
+    @Entry var paneBlocks: PaneBlocks? = nil
+    /// The card a `paneRow()` belongs to.
+    @Entry var paneBlockID: String? = nil
+}
+
+extension View {
+    /// In either unfolded pane, ends a scroll view's content just above the
+    /// pane's bottom bar without slicing a row (see `PaneCut`). Blocks must
+    /// be tagged (`paneCard()`, `paneListRow`) or the line cuts through them.
+    /// Folded the mask is fully open. Apply it to the scroll view, before
+    /// the screen's sky.
+    func clearsPaneBottom() -> some View {
+        modifier(PaneBottomClearance())
+    }
+
+    /// A card (or caption) the pane cut ends below a whole `paneRow()` or
+    /// hides whole.
+    func paneCard(_ style: PaneCut.Style = .card) -> some View {
+        modifier(PaneCardBlock(style: style))
+    }
+
+    /// A row of the enclosing `paneCard()`: the card can end below it.
+    func paneRow() -> some View {
+        modifier(PanePartReporter(block: nil, isRow: true, style: .card))
+    }
+
+    /// A row of an inset grouped List section, measured through its row
+    /// background, which fills the cell.
+    func paneListRow(_ section: String) -> some View {
+        listRowBackground(
+            Theme.row.modifier(PanePartReporter(block: section, isRow: true, style: .groupedList))
+        )
+    }
+
+    /// A List section's header or footer, cut with the section's rows.
+    func paneListPart(_ section: String) -> some View {
+        modifier(PanePartReporter(block: section, isRow: false, style: .groupedList))
+    }
+
+    /// Keeps the phone's horizontal bars in an unfolded pane. iOS 27.1
+    /// otherwise draws the tab bar as a vertical rail on some screens and a
+    /// bottom bar on others, and moves a pushed screen's back button to the
+    /// trailing edge. Folded, the system default.
+    @ViewBuilder
+    func horizontalBarsInPane(_ isSplit: Bool) -> some View {
+        if #available(iOS 27.1, *) {
+            toolbarVerticalBehavior(isSplit ? .disabled : .automatic)
+        } else {
+            self
+        }
+    }
+}
+
+private struct PaneBottomClearance: ViewModifier {
+    @Environment(\.isUnfoldedPane) private var isSplit
+    @State private var barInset: CGFloat = 0
+    @State private var blocks = PaneBlocks()
+
+    func body(content: Content) -> some View {
+        let clearance = PaneClearance.make(isSplit: isSplit, barInset: barInset)
+        content
+            .environment(\.paneBlocks, isSplit ? blocks : nil)
+            .contentMargins(.bottom, clearance.contentMargin, for: .scrollContent)
+            .bottomScrollEdgeEffectHidden(isSplit)
+            .mask {
+                PaneCutMask(blocks: blocks, hidden: clearance.hidden, isSplit: isSplit)
+                    .ignoresSafeArea()
+            }
+            .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { barInset = $0 }
+            .onChange(of: isSplit) { blocks.parts = [:] }
+    }
+}
+
+private struct PaneCutMask: View {
+    let blocks: PaneBlocks
+    let hidden: CGFloat
+    let isSplit: Bool
+
+    var body: some View {
+        GeometryReader { proxy in
+            let frame = proxy.frame(in: .global)
+            let cut = isSplit
+                ? PaneCut.make(line: frame.maxY - hidden, blocks: PaneCut.blocks(from: blocks.parts.values))
+                : PaneCut(y: frame.maxY, closes: nil)
+            let y = min(max(cut.y - frame.minY, 0), frame.height)
+            let radius = cut.closes.map { min($0.radius, y / 2) } ?? 0
+            // Two overlapping shapes rather than one path, so no seam shows
+            // where the straight part meets the rounded card bottom.
+            ZStack(alignment: .topLeading) {
+                Rectangle().frame(width: frame.width, height: y - radius)
+                if let closes = cut.closes, radius > 0 {
+                    UnevenRoundedRectangle(
+                        bottomLeadingRadius: radius,
+                        bottomTrailingRadius: radius,
+                        style: .continuous
+                    )
+                    .frame(width: closes.maxX - closes.minX, height: radius * 2)
+                    .offset(x: closes.minX - frame.minX, y: y - radius * 2)
+                }
+            }
+            .frame(width: frame.width, height: frame.height, alignment: .topLeading)
+        }
+    }
+}
+
+private struct PaneCardBlock: ViewModifier {
+    let style: PaneCut.Style
+    @State private var id = UUID().uuidString
 
     func body(content: Content) -> some View {
         content
-            .contentMargins(.bottom, isActive ? Self.fade / 2 : nil, for: .scrollContent)
-            .mask {
-                VStack(spacing: 0) {
-                    Color.black
-                    LinearGradient(
-                        colors: [.black, .black.opacity(isActive ? 0 : 1)],
-                        startPoint: .top,
-                        endPoint: .bottom
-                    )
-                    .frame(height: Self.fade)
-                }
-                .padding(.top, -Self.overscan)
-                .padding(.bottom, isActive ? 0 : -Self.overscan)
+            .environment(\.paneBlockID, id)
+            .modifier(PanePartReporter(block: id, isRow: false, style: style))
+    }
+}
+
+private struct PanePartReporter: ViewModifier {
+    /// `nil` joins the enclosing `paneCard()`.
+    let block: String?
+    let isRow: Bool
+    let style: PaneCut.Style
+    @Environment(\.paneBlocks) private var paneBlocks
+    @Environment(\.paneBlockID) private var enclosingBlock
+    @State private var id = UUID()
+
+    func body(content: Content) -> some View {
+        content
+            .onGeometryChange(for: CGRect.self) { $0.frame(in: .global) } action: { frame in
+                guard let paneBlocks, let name = block ?? enclosingBlock else { return }
+                let part = PaneCut.Part(block: name, frame: frame, isRow: isRow, style: style)
+                if paneBlocks.parts[id] != part { paneBlocks.parts[id] = part }
             }
+            .onDisappear { paneBlocks?.parts[id] = nil }
+    }
+}
+
+private extension View {
+    @ViewBuilder
+    func bottomScrollEdgeEffectHidden(_ hidden: Bool) -> some View {
+        if #available(iOS 26.0, *) {
+            scrollEdgeEffectHidden(hidden, for: .bottom)
+        } else {
+            self
+        }
     }
 }

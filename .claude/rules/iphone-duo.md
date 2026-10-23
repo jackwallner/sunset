@@ -4,9 +4,12 @@ paths:
   - "Sunset/Views/UnfoldedSplit.swift"
   - "Sunset/Views/TodayView.swift"
   - "Sunset/Views/OutlookView.swift"
+  - "Sunset/Views/SettingsView.swift"
+  - "Sunset/Views/ScoreComponents.swift"
+  - "SunsetTests/UnfoldedSplitTests.swift"
 ---
 
-# Sunset: iPhone Duo (2026-10-21)
+# Sunset: iPhone Duo (2026-10-21, bars and pane cut 2026-10-23)
 
 - Unfolded (regular width, at least 720 pt), `MainTabView` puts the TabView
   (Today and Settings, tab bar included) on the leading side of the fold and
@@ -17,27 +20,33 @@ paths:
 - Same pattern as Vitals (`jackwallner/vitals`, `Shared/Utilities/UnfoldedSplit.swift`).
   Folding only moves frames, so Today and Settings keep scroll and navigation;
   only the Outlook pane and tab are separate instances.
-- Each pane gets `horizontalSizeClass = .compact`. The system still picks
-  the tab bar's form: some iOS 27.1 runtime builds draw a bottom capsule in
-  the leading pane, others the Duo's vertical capsule at its trailing edge
-  (2026-10-22 captures J1/J2 vs J3/J4). Both stay inside the leading pane
-  and over no content.
-- The floating tab bar never sits over content: in the leading pane
-  (`paneHasFloatingTabBar`), Today, the show detail and Settings apply
-  `.clearsFloatingTabBar()`, which masks scroll content to fade out just
-  above the bar's safe-area edge. Folded, the mask is fully opaque and the
-  phone look is unchanged. A shots review (2026-10-22) rejected captures
-  with the capsule over factor rows.
+- Each pane gets `horizontalSizeClass = .compact` and `isUnfoldedPane`.
+- One navigation everywhere: split, both panes apply
+  `horizontalBarsInPane` (`toolbarVerticalBehavior(.disabled)`, iOS 27.1).
+  Without it the system drew the tab bar as a bottom capsule on some
+  screens and a vertical rail beside the fold on others, squeezed the
+  column beside the rail, and moved the trailing pane's back button to the
+  top right (review rejected that set, 2026-10-23).
+- Nothing is ever sliced at a pane's bottom bar (the tab bar on the leading
+  side, the home indicator on the trailing one): Today, the show detail,
+  Settings and the Outlook apply `.clearsPaneBottom()`, which masks content
+  a 12 pt gap above the bar. Tagged blocks report their frames: `Card` and
+  the Outlook's day cards are `paneCard()`, their rows `paneRow()`, Settings
+  rows `paneListRow(section)` and headers `paneListPart(section)`.
+  `PaneCut` (tested) moves the cut up to below the last whole row, rounding
+  the card's corners there, or hides a block whole when no row fits. A new
+  card or row in these screens needs the tag, or the line slices it. The
+  earlier fade was rejected: it sliced the Streaks and Humidity rows.
+  Folded the mask is fully open and nothing reports.
 - Onboarding and the full-screen paywall use `.leadingPaneColumn()` before
   their sky, so the column sits in the leading pane and the sky still fills
   the display.
-- Captures: gh-sim takes one shot per display after `--wait`, and no
-  `--url` (custom-scheme `simctl openurl` raises an "Open in Sunset?" alert
-  the job cannot tap; never pass fake URLs as shutter ticks). So each inner
-  surface is its own `gh-sim launch --device 'iPhone Duo'` with
-  `-DemoLocation -DemoForecast -DemoPro` plus `-ScreenshotScene <scene>`
-  (`detail`, `events`) or `-ScreenshotTab 2 -ScreenshotScene day` (Settings
-  beside the best day). The `all` run adds `-DuoTour` with
-  `--record-seconds 25 --wait 26`: the tour walks detail, day, events and
-  Settings once for the recording, then settles on Today before the shot.
-  Inner 2853x2007 landscape, outer 1398x2034.
+- Captures: one `gh-sim all --device 'iPhone Duo' --dark --args
+  "-DemoLocation -DemoForecast -DemoPro"` with one `--screen` per surface:
+  `-ScreenshotScene today`, `-ScreenshotScene detail` (hero breakdown beside
+  the week), `-ScreenshotScene events` (Up next, sky events, alerts) and
+  `-ScreenshotTab 2 -ScreenshotScene day` (Settings beside the best day).
+  No `--url`: custom-scheme `simctl openurl` raises an "Open in Sunset?"
+  alert. `-DuoTour` (with `-DuoTourFirst`/`-DuoTourStep`) walks the scenes
+  for a `gh-sim launch --record-seconds 20` recording. Inner 2853x2007
+  landscape, outer 1398x2034.

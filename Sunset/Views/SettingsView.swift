@@ -11,109 +11,129 @@ struct SettingsView: View {
 
     var body: some View {
         List {
-            Group {
-                Section {
-                    if store.isPro {
-                        Label {
-                            Text("Sun+ is on")
-                        } icon: {
-                            Image(systemName: "checkmark.seal.fill").foregroundStyle(Theme.gold)
-                        }
-                    } else {
-                        Button {
-                            showPaywall = true
-                        } label: {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 3) {
-                                    Text("Sun+").font(.headline)
-                                    Text("The full week, storm, rainbow and fog alerts")
-                                        .font(.subheadline)
-                                        .foregroundStyle(Theme.textSecondary)
-                                }
-                                Spacer()
-                                PlusCapsule()
-                            }
-                        }
-                        .foregroundStyle(Theme.textPrimary)
+            Section {
+                if store.isPro {
+                    Label {
+                        Text("Sun+ is on")
+                    } icon: {
+                        Image(systemName: "checkmark.seal.fill").foregroundStyle(Theme.gold)
                     }
-                }
-
-                Section {
-                    ForEach(SunEvent.allCases, id: \.self) { event in
-                        Toggle(isOn: Binding(
-                            get: { settings.watched.contains(event) },
-                            set: { _ in settings.toggle(event) }
-                        )) {
-                            Label(event.title, systemImage: event.symbol)
-                        }
-                        .disabled(settings.watched == [event])
-                    }
-                } header: {
-                    Text("Watch")
-                } footer: {
-                    Text("Today, the outlook, the widget and alerts follow what you watch.")
-                }
-
-                Section("Alerts") {
+                    .paneListRow("plus")
+                } else {
                     Button {
-                        showAlertSetup = true
+                        showPaywall = true
                     } label: {
                         HStack {
-                            Text("Alerts")
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text("Sun+").font(.headline)
+                                Text("The full week, storm, rainbow and fog alerts")
+                                    .font(.subheadline)
+                                    .foregroundStyle(Theme.textSecondary)
+                            }
                             Spacer()
-                            Text(alertsStatus)
-                                .foregroundStyle(Theme.textSecondary)
+                            PlusCapsule()
                         }
                     }
                     .foregroundStyle(Theme.textPrimary)
-                }
-
-                Section("Location") {
-                    HStack {
-                        Text("Forecast for")
-                        Spacer()
-                        Text(location.location?.placeName ?? "Not set")
-                            .foregroundStyle(Theme.textSecondary)
-                    }
-                    Button("Update location") {
-                        location.request { fix in ForecastStore.shared.refresh(location: fix, force: true) }
-                    }
-                }
-
-                Section("About") {
-                    Link("Rate Sunset", destination: SunsetLinks.writeReviewURL)
-                    Link("Support", destination: SunsetLinks.support)
-                    Link("Privacy Policy", destination: SunsetLinks.privacyPolicy)
-                    Link("Terms of Use", destination: SunsetLinks.terms)
-                    Button("Restore purchases") {
-                        Task {
-                            await store.restore()
-                            restoreMessage = store.isPro ? "Sun+ is restored." : (store.errorMessage ?? "No active Sun+ purchase was found for this Apple ID.")
-                            store.clearError()
-                        }
-                    }
-                    Link("Weather data by Open-Meteo", destination: SunsetLinks.openMeteo)
-                }
-
-                #if DEBUG
-                Section("Developer") {
-                    Toggle("Sun+ override", isOn: Binding(
-                        get: { store.isPro },
-                        set: { store.setLocalOverride(isPro: $0) }
-                    ))
-                }
-                #endif
-
-                Section {
-                    Text("Scores are a forecast of cloud, humidity and visibility at sunrise and sunset, not a promise. Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")")
-                        .font(.footnote)
-                        .foregroundStyle(Theme.textSecondary)
+                    .paneListRow("plus")
                 }
             }
-            .listRowBackground(Theme.row)
+
+            Section {
+                ForEach(SunEvent.allCases, id: \.self) { event in
+                    Toggle(isOn: Binding(
+                        get: { settings.watched.contains(event) },
+                        set: { _ in settings.toggle(event) }
+                    )) {
+                        Label(event.title, systemImage: event.symbol)
+                    }
+                    .disabled(settings.watched == [event])
+                    .paneListRow("watch")
+                }
+            } header: {
+                Text("Watch").paneListPart("watch")
+            } footer: {
+                Text("Today, the outlook, the widget and alerts follow what you watch.")
+                    .paneListPart("watch")
+            }
+
+            Section {
+                Button {
+                    showAlertSetup = true
+                } label: {
+                    HStack {
+                        Text("Alerts")
+                        Spacer()
+                        Text(alertsStatus)
+                            .foregroundStyle(Theme.textSecondary)
+                    }
+                }
+                .foregroundStyle(Theme.textPrimary)
+                .paneListRow("alerts")
+            } header: {
+                Text("Alerts").paneListPart("alerts")
+            }
+
+            Section {
+                HStack {
+                    Text("Forecast for")
+                    Spacer()
+                    Text(location.location?.placeName ?? "Not set")
+                        .foregroundStyle(Theme.textSecondary)
+                }
+                .paneListRow("location")
+                Button("Update location") {
+                    location.request { fix in ForecastStore.shared.refresh(location: fix, force: true) }
+                }
+                .paneListRow("location")
+            } header: {
+                Text("Location").paneListPart("location")
+            }
+
+            Section {
+                Link("Rate Sunset", destination: SunsetLinks.writeReviewURL)
+                    .paneListRow("about")
+                Link("Support", destination: SunsetLinks.support)
+                    .paneListRow("about")
+                Link("Privacy Policy", destination: SunsetLinks.privacyPolicy)
+                    .paneListRow("about")
+                Link("Terms of Use", destination: SunsetLinks.terms)
+                    .paneListRow("about")
+                Button("Restore purchases") {
+                    Task {
+                        await store.restore()
+                        restoreMessage = store.isPro ? "Sun+ is restored." : (store.errorMessage ?? "No active Sun+ purchase was found for this Apple ID.")
+                        store.clearError()
+                    }
+                }
+                .paneListRow("about")
+                Link("Weather data by Open-Meteo", destination: SunsetLinks.openMeteo)
+                    .paneListRow("about")
+            } header: {
+                Text("About").paneListPart("about")
+            }
+
+            #if DEBUG
+            Section {
+                Toggle("Sun+ override", isOn: Binding(
+                    get: { store.isPro },
+                    set: { store.setLocalOverride(isPro: $0) }
+                ))
+                .paneListRow("developer")
+            } header: {
+                Text("Developer").paneListPart("developer")
+            }
+            #endif
+
+            Section {
+                Text("Scores are a forecast of cloud, humidity and visibility at sunrise and sunset, not a promise. Version \(Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "")")
+                    .font(.footnote)
+                    .foregroundStyle(Theme.textSecondary)
+                    .paneListRow("version")
+            }
         }
         .scrollContentBackground(.hidden)
-        .clearsFloatingTabBar()
+        .clearsPaneBottom()
         .background {
             SkyBackdrop(score: forecastStore.nextShow?.score.total ?? 70, event: forecastStore.nextShow?.event ?? .sunset, horizon: 0.14)
         }

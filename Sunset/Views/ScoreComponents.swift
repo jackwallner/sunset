@@ -192,6 +192,7 @@ struct Card<Content: View>: View {
             .padding(18)
             .frame(maxWidth: .infinity, alignment: .leading)
             .glass()
+            .paneCard()
     }
 }
 

@@ -29,7 +29,7 @@ struct TodayView: View {
                 .padding(.bottom, 24)
                 .id("top")
             }
-            .clearsFloatingTabBar()
+            .clearsPaneBottom()
             #if DEBUG
             .task(id: screenshots.scene) { await openScreenshotScene(screenshots.scene, proxy: proxy) }
             #endif
@@ -136,6 +136,7 @@ struct TodayView: View {
                 .font(.headline)
             ForEach(hero.score.factors) { factor in
                 FactorRow(factor: factor, tone: Theme.tone(score: hero.score.total))
+                    .paneRow()
             }
         }
 
@@ -150,12 +151,13 @@ struct TodayView: View {
                         ShowRow(show: show, zone: zone, title: SunsetFormat.headline(show, zone: zone))
                     }
                     .buttonStyle(.plain)
+                    .paneRow()
                 }
             }
+            .id("upNext")
         }
 
         skyEventsCard(forecast: forecast)
-            .id("events")
         alertsCard
 
         if let message = forecastStore.errorMessage {
@@ -163,21 +165,24 @@ struct TodayView: View {
                 .font(.footnote)
                 .foregroundStyle(Theme.textSecondary)
                 .multilineTextAlignment(.center)
+                .paneCard()
         }
 
         Text("Forecast by Open-Meteo, updated \(SunsetFormat.time(forecast.fetched)).")
             .font(.caption)
             .foregroundStyle(Theme.textSecondary)
+            .paneCard()
     }
 
     #if DEBUG
-    /// Store captures (`ScreenshotRouter`): `events` and `alerts` need no
-    /// scrolling or tapping; any other scene returns to the top.
+    /// Store captures (`ScreenshotRouter`): `events` scrolls to Up next,
+    /// `alerts` opens the alert sheet; any other scene returns to the top.
     private func openScreenshotScene(_ scene: String?, proxy: ScrollViewProxy) async {
         guard let scene else { return }
         try? await Task.sleep(for: .milliseconds(400))
         switch scene {
-        case "events": proxy.scrollTo("events", anchor: .center)
+        // Up next a little below the top, clear of the status bar fade.
+        case "events": proxy.scrollTo("upNext", anchor: UnitPoint(x: 0.5, y: 0.08))
         case "alerts":
             settings.alertsEnabled = true
             showAlertSetup = true
@@ -201,6 +206,7 @@ struct TodayView: View {
             } else {
                 ForEach(events) { event in
                     SkyEventRow(event: event, zone: forecast.timeZone)
+                        .paneRow()
                 }
             }
             if !store.isPro {
@@ -220,6 +226,7 @@ struct TodayView: View {
                     .font(.subheadline)
                     .foregroundStyle(Theme.textSecondary)
             }
+            .paneRow()
             Button(settings.alertsEnabled ? "Change alerts" : "Turn on alerts") {
                 showAlertSetup = true
             }

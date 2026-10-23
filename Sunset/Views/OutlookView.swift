@@ -33,6 +33,7 @@ struct OutlookView: View {
             .padding(.horizontal, 16)
             .padding(.bottom, 24)
         }
+        .clearsPaneBottom()
         .background {
             SkyBackdrop(score: forecastStore.nextShow?.score.total ?? 60, event: forecastStore.nextShow?.event ?? .sunset, horizon: 0.14)
         }
@@ -118,8 +119,10 @@ private struct DayCard: View {
                         ShowRow(show: show, zone: zone)
                     }
                     .buttonStyle(.plain)
+                    .paneRow()
                 } else {
                     ShowRow(show: show, zone: zone, showsChevron: false)
+                        .paneRow()
                 }
             }
             if !events.isEmpty {
@@ -130,6 +133,7 @@ private struct DayCard: View {
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
+                .paneRow()
             }
         }
         .padding(18)
@@ -137,6 +141,7 @@ private struct DayCard: View {
         .background { DaySky(show: lead) }
         .clipShape(RoundedRectangle(cornerRadius: Theme.cardRadius))
         .overlay(RoundedRectangle(cornerRadius: Theme.cardRadius).strokeBorder(.white.opacity(0.14), lineWidth: 1))
+        .paneCard()
     }
 
     /// The show that colours the card: the sunset when it is watched,
@@ -191,6 +196,7 @@ struct ShowDetailView: View {
                     Card {
                         ForEach(show.score.factors) { factor in
                             FactorRow(factor: factor, tone: Theme.tone(score: show.score.total))
+                                .paneRow()
                         }
                     }
                     .id("factors")
@@ -203,12 +209,13 @@ struct ShowDetailView: View {
                         Text("Humidity \(Int(show.conditions.humidity))% · Visibility \(visibilityLabel)")
                             .font(.caption)
                             .foregroundStyle(Theme.textSecondary)
+                            .paneRow()
                     }
                 }
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
             }
-            .clearsFloatingTabBar()
+            .clearsPaneBottom()
             #if DEBUG
             .task {
                 // Store capture: open on the factors and cloud cover.
@@ -247,5 +254,6 @@ struct ShowDetailView: View {
                 .font(.subheadline.monospacedDigit())
                 .foregroundStyle(Theme.textSecondary)
         }
+        .paneRow()
     }
 }
