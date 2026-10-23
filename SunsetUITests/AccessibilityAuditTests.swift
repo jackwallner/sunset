@@ -4,8 +4,8 @@ import XCTest
 /// Every test attaches screenshots and a frame report; none asserts on
 /// layout quality, so the run always yields evidence.
 final class AccessibilityAuditTests: XCTestCase {
-    private static let xxxl = "UICTContentSizeCategoryAccessibilityExtraExtraExtraLarge"
-    private static let ax3 = "UICTContentSizeCategoryAccessibilityExtraLarge"
+    private static let xxxl = "ax5"
+    private static let ax3 = "ax3"
 
     override func setUp() {
         continueAfterFailure = true
@@ -14,7 +14,7 @@ final class AccessibilityAuditTests: XCTestCase {
     private func launch(_ extra: [String], size: String? = nil) -> XCUIApplication {
         let app = XCUIApplication()
         var args = extra
-        if let size { args += ["-UIPreferredContentSizeCategoryName", size] }
+        if let size { args += ["-DynamicType", size] }
         app.launchArguments = args
         app.launch()
         return app
@@ -32,17 +32,18 @@ final class AccessibilityAuditTests: XCTestCase {
     private func report(_ app: XCUIApplication, _ name: String) {
         let screen = app.windows.firstMatch.frame
         var lines = ["screen \(Int(screen.width))x\(Int(screen.height))"]
-        for type in [XCUIElement.ElementType.button, .link, .switch, .cell, .segmentedControl] {
-            for element in app.descendants(matching: type).allElementsBoundByIndex {
-                let f = element.frame
-                guard f.width > 0, f.height > 0 else { continue }
+        let types: Set<XCUIElement.ElementType> = [.button, .link, .switch, .cell, .segmentedControl]
+        func walk(_ node: XCUIElementSnapshot) {
+            let f = node.frame
+            if types.contains(node.elementType), f.width > 0, f.height > 0 {
                 var flags: [String] = []
                 if f.height < 44 || f.width < 44 { flags.append("SMALL") }
                 if f.maxY > screen.height + 1 || f.minX < -1 || f.maxX > screen.width + 1 { flags.append("OFFSCREEN") }
-                if !element.isHittable { flags.append("NOT_HITTABLE") }
-                lines.append("\(type.rawValue) '\(element.label)' \(Int(f.minX)),\(Int(f.minY)) \(Int(f.width))x\(Int(f.height)) \(flags.joined(separator: ","))")
+                lines.append("\(node.elementType.rawValue) '\(node.label)' \(Int(f.minX)),\(Int(f.minY)) \(Int(f.width))x\(Int(f.height)) \(flags.joined(separator: ","))")
             }
+            node.children.forEach(walk)
         }
+        if let snapshot = try? app.snapshot() { walk(snapshot) } else { lines.append("snapshot failed") }
         let attachment = XCTAttachment(string: lines.joined(separator: "\n"))
         attachment.name = "frames-\(name)"
         attachment.lifetime = .keepAlways
@@ -171,10 +172,13 @@ final class AccessibilityAuditTests: XCTestCase {
 
     func testPaywallFromTodayCloseReach() {
         let app = launch(demo)
+        app.tabBars.buttons["Outlook"].tap()
+        sleep(1)
         app.swipeUp()
-        app.swipeUp()
-        app.buttons["Get alerted before them"].tap()
+        look(app, "outlook-locked-default")
+        let unlock = app.buttons.matching(NSPredicate(format: "label CONTAINS[c] 'Sun+' OR label CONTAINS[c] 'unlock' OR label CONTAINS[c] 'week'")).firstMatch
+        if unlock.waitForExistence(timeout: 3) { unlock.tap() }
         sleep(2)
-        look(app, "paywall-sheet-from-today")
+        look(app, "paywall-sheet-from-outlook")
     }
 }

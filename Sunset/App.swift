@@ -24,6 +24,7 @@ struct SunsetApp: App {
                 // Every screen is drawn on a forecast sky with light text, so
                 // the system chrome always matches it.
                 .preferredColorScheme(.dark)
+                .modifier(DebugDynamicType())
                 .task {
                     store.start()
                     settings.recordOpen()
@@ -110,6 +111,22 @@ enum LaunchArguments {
         return Int(arguments[index + 1])
         #else
         return nil
+        #endif
+    }
+}
+
+/// DEBUG-only: `-DynamicType ax3|ax5` forces a text size for accessibility captures.
+private struct DebugDynamicType: ViewModifier {
+    func body(content: Content) -> some View {
+        #if DEBUG
+        let arguments = ProcessInfo.processInfo.arguments
+        if let index = arguments.firstIndex(of: "-DynamicType"), index + 1 < arguments.count {
+            content.dynamicTypeSize(arguments[index + 1] == "ax5" ? .accessibility5 : .accessibility3)
+        } else {
+            content
+        }
+        #else
+        content
         #endif
     }
 }
