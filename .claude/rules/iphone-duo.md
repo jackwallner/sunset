@@ -17,8 +17,11 @@ paths:
 - Same pattern as Vitals (`jackwallner/vitals`, `Shared/Utilities/UnfoldedSplit.swift`).
   Folding only moves frames, so Today and Settings keep scroll and navigation;
   only the Outlook pane and tab are separate instances.
-- Each pane gets `horizontalSizeClass = .compact`, which also keeps the
-  system tab bar at the bottom as on a phone.
+- Each pane gets `horizontalSizeClass = .compact`. The system still picks
+  the tab bar's form: some iOS 27.1 runtime builds draw a bottom capsule in
+  the leading pane, others the Duo's vertical capsule at its trailing edge
+  (2026-10-22 captures J1/J2 vs J3/J4). Both stay inside the leading pane
+  and over no content.
 - The floating tab bar never sits over content: in the leading pane
   (`paneHasFloatingTabBar`), Today, the show detail and Settings apply
   `.clearsFloatingTabBar()`, which masks scroll content to fade out just
