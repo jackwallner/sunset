@@ -40,7 +40,7 @@ final class NewcomerAuditUITests: XCTestCase {
 
     /// Taps a system permission alert if one shows up. Returns its text.
     @discardableResult
-    private func answerSystemAlert(allow: Bool, wait: TimeInterval = 6) -> String? {
+    private func answerSystemAlert(allow: Bool, wait: TimeInterval = 20) -> String? {
         let alert = springboard.alerts.firstMatch
         guard alert.waitForExistence(timeout: wait) else { return nil }
         let text = alert.staticTexts.allElementsBoundByIndex.map(\.label).joined(separator: " | ")
@@ -82,6 +82,8 @@ final class NewcomerAuditUITests: XCTestCase {
         shot("04-plus")
         sizes(app, ["Get Started", "Restore", "Terms", "Privacy"])
 
+        shot("04b-plus-after-alerts-answer")
+        XCTAssertTrue(app.buttons["Get Started"].waitForExistence(timeout: 15))
         app.buttons["Get Started"].tap()
         sleep(3)
         shot("05-today-after-onboarding-t3")
@@ -105,6 +107,7 @@ final class NewcomerAuditUITests: XCTestCase {
         answerSystemAlert(allow: false)
         sleep(2)
         shot("11-plus-after-notification-deny")
+        XCTAssertTrue(app.buttons["Get Started"].waitForExistence(timeout: 15))
         app.buttons["Get Started"].tap()
         sleep(3)
         shot("12-today-location-denied")
