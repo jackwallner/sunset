@@ -79,6 +79,7 @@ struct TodayView: View {
                 requestReview()
             }
         }
+        .keepsPaneEdgeInsets()
     }
 
     /// Captures drive the push from the router, because a `.task` on this
@@ -181,8 +182,8 @@ struct TodayView: View {
         guard let scene else { return }
         try? await Task.sleep(for: .milliseconds(400))
         switch scene {
-        // Up next a little below the top, clear of the status bar fade.
-        case "events": proxy.scrollTo("upNext", anchor: UnitPoint(x: 0.5, y: 0.08))
+        // Up next at the top, the card above it under the status bar strip.
+        case "events": proxy.scrollTo("upNext", anchor: .top)
         case "alerts":
             settings.alertsEnabled = true
             showAlertSetup = true

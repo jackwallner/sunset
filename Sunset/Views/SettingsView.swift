@@ -150,6 +150,7 @@ struct SettingsView: View {
         } message: {
             Text(restoreMessage ?? "")
         }
+        .keepsPaneEdgeInsets()
     }
 
     private var alertsStatus: String {

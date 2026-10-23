@@ -141,6 +141,9 @@ struct MainTabView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
     @State private var selection: Int
     @State private var paneGeometry = PaneGeometry()
+    /// The display's own safe area. Split, the panes reach the display edges
+    /// so each screen's sky fills them, and take these insets back.
+    @State private var displayInsets = EdgeInsets()
     #if DEBUG
     @ObservedObject private var screenshots = ScreenshotRouter.shared
     #endif
@@ -177,19 +180,22 @@ struct MainTabView: View {
             }
             .horizontalBarsInPane(split != nil)
             .environment(\.horizontalSizeClass, paneSizeClass)
-            .environment(\.isUnfoldedPane, split != nil)
+            .environment(\.isLeadingPane, split != nil)
+            .paneEdgeInsets(EdgeInsets(top: 0, leading: split == nil ? 0 : displayInsets.leading, bottom: 0, trailing: 0))
             .frame(maxWidth: split?.primaryWidth ?? .infinity, maxHeight: .infinity)
 
             if let split {
                 NavigationStack { OutlookView() }
                     .horizontalBarsInPane(true)
                     .environment(\.horizontalSizeClass, .compact)
-                    .environment(\.isUnfoldedPane, true)
+                    .paneEdgeInsets(EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: displayInsets.trailing))
                     .frame(maxWidth: split.secondaryWidth, maxHeight: .infinity)
                     .padding(.leading, split.secondaryX)
             }
         }
         .onGeometryChange(for: PaneGeometry.self) { $0.paneGeometry } action: { paneGeometry = $0 }
+        .ignoresSafeArea(.container, edges: split == nil ? [] : .horizontal)
+        .onGeometryChange(for: EdgeInsets.self) { $0.safeAreaInsets } action: { displayInsets = $0 }
         .onChange(of: split != nil) { _, isSplit in
             if isSplit, selection == 1 { selection = 0 }
         }

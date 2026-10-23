@@ -51,6 +51,7 @@ struct OutlookView: View {
             }
         }
         #endif
+        .keepsPaneEdgeInsets()
     }
 
     /// The real days, blurred past reading, under one unlock card.
@@ -230,6 +231,7 @@ struct ShowDetailView: View {
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationTitle(SunsetFormat.monthDay(show.time, zone: zone))
         .navigationBarTitleDisplayMode(.inline)
+        .keepsPaneEdgeInsets()
     }
 
     private var visibilityLabel: String {

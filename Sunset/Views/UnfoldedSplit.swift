@@ -82,9 +82,8 @@ private struct LeadingPaneColumn: ViewModifier {
     }
 }
 
-/// How far a pane's content stays above its bottom bar: the floating tab bar
-/// in the leading pane, the home indicator in the trailing one. Split,
-/// content ends `gap` above the bar's safe-area edge, and a bottom scroll
+/// How far the leading pane's content stays above its floating tab bar.
+/// Split, content ends `gap` above the bar's safe-area edge, and a bottom scroll
 /// content margin of `gap` lets the last row scroll up to that line. Folded,
 /// nothing is hidden and the phone layout is untouched.
 struct PaneClearance: Equatable, Sendable {
@@ -122,7 +121,9 @@ struct PaneCut: Equatable, Sendable {
         var radius: CGFloat
         var padding: CGFloat
 
-        static let card = Style(radius: Theme.cardRadius, padding: 18)
+        /// 12 rather than the card's 18 pt padding: rows sit 14 pt apart, so
+        /// a fuller margin would show the top of the next row.
+        static let card = Style(radius: Theme.cardRadius, padding: 12)
         /// An inset grouped List section: rows measure their whole cell.
         static let groupedList = Style(radius: 26, padding: 0)
     }
@@ -171,9 +172,21 @@ final class PaneBlocks {
     var parts: [UUID: PaneCut.Part] = [:]
 }
 
+/// The display edge insets a pane screen must keep. Split, the panes reach
+/// the display edges so every screen's sky fills them; the screens take the
+/// display's side insets back as safe area, unless the system already gave
+/// them that much.
+enum PaneEdgeInset {
+    static func missing(required: CGFloat, actual: CGFloat) -> CGFloat {
+        max(required - max(actual, 0), 0)
+    }
+}
+
 extension EnvironmentValues {
-    /// True in either pane of the unfolded split.
-    @Entry var isUnfoldedPane = false
+    /// True in the unfolded leading pane, above the floating tab bar.
+    @Entry var isLeadingPane = false
+    /// Side insets the pane's screens keep (`paneEdgeInsets`).
+    @Entry var paneEdgeInsets = EdgeInsets()
     /// The pane's block frames. `nil` folded, so the phone layout does no
     /// bookkeeping while it scrolls.
     @Entry var paneBlocks: PaneBlocks? = nil
@@ -182,8 +195,8 @@ extension EnvironmentValues {
 }
 
 extension View {
-    /// In either unfolded pane, ends a scroll view's content just above the
-    /// pane's bottom bar without slicing a row (see `PaneCut`). Blocks must
+    /// In the unfolded leading pane, ends a scroll view's content just above
+    /// the floating tab bar without slicing a row (see `PaneCut`). Blocks must
     /// be tagged (`paneCard()`, `paneListRow`) or the line cuts through them.
     /// Folded the mask is fully open. Apply it to the scroll view, before
     /// the screen's sky.
@@ -215,6 +228,20 @@ extension View {
         modifier(PanePartReporter(block: section, isRow: false, style: .groupedList))
     }
 
+    /// A pane container that reaches past the display's safe area: hands its
+    /// screens the side insets they keep (`keepsPaneEdgeInsets()`).
+    func paneEdgeInsets(_ insets: EdgeInsets) -> some View {
+        safeAreaPadding(insets)
+            .environment(\.paneEdgeInsets, insets)
+    }
+
+    /// A screen in a pane: its content keeps the display's side insets while
+    /// its sky, drawn ignoring the safe area, fills to the display edge.
+    /// Apply it last, after the screen's sky.
+    func keepsPaneEdgeInsets() -> some View {
+        modifier(PaneEdgeInsetKeeper())
+    }
+
     /// Keeps the phone's horizontal bars in an unfolded pane. iOS 27.1
     /// otherwise draws the tab bar as a vertical rail on some screens and a
     /// bottom bar on others, and moves a pushed screen's back button to the
@@ -229,8 +256,20 @@ extension View {
     }
 }
 
+private struct PaneEdgeInsetKeeper: ViewModifier {
+    @Environment(\.paneEdgeInsets) private var required
+    @State private var actual = EdgeInsets()
+
+    func body(content: Content) -> some View {
+        content
+            .safeAreaPadding(.leading, PaneEdgeInset.missing(required: required.leading, actual: actual.leading))
+            .safeAreaPadding(.trailing, PaneEdgeInset.missing(required: required.trailing, actual: actual.trailing))
+            .onGeometryChange(for: EdgeInsets.self) { $0.safeAreaInsets } action: { actual = $0 }
+    }
+}
+
 private struct PaneBottomClearance: ViewModifier {
-    @Environment(\.isUnfoldedPane) private var isSplit
+    @Environment(\.isLeadingPane) private var isSplit
     @State private var barInset: CGFloat = 0
     @State private var blocks = PaneBlocks()
 

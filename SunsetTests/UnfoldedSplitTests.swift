@@ -72,7 +72,7 @@ final class UnfoldedSplitTests: XCTestCase {
         let blocks = PaneCut.blocks(from: [card("a", 400, 700), row("a", 440, 500), row("a", 514, 574)])
         XCTAssertEqual(blocks, [PaneCut.Block(
             frame: CGRect(x: 16, y: 400, width: 438, height: 300),
-            breaks: [500 + 18, 574 + 18],
+            breaks: [500 + PaneCut.Style.card.padding, 574 + PaneCut.Style.card.padding],
             radius: Theme.cardRadius
         )])
     }
@@ -88,12 +88,12 @@ final class UnfoldedSplitTests: XCTestCase {
             card("factors", 380, 760), row("factors", 440, 500), row("factors", 514, 556), row("factors", 570, 630),
         ])
         let closing = PaneCut.Closing(minX: 16, maxX: 454, radius: Theme.cardRadius)
-        XCTAssertEqual(PaneCut.make(line: 577, blocks: blocks), PaneCut(y: 556 + 18, closes: closing))
+        XCTAssertEqual(PaneCut.make(line: 577, blocks: blocks), PaneCut(y: 556 + PaneCut.Style.card.padding, closes: closing))
     }
 
     func testARowWhosePaddingWouldCrossTheLineGoesToo() {
-        let blocks = PaneCut.blocks(from: [card("a", 380, 760), row("a", 440, 500), row("a", 514, 565)])
-        XCTAssertEqual(PaneCut.make(line: 577, blocks: blocks).y, 500 + 18)
+        let blocks = PaneCut.blocks(from: [card("a", 380, 760), row("a", 440, 500), row("a", 514, 570)])
+        XCTAssertEqual(PaneCut.make(line: 577, blocks: blocks).y, 500 + PaneCut.Style.card.padding)
     }
 
     func testACardWithNoWholeRowAboveTheLineHidesWhole() {
@@ -118,5 +118,16 @@ final class UnfoldedSplitTests: XCTestCase {
         ]
         XCTAssertEqual(PaneCut.make(line: 577, blocks: PaneCut.blocks(from: section)), PaneCut(y: 540, closes: nil))
     }
-}
 
+    // Pane edge insets: the display's side inset is 44 pt.
+
+    func testAScreenWithoutTheSideInsetTakesItAsSafeArea() {
+        XCTAssertEqual(PaneEdgeInset.missing(required: 44, actual: 0), 44)
+    }
+
+    func testAScreenThatAlreadyHasTheInsetAddsNothing() {
+        XCTAssertEqual(PaneEdgeInset.missing(required: 44, actual: 44), 0)
+        XCTAssertEqual(PaneEdgeInset.missing(required: 44, actual: 60), 0)
+        XCTAssertEqual(PaneEdgeInset.missing(required: 0, actual: -3), 0)
+    }
+}
