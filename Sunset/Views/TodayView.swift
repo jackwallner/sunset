@@ -10,6 +10,7 @@ struct TodayView: View {
     @State private var showPaywall = false
     @State private var showAlertSetup = false
     @State private var showHeroDetail = false
+    @Environment(\.isLeadingPane) private var isLeadingPane
     #if DEBUG
     @ObservedObject private var screenshots = ScreenshotRouter.shared
     #endif
@@ -26,7 +27,10 @@ struct TodayView: View {
                     }
                 }
                 .padding(.horizontal, 16)
-                .padding(.bottom, 24)
+                // Unfolded, room for Up next to scroll to the top of the
+                // short pane instead of stopping under a sliver of the card
+                // above it.
+                .padding(.bottom, isLeadingPane ? 80 : 24)
                 .id("top")
             }
             .clearsPaneBottom()
@@ -181,8 +185,9 @@ struct TodayView: View {
         guard let scene else { return }
         try? await Task.sleep(for: .milliseconds(400))
         switch scene {
-        // Up next at the top, the card above it under the status bar strip.
-        case "events": proxy.scrollTo("upNext", anchor: .top)
+        // Up next just below the top, clear of the status fade, with the
+        // card above it out of view.
+        case "events": proxy.scrollTo("upNext", anchor: UnitPoint(x: 0.5, y: 0.02))
         case "alerts":
             settings.alertsEnabled = true
             showAlertSetup = true

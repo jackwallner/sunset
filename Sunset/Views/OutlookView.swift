@@ -293,6 +293,6 @@ private struct PaneBackHeader: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 6)
-        .background(.ultraThinMaterial, ignoresSafeAreaEdges: .top)
+        .background(.ultraThinMaterial, ignoresSafeAreaEdges: [.top, .horizontal])
     }
 }
