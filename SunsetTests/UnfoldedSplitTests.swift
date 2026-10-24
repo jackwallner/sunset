@@ -142,15 +142,26 @@ final class UnfoldedSplitTests: XCTestCase {
         XCTAssertNil(PaneFill.heroHeight(viewport: 587, spacing: 54, cards: [], minimum: 200))
     }
 
-    // Status column: the trailing pane's content starts 83 pt down.
+    // Status column: its clock ends 112 pt down, the Outlook's first card 83.
 
     func testContentStartsBelowTheStatusColumnsClock() {
-        XCTAssertEqual(StatusColumn(width: 85, contentTop: 83).topMargin, StatusColumn.bottom - 83)
-        XCTAssertEqual(StatusColumn(width: 85, contentTop: 83.4).topMargin, (StatusColumn.bottom - 83.4).rounded(.up))
+        XCTAssertEqual(StatusColumn.clockPadding(columnWidth: 85), StatusColumn.clockClearance)
+        XCTAssertGreaterThanOrEqual(83 + StatusColumn.clockPadding(columnWidth: 85), 112 + 6)
     }
 
-    func testNoColumnOrContentAlreadyBelowItNeedsNoMargin() {
-        XCTAssertEqual(StatusColumn(width: 0, contentTop: 20).topMargin, 0)
-        XCTAssertEqual(StatusColumn(width: 85, contentTop: 140).topMargin, 0)
+    func testNoColumnNeedsNoPadding() {
+        XCTAssertEqual(StatusColumn.clockPadding(columnWidth: 0), 0)
+    }
+
+    func testTightCardsNeverShowTheNextRowsTop() {
+        // Day cards in the trailing pane space their rows 10 pt apart.
+        XCTAssertLessThan(PaneCut.Style.tightCard.padding, 10)
+        let blocks = PaneCut.blocks(from: [
+            card("d", 520, 700),
+            row("d", 560, 604, style: .tightCard),
+            row("d", 614, 658, style: .tightCard),
+            row("d", 668, 690, style: .tightCard),
+        ])
+        XCTAssertEqual(PaneCut.make(line: 669, blocks: blocks).y, 658 + PaneCut.Style.tightCard.padding)
     }
 }

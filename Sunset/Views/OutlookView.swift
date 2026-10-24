@@ -6,6 +6,7 @@ struct OutlookView: View {
     @EnvironmentObject private var forecastStore: ForecastStore
     @EnvironmentObject private var settings: AlertSettings
     @EnvironmentObject private var store: StoreService
+    @Environment(\.isTrailingPane) private var isTrailingPane
     @State private var showPaywall = false
     #if DEBUG
     @ObservedObject private var screenshots = ScreenshotRouter.shared
@@ -15,7 +16,9 @@ struct OutlookView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 12) {
+            // In the trailing pane, which starts below the status clock, the
+            // week packs a little tighter so its last card ends whole.
+            VStack(spacing: isTrailingPane ? 8 : 12) {
                 if let forecast = forecastStore.forecast {
                     let days = Array(forecast.upcomingDays().prefix(7))
                     ForEach(days.prefix(store.isPro ? days.count : Self.freeDays)) { day in
@@ -32,9 +35,10 @@ struct OutlookView: View {
             }
             .padding(.horizontal, 16)
             .padding(.bottom, 24)
+            .clearsStatusClock()
         }
         .clearsPaneBottom()
-        .fillsTrailingPane(clearsClock: true)
+        .fillsTrailingPane()
         .background {
             SkyBackdrop(score: forecastStore.nextShow?.score.total ?? 60, event: forecastStore.nextShow?.event ?? .sunset, horizon: 0.14)
         }
@@ -98,12 +102,14 @@ private struct DayCard: View {
     let forecast: SunsetForecast
     let watched: Set<SunEvent>
     var isLinked = true
+    @Environment(\.isTrailingPane) private var isTrailingPane
 
     var body: some View {
         let zone = forecast.timeZone
         let shows = SunEvent.allCases.filter(watched.contains).map(day.show)
         let events = forecast.skyEvents(on: day)
-        VStack(alignment: .leading, spacing: 14) {
+        let cut: PaneCut.Style = isTrailingPane ? .tightCard : .card
+        VStack(alignment: .leading, spacing: isTrailingPane ? 10 : 14) {
             HStack(alignment: .firstTextBaseline) {
                 Text(SunsetFormat.dayLabel(day.sunset.time, zone: zone))
                     .font(.title3.weight(.semibold))
@@ -120,10 +126,10 @@ private struct DayCard: View {
                         ShowRow(show: show, zone: zone)
                     }
                     .buttonStyle(.plain)
-                    .paneRow()
+                    .paneRow(cut)
                 } else {
                     ShowRow(show: show, zone: zone, showsChevron: false)
-                        .paneRow()
+                        .paneRow(cut)
                 }
             }
             if !events.isEmpty {
@@ -134,7 +140,7 @@ private struct DayCard: View {
                             .foregroundStyle(Theme.textSecondary)
                     }
                 }
-                .paneRow()
+                .paneRow(cut)
             }
         }
         .padding(18)
@@ -142,7 +148,7 @@ private struct DayCard: View {
         .background { DaySky(show: lead) }
         .clipShape(RoundedRectangle(cornerRadius: Theme.cardRadius))
         .overlay(RoundedRectangle(cornerRadius: Theme.cardRadius).strokeBorder(.white.opacity(0.14), lineWidth: 1))
-        .paneCard()
+        .paneCard(cut)
     }
 
     /// The show that colours the card: the sunset when it is watched,
@@ -198,9 +204,15 @@ struct ShowDetailView: View {
                         }
                     }
                     Card {
-                        ForEach(show.score.factors) { factor in
-                            FactorRow(factor: factor, tone: Theme.tone(score: show.score.total))
-                                .paneRow()
+                        // The trailing pane ends at the display edge: the
+                        // grid shows all four factors there, not the first two.
+                        if isTrailingPane {
+                            FactorGrid(factors: show.score.factors, tone: Theme.tone(score: show.score.total))
+                        } else {
+                            ForEach(show.score.factors) { factor in
+                                FactorRow(factor: factor, tone: Theme.tone(score: show.score.total))
+                                    .paneRow()
+                            }
                         }
                     }
                     .id("factors")

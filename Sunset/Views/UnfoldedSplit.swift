@@ -125,6 +125,8 @@ struct PaneCut: Equatable, Sendable {
         /// 12 rather than the card's 18 pt padding: rows sit 14 pt apart, so
         /// a fuller margin would show the top of the next row.
         static let card = Style(radius: Theme.cardRadius, padding: 12)
+        /// The trailing pane's day cards, whose rows sit 10 pt apart.
+        static let tightCard = Style(radius: Theme.cardRadius, padding: 8)
         /// An inset grouped List section: rows measure their whole cell.
         static let groupedList = Style(radius: 26, padding: 0)
     }
@@ -187,18 +189,15 @@ enum PaneFill {
 /// bar as a vertical column (clock over the connectivity ring) and reserves
 /// its width as trailing safe area down the whole pane. Content runs under
 /// that column, so the pane's margins match, and starts below the clock.
-struct StatusColumn: Equatable, Sendable {
-    /// The column's trailing safe-area width; 0 when there is none.
-    var width: CGFloat = 0
-    /// Where the scroll content starts, in global space.
-    var contentTop: CGFloat = 0
+enum StatusColumn {
+    /// The clock, ring and their backing end 112 pt down the display; the
+    /// Outlook's first card sits 83 pt down under its large title. Measured
+    /// from the iOS 27.1 iPhone Duo inner display.
+    static let clockClearance: CGFloat = 36
 
-    /// The clock and ring end about 102 pt down the display.
-    static let bottom: CGFloat = 112
-
-    /// Extra top content margin that starts the first card below the clock.
-    var topMargin: CGFloat {
-        width > 0 ? max(0, (Self.bottom - contentTop).rounded(.up)) : 0
+    /// Top padding that starts a screen's first card below the clock.
+    static func clockPadding(columnWidth: CGFloat) -> CGFloat {
+        columnWidth > 0 ? clockClearance : 0
     }
 }
 
@@ -218,6 +217,9 @@ extension EnvironmentValues {
     @Entry var paneBlocks: PaneBlocks? = nil
     /// The card a `paneRow()` belongs to.
     @Entry var paneBlockID: String? = nil
+    /// The trailing pane's status column width, under which its content is
+    /// laid out (`fillsTrailingPane()`); 0 elsewhere.
+    @Entry var statusColumnWidth: CGFloat = 0
 }
 
 extension View {
@@ -238,8 +240,8 @@ extension View {
     }
 
     /// A row of the enclosing `paneCard()`: the card can end below it.
-    func paneRow() -> some View {
-        modifier(PanePartReporter(block: nil, isRow: true, style: .card))
+    func paneRow(_ style: PaneCut.Style = .card) -> some View {
+        modifier(PanePartReporter(block: nil, isRow: true, style: style))
     }
 
     /// A row of an inset grouped List section, measured through its row
@@ -257,11 +259,15 @@ extension View {
 
     /// In the unfolded trailing pane, lays the content out under the status
     /// column at the display edge, so cards fill the pane with even margins
-    /// (see `StatusColumn`). `clearsClock` also starts a scroll view's
-    /// content below the clock; leave it off when the top right corner is
-    /// empty sky. Elsewhere it does nothing.
-    func fillsTrailingPane(clearsClock: Bool = false) -> some View {
-        modifier(TrailingPaneFill(clearsClock: clearsClock))
+    /// (see `StatusColumn`). Elsewhere it does nothing.
+    func fillsTrailingPane() -> some View {
+        modifier(TrailingPaneFill())
+    }
+
+    /// Inside `fillsTrailingPane()`, starts the content below the status
+    /// column's clock. Leave it off where the top right corner is empty sky.
+    func clearsStatusClock() -> some View {
+        modifier(StatusClockClearance())
     }
 
     /// Keeps the phone's horizontal tab bar in the unfolded leading pane.
@@ -304,26 +310,27 @@ private struct PaneBottomClearance: ViewModifier {
 }
 
 private struct TrailingPaneFill: ViewModifier {
-    let clearsClock: Bool
     @Environment(\.isTrailingPane) private var isTrailingPane
-    @State private var column = StatusColumn()
+    @State private var columnWidth: CGFloat = 0
 
     func body(content: Content) -> some View {
-        let fills = isTrailingPane && column.width > 0
+        let width = isTrailingPane ? columnWidth : 0
         content
-            .contentMargins(.top, fills && clearsClock ? column.topMargin : nil, for: .scrollContent)
-            .ignoresSafeArea(.container, edges: fills ? .trailing : [])
-            .onGeometryChange(for: StatusColumn.self) { proxy in
-                StatusColumn(
-                    width: proxy.safeAreaInsets.trailing,
-                    contentTop: proxy.frame(in: .global).minY + proxy.safeAreaInsets.top
-                )
-            } action: { measured in
+            .environment(\.statusColumnWidth, width)
+            .ignoresSafeArea(.container, edges: width > 0 ? .trailing : [])
+            .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.trailing } action: { measured in
                 // Keep the width once seen: laid out under the column, the
                 // view may no longer report it.
-                guard isTrailingPane, measured.width > 0 || column.width == 0 else { return }
-                column = measured
+                if measured > 0 || columnWidth == 0 { columnWidth = measured }
             }
+    }
+}
+
+private struct StatusClockClearance: ViewModifier {
+    @Environment(\.statusColumnWidth) private var columnWidth
+
+    func body(content: Content) -> some View {
+        content.padding(.top, StatusColumn.clockPadding(columnWidth: columnWidth))
     }
 }
 
