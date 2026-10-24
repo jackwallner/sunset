@@ -242,17 +242,22 @@ struct MainTabView: View {
 /// `today`) before the shot. Scenes: `today`, `detail`, `day`, `events`,
 /// `settings`, `outlook`, `alerts`. `-DuoTourFirst <s>` delays the walk,
 /// `-DuoTourStep <s>` is the dwell on each, and every step logs a
-/// `DUOTOUR` line that maps recordings to scenes.
+/// `DUOTOUR` line that maps recordings to scenes. The launch scene opens
+/// once the UI is on screen: a push requested in the first frame raced the
+/// folded tab rail's setup, and a UIKit assert storm left the display
+/// blank (2026-10-23).
 @MainActor
 final class ScreenshotRouter: ObservableObject {
     static let shared = ScreenshotRouter()
 
-    @Published var scene = LaunchArguments.screenshotScene
+    @Published var scene: String?
 
     private static let tour = ["detail", "day", "events", "settings"]
     private let logger = Logger(subsystem: "com.jackwallner.sunset", category: "DuoTour")
 
     func runTour() async {
+        try? await Task.sleep(for: .milliseconds(600))
+        if scene == nil { scene = LaunchArguments.screenshotScene }
         let arguments = ProcessInfo.processInfo.arguments
         guard arguments.contains("-DuoTour") else { return }
         func seconds(_ key: String, _ fallback: Double) -> Double {

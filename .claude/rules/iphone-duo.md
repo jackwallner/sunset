@@ -89,6 +89,8 @@ paths:
   the Outlook: its detail on the left, its row lit on the right) and
   `-ScreenshotTab 2` (Settings beside the Outlook).
   No `--url`: custom-scheme `simctl openurl` raises an "Open in Sunset?"
-  alert. `-DuoTour` (with `-DuoTourFirst`/`-DuoTourStep`) walks the scenes
+  alert. The router opens the launch scene 0.6 s after the UI appears:
+  pushed in the first frame, the folded detail raced the tab rail's setup
+  and a UIKit assert storm left that capture blank (2026-10-23). `-DuoTour` (with `-DuoTourFirst`/`-DuoTourStep`) walks the scenes
   for a `gh-sim launch --record-seconds 20` recording. Inner 2853x2007
   landscape, outer 1398x2034.
