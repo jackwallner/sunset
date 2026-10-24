@@ -139,7 +139,14 @@ private struct RootView: View {
 /// rebuilt, so their scroll and navigation survive.
 struct MainTabView: View {
     @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+    #if DEBUG
+    @EnvironmentObject private var forecastStore: ForecastStore
+    @EnvironmentObject private var settings: AlertSettings
+    #endif
     @State private var selection: Int
+    /// A show picked in the trailing Outlook, open on Today in the leading
+    /// pane (`PaneDetail`).
+    @State private var pickedShow: SunShow?
     @State private var paneGeometry = PaneGeometry()
     #if DEBUG
     @ObservedObject private var screenshots = ScreenshotRouter.shared
@@ -161,7 +168,7 @@ struct MainTabView: View {
     var body: some View {
         ZStack(alignment: .topLeading) {
             TabView(selection: $selection) {
-                NavigationStack { TodayView() }
+                NavigationStack { TodayView(pickedShow: $pickedShow) }
                     .horizontalBarsInPane(split != nil)
                     .tabItem { Label("Today", systemImage: "sun.horizon.fill") }
                     .tag(0)
@@ -183,6 +190,7 @@ struct MainTabView: View {
                 NavigationStack { OutlookView() }
                     .environment(\.horizontalSizeClass, .compact)
                     .environment(\.isTrailingPane, true)
+                    .environment(\.paneDetail, $pickedShow)
                     .frame(maxWidth: split.secondaryWidth, maxHeight: .infinity)
                     .padding(.leading, split.secondaryX)
             }
@@ -191,16 +199,40 @@ struct MainTabView: View {
         .onChange(of: split != nil) { _, isSplit in
             if isSplit, selection == 1 { selection = 0 }
         }
+        .onChange(of: pickedShow) { _, show in
+            selection = PaneDetail.tab(after: show, current: selection)
+        }
         #if DEBUG
-        .onChange(of: screenshots.scene) { _, scene in
+        .onChange(of: screenshots.scene, initial: true) { old, scene in
+            if scene == "day" {
+                pickedShow = captureDay
+                return
+            }
+            // At launch only `day` moves; `-ScreenshotTab` picks the tab.
+            guard old != scene else { return }
+            pickedShow = nil
             switch scene {
             case "settings": selection = 2
-            case "outlook", "day": selection = split == nil ? 1 : 0
+            case "outlook": selection = split == nil ? 1 : 0
             default: selection = 0
             }
         }
         #endif
     }
+
+    #if DEBUG
+    /// Store capture `day`: the best show after the next one in the free
+    /// days, so the week beside it shows the picked row.
+    private var captureDay: SunShow? {
+        guard let forecast = forecastStore.forecast else { return nil }
+        let days = forecast.upcomingDays().prefix(OutlookView.freeDays)
+        guard let end = days.last?.sunset.time else { return nil }
+        return forecast.upcomingShows(settings.watched)
+            .dropFirst()
+            .filter { $0.time <= end }
+            .max { $0.score.total < $1.score.total }
+    }
+    #endif
 }
 
 #if DEBUG

@@ -8,9 +8,6 @@ struct OutlookView: View {
     @EnvironmentObject private var store: StoreService
     @Environment(\.isTrailingPane) private var isTrailingPane
     @State private var showPaywall = false
-    #if DEBUG
-    @ObservedObject private var screenshots = ScreenshotRouter.shared
-    #endif
 
     static let freeDays = 2
 
@@ -44,18 +41,6 @@ struct OutlookView: View {
         }
         .navigationTitle("Outlook")
         .sheet(isPresented: $showPaywall) { PaywallView(source: "outlook") }
-        #if DEBUG
-        // Store captures: `day` opens the best show after the next one.
-        .navigationDestination(isPresented: Binding(
-            get: { screenshots.scene == "day" },
-            set: { if !$0, screenshots.scene == "day" { screenshots.scene = nil } }
-        )) {
-            if let forecast = forecastStore.forecast,
-               let show = forecast.upcomingShows(settings.watched).dropFirst().max(by: { $0.score.total < $1.score.total }) {
-                ShowDetailView(show: show, zone: forecast.timeZone, placeName: forecast.placeName)
-            }
-        }
-        #endif
     }
 
     /// The real days, blurred past reading, under one unlock card.
@@ -103,6 +88,7 @@ private struct DayCard: View {
     let watched: Set<SunEvent>
     var isLinked = true
     @Environment(\.isTrailingPane) private var isTrailingPane
+    @Environment(\.paneDetail) private var paneDetail
 
     var body: some View {
         let zone = forecast.timeZone
@@ -119,7 +105,21 @@ private struct DayCard: View {
                     .foregroundStyle(Theme.textSecondary)
             }
             ForEach(shows) { show in
-                if isLinked {
+                if isLinked, let paneDetail {
+                    // Unfolded, the show opens in the leading pane and the
+                    // week stays here, its picked row lit.
+                    Button { paneDetail.wrappedValue = show } label: {
+                        ShowRow(show: show, zone: zone)
+                            .background {
+                                RoundedRectangle(cornerRadius: 14)
+                                    .fill(.white.opacity(paneDetail.wrappedValue?.id == show.id ? 0.16 : 0))
+                                    .padding(-6)
+                            }
+                    }
+                    .buttonStyle(.plain)
+                    .accessibilityAddTraits(paneDetail.wrappedValue?.id == show.id ? .isSelected : [])
+                    .paneRow(cut)
+                } else if isLinked {
                     NavigationLink {
                         ShowDetailView(show: show, zone: zone, placeName: forecast.placeName)
                     } label: {
@@ -182,15 +182,12 @@ struct ShowDetailView: View {
     let show: SunShow
     let zone: TimeZone
     let placeName: String?
-    @Environment(\.isTrailingPane) private var isTrailingPane
 
     var body: some View {
         ScrollViewReader { proxy in
             ScrollView {
                 VStack(spacing: 16) {
-                    // The trailing pane's top right corner holds the status
-                    // column's clock, and the header already names the day.
-                    SkyHero(show: show, zone: zone, title: SunsetFormat.headline(show, zone: zone), placeName: isTrailingPane ? nil : placeName)
+                    SkyHero(show: show, zone: zone, title: SunsetFormat.headline(show, zone: zone), placeName: placeName)
                         .containerRelativeFrame(.vertical) { length, _ in max(240, length * 0.34) }
                         .padding(.bottom, 12)
                     Card {
@@ -204,15 +201,9 @@ struct ShowDetailView: View {
                         }
                     }
                     Card {
-                        // The trailing pane ends at the display edge: the
-                        // grid shows all four factors there, not the first two.
-                        if isTrailingPane {
-                            FactorGrid(factors: show.score.factors, tone: Theme.tone(score: show.score.total))
-                        } else {
-                            ForEach(show.score.factors) { factor in
-                                FactorRow(factor: factor, tone: Theme.tone(score: show.score.total))
-                                    .paneRow()
-                            }
+                        ForEach(show.score.factors) { factor in
+                            FactorRow(factor: factor, tone: Theme.tone(score: show.score.total))
+                                .paneRow()
                         }
                     }
                     .id("factors")
@@ -246,12 +237,6 @@ struct ShowDetailView: View {
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationTitle(SunsetFormat.monthDay(show.time, zone: zone))
         .navigationBarTitleDisplayMode(.inline)
-        // In the trailing pane the system would move the back button into a
-        // vertical bar at the top right, away from the title. Hide the bar
-        // there and draw the same back button and title in a header.
-        .toolbar(isTrailingPane ? .hidden : .automatic, for: .navigationBar)
-        .paneBackHeader(isTrailingPane ? SunsetFormat.monthDay(show.time, zone: zone) : nil)
-        .fillsTrailingPane()
     }
 
     private var visibilityLabel: String {
@@ -277,50 +262,5 @@ struct ShowDetailView: View {
                 .foregroundStyle(Theme.textSecondary)
         }
         .paneRow()
-    }
-}
-
-/// A pushed screen's back button and title, for the trailing pane, where the
-/// system bar would split them (see `ShowDetailView`). No bar behind it: the
-/// status column's clock sits at its trailing end, so the sky shows through
-/// and content scrolling under it gets the system's soft edge.
-private extension View {
-    @ViewBuilder
-    func paneBackHeader(_ title: String?) -> some View {
-        if let title {
-            if #available(iOS 26.0, *) {
-                safeAreaBar(edge: .top, spacing: 0) { PaneBackHeader(title: title) }
-            } else {
-                safeAreaInset(edge: .top, spacing: 0) { PaneBackHeader(title: title) }
-            }
-        } else {
-            self
-        }
-    }
-}
-
-private struct PaneBackHeader: View {
-    let title: String
-    @Environment(\.dismiss) private var dismiss
-
-    var body: some View {
-        ZStack {
-            Text(title)
-                .font(.headline)
-                .accessibilityAddTraits(.isHeader)
-            HStack {
-                Button { dismiss() } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.body.weight(.semibold))
-                        .frame(width: 44, height: 44)
-                        .glass(cornerRadius: 22)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel("Back")
-                Spacer()
-            }
-        }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 6)
     }
 }

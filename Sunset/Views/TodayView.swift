@@ -2,6 +2,8 @@ import StoreKit
 import SwiftUI
 
 struct TodayView: View {
+    /// Unfolded, a show picked in the Outlook beside the fold opens here.
+    @Binding var pickedShow: SunShow?
     @EnvironmentObject private var forecastStore: ForecastStore
     @EnvironmentObject private var location: LocationService
     @EnvironmentObject private var settings: AlertSettings
@@ -73,6 +75,11 @@ struct TodayView: View {
         .navigationDestination(isPresented: heroDetailPresented) {
             if let forecast = forecastStore.forecast, let hero = forecastStore.nextShow {
                 ShowDetailView(show: hero, zone: forecast.timeZone, placeName: forecast.placeName)
+            }
+        }
+        .navigationDestination(item: $pickedShow) { show in
+            if let forecast = forecastStore.forecast {
+                ShowDetailView(show: show, zone: forecast.timeZone, placeName: forecast.placeName)
             }
         }
         .navigationTitle("Today")

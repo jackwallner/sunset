@@ -36,6 +36,27 @@ struct UnfoldedSplit: Equatable, Sendable {
     }
 }
 
+/// A show picked in the trailing Outlook opens on Today in the leading pane,
+/// whichever leading tab was showing. The trailing pane never pushes, so the
+/// week beside the fold always shows its root and no back button sits by
+/// the crease: the list on one side, its detail on the other.
+enum PaneDetail {
+    static let tab = 0
+
+    /// The leading tab after a pick; clearing the pick leaves it alone.
+    static func tab(after pick: SunShow?, current: Int) -> Int {
+        pick == nil ? current : tab
+    }
+}
+
+/// `navigationDestination(item:)` needs a hashable item; a show is
+/// identified by its moment.
+extension SunShow: Hashable {
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
+
 /// A container's width and its vertical fold, measured together.
 struct PaneGeometry: Equatable, Sendable {
     var width: CGFloat = 0
@@ -210,8 +231,11 @@ final class PaneBlocks {
 extension EnvironmentValues {
     /// True in the unfolded leading pane, above the floating tab bar.
     @Entry var isLeadingPane = false
-    /// True in the unfolded trailing pane (the Outlook and its pushes).
+    /// True in the unfolded trailing pane (the Outlook).
     @Entry var isTrailingPane = false
+    /// In the trailing pane, where a picked show goes (`PaneDetail`).
+    /// `nil` folded, where the Outlook pushes as on a phone.
+    @Entry var paneDetail: Binding<SunShow?>? = nil
     /// The pane's block frames. `nil` folded, so the phone layout does no
     /// bookkeeping while it scrolls.
     @Entry var paneBlocks: PaneBlocks? = nil
@@ -275,8 +299,8 @@ extension View {
     /// vertical rail beside the fold on others. Folded, the system default.
     /// Apply it to each leading tab only: set anywhere in the trailing pane
     /// (its stack or its screens), the whole app was laid out 42 pt in from
-    /// both display edges, between black strips. The trailing pane's pushes
-    /// use `PaneBackHeader` instead.
+    /// both display edges, between black strips. The trailing pane never
+    /// pushes (`PaneDetail`), so it needs no bar of its own.
     @ViewBuilder
     func horizontalBarsInPane(_ isSplit: Bool) -> some View {
         if #available(iOS 27.1, *) {

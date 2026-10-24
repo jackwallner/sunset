@@ -44,6 +44,23 @@ final class UnfoldedSplitTests: XCTestCase {
         XCTAssertNil(UnfoldedSplit.make(PaneGeometry(), isRegularWidth: true))
     }
 
+    // Pane detail: a show picked in the trailing Outlook.
+
+    func testPickInTheOutlookOpensOnTodayFromAnyLeadingTab() {
+        let show = DemoForecast.make().days[0].sunset
+        XCTAssertEqual(PaneDetail.tab(after: show, current: 2), PaneDetail.tab)
+        XCTAssertEqual(PaneDetail.tab(after: show, current: 0), PaneDetail.tab)
+    }
+
+    func testClearingThePickKeepsTheLeadingTab() {
+        XCTAssertEqual(PaneDetail.tab(after: nil, current: 2), 2)
+    }
+
+    func testShowsHashByTheirMoment() {
+        let day = DemoForecast.make().days[0]
+        XCTAssertEqual(Set([day.sunset, day.sunset, day.sunrise]).count, 2)
+    }
+
     // Pane clearance: the leading pane's tab bar inset is 81 pt.
 
     func testFoldedClearanceHidesNothing() {
