@@ -9,7 +9,7 @@ paths:
   - "SunsetTests/UnfoldedSplitTests.swift"
 ---
 
-# Sunset: iPhone Duo (2026-10-21, bars and pane cut 2026-10-23)
+# Sunset: iPhone Duo (2026-10-21, bars, pane cut and status column 2026-10-23)
 
 - Unfolded (regular width, at least 720 pt), `MainTabView` puts the TabView
   (Today and Settings, tab bar included) on the leading side of the fold and
@@ -51,6 +51,22 @@ paths:
 - Today's column ends with 80 pt of bottom padding in the leading pane (24
   folded), so the `events` scene can scroll Up next to the top instead of
   stopping under a sliver of the factors card.
+- Today in the leading pane opens on whole cards: the factors show as a
+  2x2 `FactorGrid` (no detail lines) and the hero takes the height the
+  summary and factor cards leave above the bar line (`PaneFill`, tested).
+  The full rows were cut to "Color" alone, which review read as a clipped
+  breakdown (2026-10-23). `SkyHero` fills the height its caller proposes;
+  its old fixed 300 pt overflowed the shorter frames and hid the title
+  row under the detail header.
+- The trailing pane's trailing safe area (~85 pt, full height) is iOS
+  27.1's vertical status column: clock over the connectivity ring, ending
+  about 102 pt down. `fillsTrailingPane()` lays the Outlook and the show
+  detail out under it so both margins are 16 pt; `clearsClock` (Outlook)
+  adds a top content margin that starts the first card below the clock
+  (`StatusColumn`, tested). The detail drops the place name from its hero
+  there and `PaneBackHeader` has no bar (a `safeAreaBar` on iOS 26+), so
+  nothing sits under the clock. Review rejected the earlier set for the
+  ~100 pt dead column and the header bar running under the clock.
   Folded the mask is fully open and nothing reports.
 - Onboarding and the full-screen paywall use `.leadingPaneColumn()` before
   their sky, so the column sits in the leading pane and the sky still fills
