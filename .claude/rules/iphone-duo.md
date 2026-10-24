@@ -22,6 +22,13 @@ paths:
   tab was up, and its row stays lit. Review rejected a pushed day detail in
   the trailing pane (back button beside the fold, bar crowding the top
   edge), 2026-10-23. Folded, the Outlook pushes as on a phone.
+  The detail there sizes its hero like Today (`PaneFill`), so the summary
+  ends on the bar line instead of above an empty band where the too-tall
+  factors card was hidden. Both measure the viewport as the scroll view's
+  `size.height`: that size already sits inside the nav and tab bars while
+  the proxy still reports their insets, and subtracting them counted the
+  bars twice (logged: size 504, insets 82 and 83), pinning both heroes to
+  their minimum.
 - Same pattern as Vitals (`jackwallner/vitals`, `Shared/Utilities/UnfoldedSplit.swift`).
   Folding only moves frames, so Today and Settings keep scroll and navigation;
   only the Outlook pane and tab are separate instances.
