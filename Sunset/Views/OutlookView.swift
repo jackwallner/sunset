@@ -182,13 +182,18 @@ struct ShowDetailView: View {
     let show: SunShow
     let zone: TimeZone
     let placeName: String?
+    @Environment(\.isLeadingPane) private var isLeadingPane
+    /// Unfolded: the viewport and the summary card's height.
+    @State private var paneViewport: CGFloat = 0
+    @State private var summaryHeight: CGFloat = 0
 
     var body: some View {
+        let heroHeight = paneHeroHeight
         ScrollViewReader { proxy in
             ScrollView {
                 VStack(spacing: 16) {
                     SkyHero(show: show, zone: zone, title: SunsetFormat.headline(show, zone: zone), placeName: placeName)
-                        .containerRelativeFrame(.vertical) { length, _ in max(240, length * 0.34) }
+                        .containerRelativeFrame(.vertical) { length, _ in heroHeight ?? max(240, length * 0.34) }
                         .padding(.bottom, 12)
                     Card {
                         Text(show.score.summary)
@@ -200,6 +205,7 @@ struct ShowDetailView: View {
                             detail("Rain", "\(show.score.rainChance)%")
                         }
                     }
+                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { summaryHeight = $0 }
                     Card {
                         ForEach(show.score.factors) { factor in
                             FactorRow(factor: factor, tone: Theme.tone(score: show.score.total))
@@ -223,6 +229,9 @@ struct ShowDetailView: View {
                 .padding(.bottom, 24)
             }
             .clearsPaneBottom()
+            .onGeometryChange(for: CGFloat.self) { proxy in
+                proxy.size.height - proxy.safeAreaInsets.top - proxy.safeAreaInsets.bottom
+            } action: { paneViewport = $0 }
             #if DEBUG
             .task {
                 // Store capture: open on the factors and cloud cover.
@@ -237,6 +246,15 @@ struct ShowDetailView: View {
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationTitle(SunsetFormat.monthDay(show.time, zone: zone))
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    /// Unfolded, the factors card is taller than the room under the hero,
+    /// so the hero takes that room and the summary ends at the tab bar line
+    /// instead of above an empty band (`PaneFill`). Folded, `nil`.
+    private var paneHeroHeight: CGFloat? {
+        guard isLeadingPane else { return nil }
+        // The hero's 12 pt bottom padding, then the 16 pt stack gap.
+        return PaneFill.heroHeight(viewport: paneViewport, spacing: 28, cards: [summaryHeight], minimum: 240)
     }
 
     private var visibilityLabel: String {

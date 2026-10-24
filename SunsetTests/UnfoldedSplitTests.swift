@@ -149,6 +149,13 @@ final class UnfoldedSplitTests: XCTestCase {
         XCTAssertEqual(hero! + 54 + 138 + 164, 587 - PaneClearance.gap)
     }
 
+    func testADetailHeroEndsTheSummaryOnTheLine() {
+        // A show detail under a nav bar: the factors card is too tall to
+        // fit, so only the summary sits under the hero.
+        let hero = PaneFill.heroHeight(viewport: 524, spacing: 28, cards: [150], minimum: 240)
+        XCTAssertEqual(hero! + 28 + 150, 524 - PaneClearance.gap)
+    }
+
     func testTheHeroNeverShrinksBelowItsMinimum() {
         XCTAssertEqual(PaneFill.heroHeight(viewport: 587, spacing: 54, cards: [138, 340], minimum: 200), 200)
     }
