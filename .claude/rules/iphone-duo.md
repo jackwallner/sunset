@@ -31,17 +31,19 @@ paths:
   pane's back button to the top right (review rejected that set,
   2026-10-23). Never on the TabView or the trailing NavigationStack
   themselves: that pillarboxed the app between 44 pt black strips.
-- Nothing is ever sliced at the leading pane's floating tab bar: Today, the
-  show detail, Settings and the Outlook apply `.clearsPaneBottom()`, which
-  in the leading pane masks content a 12 pt gap above the bar. The trailing
-  pane has no bar and scrolls to the display edge as on a phone (a cut
-  there left a 110 pt empty band under the week). Tagged blocks report their frames: `Card` and
-  the Outlook's day cards are `paneCard()`, their rows `paneRow()`, Settings
-  rows `paneListRow(section)` and headers `paneListPart(section)`.
-  `PaneCut` (tested) moves the cut up to 12 pt below the last whole row
-  (rows sit 14 pt apart), rounding the card's corners there, or hides a block whole when no row fits. A new
-  card or row in these screens needs the tag, or the line slices it. The
-  earlier fade was rejected: it sliced the Streaks and Humidity rows.
+- No pane ever shows half a row: Today, the show detail, Settings and the
+  Outlook apply `.clearsPaneBottom()`. In the leading pane the line is a
+  12 pt gap above the floating tab bar; in the trailing pane (no bar) it is
+  the display edge, as on a phone. Tagged blocks report their frames:
+  `Card` and the Outlook's day cards are `paneCard()`, their rows
+  `paneRow()`, Settings rows `paneListRow(section)` and headers
+  `paneListPart(section)`. `PaneCut` (tested) moves the cut up to 12 pt
+  below the last whole row (rows sit 14 pt apart), rounding the card's
+  corners there, or hides a block whole when no row fits. A new card or
+  row in these screens needs the tag, or the line slices it. The earlier
+  fade was rejected: it sliced the Streaks and Humidity rows. Settings
+  uses compact section spacing in the leading pane so its Location rows
+  fit above the bar instead of leaving a 100 pt gap.
   Folded the mask is fully open and nothing reports.
 - Onboarding and the full-screen paywall use `.leadingPaneColumn()` before
   their sky, so the column sits in the leading pane and the sky still fills
