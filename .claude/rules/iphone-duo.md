@@ -48,6 +48,9 @@ paths:
   fade was rejected: it sliced the Streaks and Humidity rows. Settings
   uses compact section spacing in the leading pane so its Location rows
   fit above the bar instead of leaving a 100 pt gap.
+- Today's column ends with 80 pt of bottom padding in the leading pane (24
+  folded), so the `events` scene can scroll Up next to the top instead of
+  stopping under a sliver of the factors card.
   Folded the mask is fully open and nothing reports.
 - Onboarding and the full-screen paywall use `.leadingPaneColumn()` before
   their sky, so the column sits in the leading pane and the sky still fills
