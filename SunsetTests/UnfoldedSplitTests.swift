@@ -58,6 +58,10 @@ final class UnfoldedSplitTests: XCTestCase {
         XCTAssertEqual(PaneClearance.make(isSplit: true, barInset: -4).hidden, PaneClearance.gap)
     }
 
+    func testTrailingPaneRunsToTheDisplayEdge() {
+        XCTAssertEqual(PaneClearance.make(isSplit: true, hasBar: false, barInset: 20), PaneClearance(hidden: 0, contentMargin: nil))
+    }
+
     // Pane cut: the line sits at 577 in each case.
 
     private func card(_ id: String, _ minY: CGFloat, _ maxY: CGFloat) -> PaneCut.Part {

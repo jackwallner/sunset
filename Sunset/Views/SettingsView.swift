@@ -8,6 +8,7 @@ struct SettingsView: View {
     @State private var showPaywall = false
     @State private var showAlertSetup = false
     @State private var restoreMessage: String?
+    @Environment(\.isLeadingPane) private var isLeadingPane
 
     var body: some View {
         List {
@@ -133,6 +134,8 @@ struct SettingsView: View {
             }
         }
         .scrollContentBackground(.hidden)
+        // Unfolded, tighter sections fit the Location rows above the tab bar.
+        .listSectionSpacing(isLeadingPane ? .compact : .default)
         .clearsPaneBottom()
         .background {
             SkyBackdrop(score: forecastStore.nextShow?.score.total ?? 70, event: forecastStore.nextShow?.event ?? .sunset, horizon: 0.14)

@@ -82,10 +82,11 @@ private struct LeadingPaneColumn: ViewModifier {
     }
 }
 
-/// How far the leading pane's content stays above its floating tab bar.
-/// Split, content ends `gap` above the bar's safe-area edge, and a bottom scroll
-/// content margin of `gap` lets the last row scroll up to that line. Folded,
-/// nothing is hidden and the phone layout is untouched.
+/// Where a pane's content ends. The leading pane's content ends `gap` above
+/// the floating tab bar's safe-area edge, and a bottom scroll content margin
+/// of `gap` lets the last row scroll up to that line. The trailing pane has
+/// no bar: its content runs to the display edge, as on a phone, but still
+/// in whole rows. Folded, nothing is hidden and the phone layout is untouched.
 struct PaneClearance: Equatable, Sendable {
     /// Masked out from the bottom: the bar's inset plus the gap.
     var hidden: CGFloat
@@ -94,8 +95,8 @@ struct PaneClearance: Equatable, Sendable {
 
     static let gap: CGFloat = 12
 
-    static func make(isSplit: Bool, barInset: CGFloat) -> PaneClearance {
-        guard isSplit else { return PaneClearance(hidden: 0, contentMargin: nil) }
+    static func make(isSplit: Bool, hasBar: Bool = true, barInset: CGFloat) -> PaneClearance {
+        guard isSplit, hasBar else { return PaneClearance(hidden: 0, contentMargin: nil) }
         return PaneClearance(hidden: max(barInset, 0) + gap, contentMargin: gap)
     }
 }
@@ -185,8 +186,9 @@ extension EnvironmentValues {
 }
 
 extension View {
-    /// In the unfolded leading pane, ends a scroll view's content just above
-    /// the floating tab bar without slicing a row (see `PaneCut`). Blocks must
+    /// In an unfolded pane, ends a scroll view's content just above the
+    /// leading pane's floating tab bar, or at the trailing pane's display
+    /// edge, without slicing a row (see `PaneCut`). Blocks must
     /// be tagged (`paneCard()`, `paneListRow`) or the line cuts through them.
     /// Folded the mask is fully open. Apply it to the scroll view, before
     /// the screen's sky.
@@ -254,12 +256,14 @@ private struct TrailingPaneBars: ViewModifier {
 }
 
 private struct PaneBottomClearance: ViewModifier {
-    @Environment(\.isLeadingPane) private var isSplit
+    @Environment(\.isLeadingPane) private var isLeadingPane
+    @Environment(\.isTrailingPane) private var isTrailingPane
     @State private var barInset: CGFloat = 0
     @State private var blocks = PaneBlocks()
 
     func body(content: Content) -> some View {
-        let clearance = PaneClearance.make(isSplit: isSplit, barInset: barInset)
+        let isSplit = isLeadingPane || isTrailingPane
+        let clearance = PaneClearance.make(isSplit: isSplit, hasBar: isLeadingPane, barInset: barInset)
         content
             .environment(\.paneBlocks, isSplit ? blocks : nil)
             .contentMargins(.bottom, clearance.contentMargin, for: .scrollContent)
