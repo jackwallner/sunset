@@ -1,3 +1,4 @@
+import os
 import StoreKit
 import SwiftUI
 
@@ -44,6 +45,11 @@ struct TodayView: View {
                 proxy.size.height - proxy.safeAreaInsets.top - proxy.safeAreaInsets.bottom
             } action: { paneViewport = $0 }
             #if DEBUG
+            .onGeometryChange(for: CGRect.self) { proxy in
+                CGRect(x: proxy.safeAreaInsets.top, y: proxy.safeAreaInsets.bottom, width: proxy.size.width, height: proxy.size.height)
+            } action: { raw in
+                Logger(subsystem: "com.jackwallner.sunset", category: "PaneFill").notice("PANEFILL today raw top \(raw.minX, privacy: .public) bottom \(raw.minY, privacy: .public) size \(raw.width, privacy: .public)x\(raw.height, privacy: .public) hero \(paneHeroHeight ?? -1, privacy: .public) summary \(summaryHeight, privacy: .public)")
+            }
             .task(id: screenshots.scene) { await openScreenshotScene(screenshots.scene, proxy: proxy) }
             #endif
         }

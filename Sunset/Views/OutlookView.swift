@@ -1,3 +1,4 @@
+import os
 import SwiftUI
 
 /// The week ahead. Today and tomorrow are free; the rest is Sun+, shown
@@ -193,7 +194,12 @@ struct ShowDetailView: View {
             ScrollView {
                 VStack(spacing: 16) {
                     SkyHero(show: show, zone: zone, title: SunsetFormat.headline(show, zone: zone), placeName: placeName)
-                        .containerRelativeFrame(.vertical) { length, _ in heroHeight ?? max(240, length * 0.34) }
+                        .containerRelativeFrame(.vertical) { length, _ in
+                            #if DEBUG
+                            Self.paneLog.notice("PANEFILL detail length \(length, privacy: .public) hero \(heroHeight ?? -1, privacy: .public)")
+                            #endif
+                            return heroHeight ?? max(240, length * 0.34)
+                        }
                         .padding(.bottom, 12)
                     Card {
                         Text(show.score.summary)
@@ -233,6 +239,14 @@ struct ShowDetailView: View {
                 proxy.size.height - proxy.safeAreaInsets.top - proxy.safeAreaInsets.bottom
             } action: { paneViewport = $0 }
             #if DEBUG
+            .onGeometryChange(for: CGRect.self) { proxy in
+                CGRect(x: proxy.safeAreaInsets.top, y: proxy.safeAreaInsets.bottom, width: proxy.size.width, height: proxy.size.height)
+            } action: { raw in
+                Self.paneLog.notice("PANEFILL detail raw top \(raw.minX, privacy: .public) bottom \(raw.minY, privacy: .public) size \(raw.width, privacy: .public)x\(raw.height, privacy: .public)")
+            }
+            .onChange(of: paneHeroHeight, initial: true) { _, hero in
+                Self.paneLog.notice("PANEFILL detail leading \(isLeadingPane, privacy: .public) viewport \(paneViewport, privacy: .public) summary \(summaryHeight, privacy: .public) hero \(hero ?? -1, privacy: .public)")
+            }
             .task {
                 // Store capture: open on the factors and cloud cover.
                 guard ScreenshotRouter.shared.scene == "detail" else { return }
@@ -256,6 +270,10 @@ struct ShowDetailView: View {
         // The hero's 12 pt bottom padding, then the 16 pt stack gap.
         return PaneFill.heroHeight(viewport: paneViewport, spacing: 28, cards: [summaryHeight], minimum: 240)
     }
+
+    #if DEBUG
+    private static let paneLog = Logger(subsystem: "com.jackwallner.sunset", category: "PaneFill")
+    #endif
 
     private var visibilityLabel: String {
         let km = show.conditions.visibility / 1000
