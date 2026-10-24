@@ -247,7 +247,7 @@ private struct TrailingPaneBars: ViewModifier {
 
     func body(content: Content) -> some View {
         // Fixed for a view's life: the trailing pane is its own instance.
-        if isTrailingPane {
+        if isTrailingPane, ["both", "trailing"].contains(LaunchArguments.duoBars) {
             content.horizontalBarsInPane(true)
         } else {
             content
