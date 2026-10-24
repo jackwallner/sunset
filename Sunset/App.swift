@@ -90,18 +90,6 @@ enum LaunchArguments {
     }
 
     /// Any store-capture argument. Keeps the review prompt out of captures.
-    /// Which unfolded panes pin horizontal bars: `both` (release), or in
-    /// DEBUG `-DuoBars leading|trailing|none` to isolate iOS 27.1 bar effects.
-    static var duoBars: String {
-        #if DEBUG
-        let arguments = ProcessInfo.processInfo.arguments
-        if let index = arguments.firstIndex(of: "-DuoBars"), index + 1 < arguments.count {
-            return arguments[index + 1]
-        }
-        #endif
-        return "both"
-    }
-
     static var isScreenshotRun: Bool {
         screenshotTab != nil || screenshotScene != nil || onboardingStep != nil || paywallSnapshot
     }
@@ -165,10 +153,6 @@ struct MainTabView: View {
         UnfoldedSplit.make(paneGeometry, isRegularWidth: horizontalSizeClass == .regular)
     }
 
-    private var pinsLeadingBars: Bool {
-        split != nil && ["both", "leading"].contains(LaunchArguments.duoBars)
-    }
-
     /// Each unfolded pane is phone-width, so its screen lays out as on a phone.
     private var paneSizeClass: UserInterfaceSizeClass? {
         split == nil ? horizontalSizeClass : .compact
@@ -178,7 +162,7 @@ struct MainTabView: View {
         ZStack(alignment: .topLeading) {
             TabView(selection: $selection) {
                 NavigationStack { TodayView() }
-                    .horizontalBarsInPane(pinsLeadingBars)
+                    .horizontalBarsInPane(split != nil)
                     .tabItem { Label("Today", systemImage: "sun.horizon.fill") }
                     .tag(0)
                 if split == nil {
@@ -187,7 +171,7 @@ struct MainTabView: View {
                         .tag(1)
                 }
                 NavigationStack { SettingsView() }
-                    .horizontalBarsInPane(pinsLeadingBars)
+                    .horizontalBarsInPane(split != nil)
                     .tabItem { Label("Settings", systemImage: "slider.horizontal.3") }
                     .tag(2)
             }
@@ -208,10 +192,6 @@ struct MainTabView: View {
             if isSplit, selection == 1 { selection = 0 }
         }
         #if DEBUG
-        .task { await DuoGeometryProbe.log(after: 6) }
-        .onGeometryChange(for: String.self) { proxy in
-            "zstack size \(proxy.size) global \(proxy.frame(in: .global)) safe \(proxy.safeAreaInsets)"
-        } action: { DuoGeometryProbe.logger.notice("DUOGEOM \(LaunchArguments.duoBars, privacy: .public) \($0, privacy: .public)") }
         .onChange(of: screenshots.scene) { _, scene in
             switch scene {
             case "settings": selection = 2
@@ -224,31 +204,6 @@ struct MainTabView: View {
 }
 
 #if DEBUG
-/// Logs the window and view controller frames once the unfolded layout has
-/// settled, so a capture's `app.log` shows where each pane really sits.
-@MainActor
-enum DuoGeometryProbe {
-    static let logger = Logger(subsystem: "com.jackwallner.sunset", category: "DuoGeometry")
-
-    static func log(after seconds: Double) async {
-        try? await Task.sleep(for: .seconds(seconds))
-        let windows = UIApplication.shared.connectedScenes
-            .compactMap { $0 as? UIWindowScene }
-            .flatMap(\.windows)
-        for window in windows {
-            logger.notice("DUOGEOM \(LaunchArguments.duoBars, privacy: .public) window \(String(describing: window.frame), privacy: .public) safe \(String(describing: window.safeAreaInsets), privacy: .public) screen \(String(describing: window.screen.bounds), privacy: .public)")
-            if let root = window.rootViewController { logTree(root, in: window, depth: 0) }
-        }
-    }
-
-    private static func logTree(_ controller: UIViewController, in window: UIWindow, depth: Int) {
-        guard depth < 6, let view = controller.viewIfLoaded else { return }
-        let frame = view.convert(view.bounds, to: window)
-        logger.notice("DUOGEOM \(LaunchArguments.duoBars, privacy: .public) \(String(repeating: ".", count: depth), privacy: .public)\(String(describing: type(of: controller)), privacy: .public) \(String(describing: frame), privacy: .public) safe \(String(describing: view.safeAreaInsets), privacy: .public)")
-        for child in controller.children { logTree(child, in: window, depth: depth + 1) }
-    }
-}
-
 /// Store captures. `-ScreenshotScene <scene>` opens one scene. gh-sim takes
 /// one shot per display after a fixed wait, so `-DuoTour` walks the other
 /// scenes once for the recording and then settles on that scene (or

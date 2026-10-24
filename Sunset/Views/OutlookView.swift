@@ -51,7 +51,6 @@ struct OutlookView: View {
             }
         }
         #endif
-        .horizontalBarsInTrailingPane()
     }
 
     /// The real days, blurred past reading, under one unlock card.
@@ -176,6 +175,7 @@ struct ShowDetailView: View {
     let show: SunShow
     let zone: TimeZone
     let placeName: String?
+    @Environment(\.isTrailingPane) private var isTrailingPane
 
     var body: some View {
         ScrollViewReader { proxy in
@@ -231,7 +231,15 @@ struct ShowDetailView: View {
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationTitle(SunsetFormat.monthDay(show.time, zone: zone))
         .navigationBarTitleDisplayMode(.inline)
-        .horizontalBarsInTrailingPane()
+        // In the trailing pane the system would move the back button into a
+        // vertical bar at the top right, away from the title. Hide the bar
+        // there and draw the same back button and title in a header.
+        .toolbar(isTrailingPane ? .hidden : .automatic, for: .navigationBar)
+        .safeAreaInset(edge: .top, spacing: 0) {
+            if isTrailingPane {
+                PaneBackHeader(title: SunsetFormat.monthDay(show.time, zone: zone))
+            }
+        }
     }
 
     private var visibilityLabel: String {
@@ -257,5 +265,34 @@ struct ShowDetailView: View {
                 .foregroundStyle(Theme.textSecondary)
         }
         .paneRow()
+    }
+}
+
+/// A pushed screen's back button and title, for the trailing pane, where the
+/// system bar would split them (see `ShowDetailView`).
+private struct PaneBackHeader: View {
+    let title: String
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        ZStack {
+            Text(title)
+                .font(.headline)
+                .accessibilityAddTraits(.isHeader)
+            HStack {
+                Button { dismiss() } label: {
+                    Image(systemName: "chevron.left")
+                        .font(.body.weight(.semibold))
+                        .frame(width: 44, height: 44)
+                        .glass(cornerRadius: 22)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("Back")
+                Spacer()
+            }
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 6)
+        .background(.ultraThinMaterial, ignoresSafeAreaEdges: .top)
     }
 }

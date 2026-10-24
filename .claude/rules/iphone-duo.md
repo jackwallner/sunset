@@ -24,13 +24,17 @@ paths:
   `isLeadingPane`.
 - One navigation everywhere: split, each leading tab's NavigationStack
   applies `horizontalBarsInPane` (`toolbarVerticalBehavior(.disabled)`,
-  iOS 27.1), and the trailing pane's screens (Outlook, show detail) apply
-  `horizontalBarsInTrailingPane()`. Without it the system drew the tab bar
-  as a bottom capsule on some screens and a vertical rail beside the fold
-  on others, squeezed the column beside the rail, and moved the trailing
-  pane's back button to the top right (review rejected that set,
-  2026-10-23). Never on the TabView or the trailing NavigationStack
-  themselves: that pillarboxed the app between 44 pt black strips.
+  iOS 27.1), so the tab bar is always the bottom capsule. Without it the
+  system drew a bottom capsule on some runtimes and a vertical rail beside
+  the fold on others, squeezing the column (review rejected that set,
+  2026-10-23). Never set it in the trailing pane: on its stack or on its
+  screens, SwiftUI laid the whole root out 42 pt in from both display edges
+  with zero side safe area (logged 2026-10-23: window 951 wide, root at
+  x 42, width 867), so black strips framed the app. The trailing pane keeps
+  the system's vertical status column; a push there (the show detail)
+  hides the nav bar and draws its own back button and title
+  (`PaneBackHeader`), because the system moved that back button into a
+  vertical bar at the top right, away from the title.
 - No pane ever shows half a row: Today, the show detail, Settings and the
   Outlook apply `.clearsPaneBottom()`. In the leading pane the line is a
   12 pt gap above the floating tab bar; in the trailing pane (no bar) it is

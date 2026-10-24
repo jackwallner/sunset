@@ -220,37 +220,19 @@ extension View {
         modifier(PanePartReporter(block: section, isRow: false, style: .groupedList))
     }
 
-    /// Keeps the phone's horizontal bars in an unfolded pane. iOS 27.1
-    /// otherwise draws the tab bar as a vertical rail on some screens and a
-    /// bottom bar on others, and moves a pushed screen's back button to the
-    /// trailing edge. Folded, the system default. Apply it to each tab, not
-    /// the TabView: on the root container it also pillarboxed the whole
-    /// app between black strips.
+    /// Keeps the phone's horizontal tab bar in the unfolded leading pane.
+    /// iOS 27.1 otherwise draws it as a bottom capsule on some screens and a
+    /// vertical rail beside the fold on others. Folded, the system default.
+    /// Apply it to each leading tab only: set anywhere in the trailing pane
+    /// (its stack or its screens), the whole app was laid out 42 pt in from
+    /// both display edges, between black strips. The trailing pane's pushes
+    /// use `PaneBackHeader` instead.
     @ViewBuilder
     func horizontalBarsInPane(_ isSplit: Bool) -> some View {
         if #available(iOS 27.1, *) {
             toolbarVerticalBehavior(isSplit ? .disabled : .automatic)
         } else {
             self
-        }
-    }
-
-    /// `horizontalBarsInPane` for a screen in the trailing pane's stack (the
-    /// Outlook and its pushes); elsewhere it leaves the bars alone.
-    func horizontalBarsInTrailingPane() -> some View {
-        modifier(TrailingPaneBars())
-    }
-}
-
-private struct TrailingPaneBars: ViewModifier {
-    @Environment(\.isTrailingPane) private var isTrailingPane
-
-    func body(content: Content) -> some View {
-        // Fixed for a view's life: the trailing pane is its own instance.
-        if isTrailingPane, ["both", "trailing"].contains(LaunchArguments.duoBars) {
-            content.horizontalBarsInPane(true)
-        } else {
-            content
         }
     }
 }
