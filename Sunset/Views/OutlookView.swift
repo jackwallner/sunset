@@ -34,6 +34,7 @@ struct OutlookView: View {
             .padding(.bottom, 24)
         }
         .clearsPaneBottom()
+        .fillsTrailingPane(clearsClock: true)
         .background {
             SkyBackdrop(score: forecastStore.nextShow?.score.total ?? 60, event: forecastStore.nextShow?.event ?? .sunset, horizon: 0.14)
         }
@@ -181,7 +182,9 @@ struct ShowDetailView: View {
         ScrollViewReader { proxy in
             ScrollView {
                 VStack(spacing: 16) {
-                    SkyHero(show: show, zone: zone, title: SunsetFormat.headline(show, zone: zone), placeName: placeName)
+                    // The trailing pane's top right corner holds the status
+                    // column's clock, and the header already names the day.
+                    SkyHero(show: show, zone: zone, title: SunsetFormat.headline(show, zone: zone), placeName: isTrailingPane ? nil : placeName)
                         .containerRelativeFrame(.vertical) { length, _ in max(240, length * 0.34) }
                         .padding(.bottom, 12)
                     Card {
@@ -235,11 +238,8 @@ struct ShowDetailView: View {
         // vertical bar at the top right, away from the title. Hide the bar
         // there and draw the same back button and title in a header.
         .toolbar(isTrailingPane ? .hidden : .automatic, for: .navigationBar)
-        .safeAreaInset(edge: .top, spacing: 0) {
-            if isTrailingPane {
-                PaneBackHeader(title: SunsetFormat.monthDay(show.time, zone: zone))
-            }
-        }
+        .paneBackHeader(isTrailingPane ? SunsetFormat.monthDay(show.time, zone: zone) : nil)
+        .fillsTrailingPane()
     }
 
     private var visibilityLabel: String {
@@ -269,7 +269,24 @@ struct ShowDetailView: View {
 }
 
 /// A pushed screen's back button and title, for the trailing pane, where the
-/// system bar would split them (see `ShowDetailView`).
+/// system bar would split them (see `ShowDetailView`). No bar behind it: the
+/// status column's clock sits at its trailing end, so the sky shows through
+/// and content scrolling under it gets the system's soft edge.
+private extension View {
+    @ViewBuilder
+    func paneBackHeader(_ title: String?) -> some View {
+        if let title {
+            if #available(iOS 26.0, *) {
+                safeAreaBar(edge: .top, spacing: 0) { PaneBackHeader(title: title) }
+            } else {
+                safeAreaInset(edge: .top, spacing: 0) { PaneBackHeader(title: title) }
+            }
+        } else {
+            self
+        }
+    }
+}
+
 private struct PaneBackHeader: View {
     let title: String
     @Environment(\.dismiss) private var dismiss
@@ -293,6 +310,5 @@ private struct PaneBackHeader: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 6)
-        .background(.ultraThinMaterial, ignoresSafeAreaEdges: [.top, .horizontal])
     }
 }

@@ -122,4 +122,35 @@ final class UnfoldedSplitTests: XCTestCase {
         ]
         XCTAssertEqual(PaneCut.make(line: 577, blocks: PaneCut.blocks(from: section)), PaneCut(y: 540, closes: nil))
     }
+
+    // Pane fill: the leading pane's viewport above the tab bar is 587 pt.
+
+    func testTheHeroTakesTheRoomTheCardsLeaveAboveTheLine() {
+        let hero = PaneFill.heroHeight(viewport: 587, spacing: 54, cards: [138, 164], minimum: 200)
+        XCTAssertEqual(hero, 587 - PaneClearance.gap - 54 - 138 - 164)
+        // Hero, padding and cards end exactly on the line, so nothing is cut.
+        XCTAssertEqual(hero! + 54 + 138 + 164, 587 - PaneClearance.gap)
+    }
+
+    func testTheHeroNeverShrinksBelowItsMinimum() {
+        XCTAssertEqual(PaneFill.heroHeight(viewport: 587, spacing: 54, cards: [138, 340], minimum: 200), 200)
+    }
+
+    func testTheHeroWaitsForEveryHeight() {
+        XCTAssertNil(PaneFill.heroHeight(viewport: 0, spacing: 54, cards: [138, 164], minimum: 200))
+        XCTAssertNil(PaneFill.heroHeight(viewport: 587, spacing: 54, cards: [138, 0], minimum: 200))
+        XCTAssertNil(PaneFill.heroHeight(viewport: 587, spacing: 54, cards: [], minimum: 200))
+    }
+
+    // Status column: the trailing pane's content starts 83 pt down.
+
+    func testContentStartsBelowTheStatusColumnsClock() {
+        XCTAssertEqual(StatusColumn(width: 85, contentTop: 83).topMargin, StatusColumn.bottom - 83)
+        XCTAssertEqual(StatusColumn(width: 85, contentTop: 83.4).topMargin, (StatusColumn.bottom - 83.4).rounded(.up))
+    }
+
+    func testNoColumnOrContentAlreadyBelowItNeedsNoMargin() {
+        XCTAssertEqual(StatusColumn(width: 0, contentTop: 20).topMargin, 0)
+        XCTAssertEqual(StatusColumn(width: 85, contentTop: 140).topMargin, 0)
+    }
 }

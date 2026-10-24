@@ -167,6 +167,41 @@ struct PaneCut: Equatable, Sendable {
     }
 }
 
+/// Today in the unfolded leading pane opens on whole cards: the hero sky
+/// takes the height the summary and factor cards leave above the bar line,
+/// so the factor card ends there instead of being cut to its first row.
+enum PaneFill {
+    /// - Parameters:
+    ///   - viewport: the scroll view's height inside its safe area.
+    ///   - spacing: padding and stack spacing around the hero and cards.
+    ///   - cards: the heights of the cards under the hero.
+    /// - Returns: `nil` until every height is measured.
+    static func heroHeight(viewport: CGFloat, spacing: CGFloat, cards: [CGFloat], minimum: CGFloat) -> CGFloat? {
+        guard viewport > 0, !cards.isEmpty, cards.allSatisfy({ $0 > 0 }) else { return nil }
+        let room = viewport - PaneClearance.gap - spacing - cards.reduce(0, +)
+        return max(minimum, room.rounded(.down))
+    }
+}
+
+/// The trailing pane meets the display edge, where iOS 27.1 draws the status
+/// bar as a vertical column (clock over the connectivity ring) and reserves
+/// its width as trailing safe area down the whole pane. Content runs under
+/// that column, so the pane's margins match, and starts below the clock.
+struct StatusColumn: Equatable, Sendable {
+    /// The column's trailing safe-area width; 0 when there is none.
+    var width: CGFloat = 0
+    /// Where the scroll content starts, in global space.
+    var contentTop: CGFloat = 0
+
+    /// The clock and ring end about 102 pt down the display.
+    static let bottom: CGFloat = 112
+
+    /// Extra top content margin that starts the first card below the clock.
+    var topMargin: CGFloat {
+        width > 0 ? max(0, (Self.bottom - contentTop).rounded(.up)) : 0
+    }
+}
+
 /// The blocks one pane's scroll view reports, read by its mask.
 @MainActor @Observable
 final class PaneBlocks {
@@ -220,6 +255,15 @@ extension View {
         modifier(PanePartReporter(block: section, isRow: false, style: .groupedList))
     }
 
+    /// In the unfolded trailing pane, lays the content out under the status
+    /// column at the display edge, so cards fill the pane with even margins
+    /// (see `StatusColumn`). `clearsClock` also starts a scroll view's
+    /// content below the clock; leave it off when the top right corner is
+    /// empty sky. Elsewhere it does nothing.
+    func fillsTrailingPane(clearsClock: Bool = false) -> some View {
+        modifier(TrailingPaneFill(clearsClock: clearsClock))
+    }
+
     /// Keeps the phone's horizontal tab bar in the unfolded leading pane.
     /// iOS 27.1 otherwise draws it as a bottom capsule on some screens and a
     /// vertical rail beside the fold on others. Folded, the system default.
@@ -256,6 +300,30 @@ private struct PaneBottomClearance: ViewModifier {
             }
             .onGeometryChange(for: CGFloat.self) { $0.safeAreaInsets.bottom } action: { barInset = $0 }
             .onChange(of: isSplit) { blocks.parts = [:] }
+    }
+}
+
+private struct TrailingPaneFill: ViewModifier {
+    let clearsClock: Bool
+    @Environment(\.isTrailingPane) private var isTrailingPane
+    @State private var column = StatusColumn()
+
+    func body(content: Content) -> some View {
+        let fills = isTrailingPane && column.width > 0
+        content
+            .contentMargins(.top, fills && clearsClock ? column.topMargin : nil, for: .scrollContent)
+            .ignoresSafeArea(.container, edges: fills ? .trailing : [])
+            .onGeometryChange(for: StatusColumn.self) { proxy in
+                StatusColumn(
+                    width: proxy.safeAreaInsets.trailing,
+                    contentTop: proxy.frame(in: .global).minY + proxy.safeAreaInsets.top
+                )
+            } action: { measured in
+                // Keep the width once seen: laid out under the column, the
+                // view may no longer report it.
+                guard isTrailingPane, measured.width > 0 || column.width == 0 else { return }
+                column = measured
+            }
     }
 }
 

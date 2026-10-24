@@ -11,6 +11,10 @@ struct TodayView: View {
     @State private var showAlertSetup = false
     @State private var showHeroDetail = false
     @Environment(\.isLeadingPane) private var isLeadingPane
+    /// Unfolded: the viewport and the heights of the cards under the hero.
+    @State private var paneViewport: CGFloat = 0
+    @State private var summaryHeight: CGFloat = 0
+    @State private var factorsHeight: CGFloat = 0
     #if DEBUG
     @ObservedObject private var screenshots = ScreenshotRouter.shared
     #endif
@@ -34,6 +38,9 @@ struct TodayView: View {
                 .id("top")
             }
             .clearsPaneBottom()
+            .onGeometryChange(for: CGFloat.self) { proxy in
+                proxy.size.height - proxy.safeAreaInsets.top - proxy.safeAreaInsets.bottom
+            } action: { paneViewport = $0 }
             #if DEBUG
             .task(id: screenshots.scene) { await openScreenshotScene(screenshots.scene, proxy: proxy) }
             #endif
@@ -108,6 +115,7 @@ struct TodayView: View {
     @ViewBuilder
     private func content(forecast: SunsetForecast, hero: SunShow) -> some View {
         let zone = forecast.timeZone
+        let heroHeight = paneHeroHeight
         Button { showHeroDetail = true } label: {
             SkyHero(
                 show: hero,
@@ -119,7 +127,7 @@ struct TodayView: View {
         }
         .buttonStyle(.plain)
         .accessibilityHint("Shows cloud cover and the full breakdown")
-        .containerRelativeFrame(.vertical) { length, _ in max(260, length * 0.40) }
+        .containerRelativeFrame(.vertical) { length, _ in heroHeight ?? max(260, length * 0.40) }
         .padding(.top, 18)
         .padding(.bottom, 4)
 
@@ -134,15 +142,21 @@ struct TodayView: View {
                 stat("Rain chance", "\(hero.score.rainChance)%")
             }
         }
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { summaryHeight = $0 }
 
         Card {
             Text("What makes the score")
                 .font(.headline)
-            ForEach(hero.score.factors) { factor in
-                FactorRow(factor: factor, tone: Theme.tone(score: hero.score.total))
-                    .paneRow()
+            if isLeadingPane {
+                FactorGrid(factors: hero.score.factors, tone: Theme.tone(score: hero.score.total))
+            } else {
+                ForEach(hero.score.factors) { factor in
+                    FactorRow(factor: factor, tone: Theme.tone(score: hero.score.total))
+                        .paneRow()
+                }
             }
         }
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { factorsHeight = $0 }
 
         let next = Array(forecast.upcomingShows(settings.watched).dropFirst().prefix(2))
         if !next.isEmpty {
@@ -176,6 +190,15 @@ struct TodayView: View {
             .font(.caption)
             .foregroundStyle(Theme.textSecondary)
             .paneCard()
+    }
+
+    /// Unfolded, the hero takes the height the summary and the factor grid
+    /// leave above the tab bar, so Today opens on whole cards (`PaneFill`).
+    /// Folded, `nil`: the phone's hero.
+    private var paneHeroHeight: CGFloat? {
+        guard isLeadingPane else { return nil }
+        // Hero padding 18 + 4, then a 16 pt gap before each card.
+        return PaneFill.heroHeight(viewport: paneViewport, spacing: 54, cards: [summaryHeight, factorsHeight], minimum: 200)
     }
 
     #if DEBUG

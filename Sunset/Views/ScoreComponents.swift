@@ -34,13 +34,13 @@ struct SkyBackdrop: View {
     }
 }
 
-/// The hero: the next sunrise or sunset written straight onto its sky.
+/// The hero: the next sunrise or sunset written straight onto its sky. It
+/// fills the height its caller proposes (`containerRelativeFrame`).
 struct SkyHero: View {
     let show: SunShow
     let zone: TimeZone
     let title: String
     let placeName: String?
-    var height: CGFloat = 300
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -73,7 +73,7 @@ struct SkyHero: View {
         }
         .padding(.horizontal, 6)
         .padding(.vertical, 8)
-        .frame(height: height)
+        .frame(maxHeight: .infinity)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title), score \(show.score.total), \(show.score.grade.rawValue). \(show.event.title) at \(SunsetFormat.time(show.time, zone: zone))")
     }
@@ -151,21 +151,70 @@ struct FactorRow: View {
                     .font(.headline.monospacedDigit())
                     .foregroundStyle(Theme.textSecondary)
             }
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    Capsule().fill(Theme.hairline)
-                    Capsule()
-                        .fill(tone)
-                        .frame(width: max(8, geometry.size.width * CGFloat(factor.value) / 100))
-                }
-            }
-            .frame(height: 8)
+            FactorBar(value: factor.value, tone: tone)
             Text(factor.detail)
                 .font(.caption)
                 .foregroundStyle(Theme.textSecondary)
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(factor.name) \(factor.value) out of 100. \(factor.detail)")
+    }
+}
+
+/// The four factors as a two-by-two grid of name, value and bar, without
+/// the one-line details. The unfolded leading pane fits all four above its
+/// tab bar this way, where the full rows would be cut after the first.
+struct FactorGrid: View {
+    let factors: [SunsetScore.Factor]
+    let tone: Color
+
+    var body: some View {
+        VStack(spacing: 16) {
+            ForEach(Array(stride(from: 0, to: factors.count, by: 2)), id: \.self) { start in
+                HStack(alignment: .top, spacing: 20) {
+                    tile(factors[start])
+                    if start + 1 < factors.count {
+                        tile(factors[start + 1])
+                    } else {
+                        Color.clear.frame(maxWidth: .infinity)
+                    }
+                }
+                .paneRow()
+            }
+        }
+    }
+
+    private func tile(_ factor: SunsetScore.Factor) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            HStack(alignment: .firstTextBaseline) {
+                Text(factor.name).font(.headline)
+                Spacer(minLength: 4)
+                Text("\(factor.value)")
+                    .font(.headline.monospacedDigit())
+                    .foregroundStyle(Theme.textSecondary)
+            }
+            FactorBar(value: factor.value, tone: tone)
+        }
+        .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("\(factor.name) \(factor.value) out of 100. \(factor.detail)")
+    }
+}
+
+struct FactorBar: View {
+    let value: Int
+    let tone: Color
+
+    var body: some View {
+        GeometryReader { geometry in
+            ZStack(alignment: .leading) {
+                Capsule().fill(Theme.hairline)
+                Capsule()
+                    .fill(tone)
+                    .frame(width: max(8, geometry.size.width * CGFloat(value) / 100))
+            }
+        }
+        .frame(height: 8)
     }
 }
 
