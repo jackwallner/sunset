@@ -172,21 +172,11 @@ final class PaneBlocks {
     var parts: [UUID: PaneCut.Part] = [:]
 }
 
-/// The display edge insets a pane screen must keep. Split, the panes reach
-/// the display edges so every screen's sky fills them; the screens take the
-/// display's side insets back as safe area, unless the system already gave
-/// them that much.
-enum PaneEdgeInset {
-    static func missing(required: CGFloat, actual: CGFloat) -> CGFloat {
-        max(required - max(actual, 0), 0)
-    }
-}
-
 extension EnvironmentValues {
     /// True in the unfolded leading pane, above the floating tab bar.
     @Entry var isLeadingPane = false
-    /// Side insets the pane's screens keep (`paneEdgeInsets`).
-    @Entry var paneEdgeInsets = EdgeInsets()
+    /// True in the unfolded trailing pane (the Outlook and its pushes).
+    @Entry var isTrailingPane = false
     /// The pane's block frames. `nil` folded, so the phone layout does no
     /// bookkeeping while it scrolls.
     @Entry var paneBlocks: PaneBlocks? = nil
@@ -228,24 +218,12 @@ extension View {
         modifier(PanePartReporter(block: section, isRow: false, style: .groupedList))
     }
 
-    /// A pane container that reaches past the display's safe area: hands its
-    /// screens the side insets they keep (`keepsPaneEdgeInsets()`).
-    func paneEdgeInsets(_ insets: EdgeInsets) -> some View {
-        safeAreaPadding(insets)
-            .environment(\.paneEdgeInsets, insets)
-    }
-
-    /// A screen in a pane: its content keeps the display's side insets while
-    /// its sky, drawn ignoring the safe area, fills to the display edge.
-    /// Apply it last, after the screen's sky.
-    func keepsPaneEdgeInsets() -> some View {
-        modifier(PaneEdgeInsetKeeper())
-    }
-
     /// Keeps the phone's horizontal bars in an unfolded pane. iOS 27.1
     /// otherwise draws the tab bar as a vertical rail on some screens and a
     /// bottom bar on others, and moves a pushed screen's back button to the
-    /// trailing edge. Folded, the system default.
+    /// trailing edge. Folded, the system default. Apply it to each tab, not
+    /// the TabView: on the root container it also pillarboxed the whole
+    /// app between black strips.
     @ViewBuilder
     func horizontalBarsInPane(_ isSplit: Bool) -> some View {
         if #available(iOS 27.1, *) {
@@ -254,17 +232,24 @@ extension View {
             self
         }
     }
+
+    /// `horizontalBarsInPane` for a screen in the trailing pane's stack (the
+    /// Outlook and its pushes); elsewhere it leaves the bars alone.
+    func horizontalBarsInTrailingPane() -> some View {
+        modifier(TrailingPaneBars())
+    }
 }
 
-private struct PaneEdgeInsetKeeper: ViewModifier {
-    @Environment(\.paneEdgeInsets) private var required
-    @State private var actual = EdgeInsets()
+private struct TrailingPaneBars: ViewModifier {
+    @Environment(\.isTrailingPane) private var isTrailingPane
 
     func body(content: Content) -> some View {
-        content
-            .safeAreaPadding(.leading, PaneEdgeInset.missing(required: required.leading, actual: actual.leading))
-            .safeAreaPadding(.trailing, PaneEdgeInset.missing(required: required.trailing, actual: actual.trailing))
-            .onGeometryChange(for: EdgeInsets.self) { $0.safeAreaInsets } action: { actual = $0 }
+        // Fixed for a view's life: the trailing pane is its own instance.
+        if isTrailingPane {
+            content.horizontalBarsInPane(true)
+        } else {
+            content
+        }
     }
 }
 

@@ -118,16 +118,4 @@ final class UnfoldedSplitTests: XCTestCase {
         ]
         XCTAssertEqual(PaneCut.make(line: 577, blocks: PaneCut.blocks(from: section)), PaneCut(y: 540, closes: nil))
     }
-
-    // Pane edge insets: the display's side inset is 44 pt.
-
-    func testAScreenWithoutTheSideInsetTakesItAsSafeArea() {
-        XCTAssertEqual(PaneEdgeInset.missing(required: 44, actual: 0), 44)
-    }
-
-    func testAScreenThatAlreadyHasTheInsetAddsNothing() {
-        XCTAssertEqual(PaneEdgeInset.missing(required: 44, actual: 44), 0)
-        XCTAssertEqual(PaneEdgeInset.missing(required: 44, actual: 60), 0)
-        XCTAssertEqual(PaneEdgeInset.missing(required: 0, actual: -3), 0)
-    }
 }

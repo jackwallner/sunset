@@ -79,7 +79,6 @@ struct TodayView: View {
                 requestReview()
             }
         }
-        .keepsPaneEdgeInsets()
     }
 
     /// Captures drive the push from the router, because a `.task` on this

@@ -22,20 +22,15 @@ paths:
   only the Outlook pane and tab are separate instances.
 - Each pane gets `horizontalSizeClass = .compact`; the leading one also
   `isLeadingPane`.
-- Newer iOS 27.1 runtimes give the landscape inner display about 44 pt side
-  safe areas and a 74 pt top one (status bar along the top). Split,
-  `MainTabView` ignores the horizontal safe area so both panes reach the
-  display edges (else each screen's sky stopped short and left black
-  strips), and hands the side inset back: `paneEdgeInsets` on each pane,
-  `keepsPaneEdgeInsets()` last on every pane screen (Today, Settings,
-  Outlook, show detail), which adds only what the system did not already
-  give (`PaneEdgeInset.missing`, tested).
-- One navigation everywhere: split, both panes apply
-  `horizontalBarsInPane` (`toolbarVerticalBehavior(.disabled)`, iOS 27.1).
-  Without it the system drew the tab bar as a bottom capsule on some
-  screens and a vertical rail beside the fold on others, squeezed the
-  column beside the rail, and moved the trailing pane's back button to the
-  top right (review rejected that set, 2026-10-23).
+- One navigation everywhere: split, each leading tab's NavigationStack
+  applies `horizontalBarsInPane` (`toolbarVerticalBehavior(.disabled)`,
+  iOS 27.1), and the trailing pane's screens (Outlook, show detail) apply
+  `horizontalBarsInTrailingPane()`. Without it the system drew the tab bar
+  as a bottom capsule on some screens and a vertical rail beside the fold
+  on others, squeezed the column beside the rail, and moved the trailing
+  pane's back button to the top right (review rejected that set,
+  2026-10-23). Never on the TabView or the trailing NavigationStack
+  themselves: that pillarboxed the app between 44 pt black strips.
 - Nothing is ever sliced at the leading pane's floating tab bar: Today, the
   show detail, Settings and the Outlook apply `.clearsPaneBottom()`, which
   in the leading pane masks content a 12 pt gap above the bar. The trailing
