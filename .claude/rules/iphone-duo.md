@@ -59,14 +59,18 @@ paths:
   its old fixed 300 pt overflowed the shorter frames and hid the title
   row under the detail header.
 - The trailing pane's trailing safe area (~85 pt, full height) is iOS
-  27.1's vertical status column: clock over the connectivity ring, ending
-  about 102 pt down. `fillsTrailingPane()` lays the Outlook and the show
-  detail out under it so both margins are 16 pt; `clearsClock` (Outlook)
-  adds a top content margin that starts the first card below the clock
-  (`StatusColumn`, tested). The detail drops the place name from its hero
-  there and `PaneBackHeader` has no bar (a `safeAreaBar` on iOS 26+), so
-  nothing sits under the clock. Review rejected the earlier set for the
-  ~100 pt dead column and the header bar running under the clock.
+  27.1's vertical status column: clock over the connectivity ring, with
+  its backing ending 112 pt down. `fillsTrailingPane()` lays the Outlook
+  and the show detail out under it so both margins are 16 pt.
+  `clearsStatusClock()` (Outlook) pads the week 36 pt so the first card
+  starts below the clock (`StatusColumn`); a top content margin computed
+  from the measured content top never applied, so the padding is fixed.
+  To keep the last day card whole, trailing day cards space rows 10 pt
+  (cut style `tightCard`, 8 pt) and cards 8 pt. The trailing detail
+  drops the hero's place name (it would sit under the clock), shows the
+  factor grid, and `PaneBackHeader` has no bar (a `safeAreaBar` on iOS
+  26+). Review rejected the earlier set for the ~100 pt dead column and
+  the header bar running under the clock (2026-10-23).
   Folded the mask is fully open and nothing reports.
 - Onboarding and the full-screen paywall use `.leadingPaneColumn()` before
   their sky, so the column sits in the leading pane and the sky still fills
