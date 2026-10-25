@@ -1,0 +1,17 @@
+{
+  "project": "Sunset.xcodeproj",
+  "scheme": "SunsetUITests",
+  "uitests_dir": "SunsetUITests",
+  "journeys": [
+    "SunsetUITests/ReleaseJourneysUITests"
+  ],
+  "personas": [
+    "newcomer",
+    "accessibility",
+    "reduce-motion",
+    "german"
+  ],
+  "persona_overrides": {},
+  "slot": null,
+  "bundle_id": "com.jackwallner.sunset"
+}
