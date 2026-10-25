@@ -1,0 +1,34 @@
+Sunset note chaque lever et coucher de soleil, plusieurs heures à l'avance, pour que vous soyez dehors pour les plus beaux au lieu d'en entendre parler après coup.
+
+CHAQUE LEVER ET COUCHER DE SOLEIL A UN SCORE
+Sunset lit les prévisions de nuages, d'humidité et de visibilité pour la minute exacte où le soleil se lève ou se couche, et les transforme en un score de 0 à 100 avec un résumé clair : nuages hauts et fins au-dessus d'un horizon dégagé, un banc de nuages bas face au soleil, de la pluie à ce moment-là, ou un ciel clair et une lueur dorée pure. Suivez les levers, les couchers, ou les deux.
+
+POURQUOI LE CIEL S'EMBRASERA OU NON
+Quatre facteurs montrent ce qui détermine le score :
+• Couleur : nuages hauts et moyens qui captent la lumière
+• Traînées : cirrus fins avec de la place pour rayonner
+• Horizon : ciel dégagé vers le soleil, y compris les nuages bas situés à 80 km à l'est ou à l'ouest, qui décident si la lumière passe ou non
+• Clarté : air sec et pur pour des tons éclatants
+
+ALERTES GRATUITES
+Une notification avant les couchers de soleil qui valent le déplacement, et la veille au soir d'un beau lever, pour programmer votre réveil. Les alertes sont recalculées au fil des prévisions : un ciel qui se couvre perd son alerte.
+
+HEURE DORÉE ET WIDGET
+Consultez l'heure de chaque lever et coucher de soleil et la fenêtre où les couleurs sont à leur apogée, où que vous soyez. Un widget d'écran d'accueil affiche le prochain score.
+
+SUN+
+• Le score de chaque lever et coucher de la semaine à venir
+• Des alertes avant l'arrivée d'orages
+• Un signal quand des averses et un soleil bas peuvent faire apparaître un arc-en-ciel
+• Des alertes brouillard pour une lumière douce et mystérieuse
+• Votre propre seuil de score et délai d'alerte
+
+Sun+ est disponible en abonnement mensuel ou annuel avec essai gratuit pour les nouveaux abonnés, ou en achat unique à vie. Les prix s'affichent dans l'application avant l'achat et varient selon la région. Le paiement est débité sur votre compte Google Play. Les abonnements se renouvellent automatiquement sauf annulation avant la fin de la période en cours. Gérez ou annulez à tout moment dans Google Play, sous Paiements et abonnements.
+
+CONFIDENTIALITÉ
+Sunset demande une seule fois votre position approximative et envoie uniquement des coordonnées arrondies au service météo Open-Meteo pour obtenir les prévisions. Pas de compte, pas de suivi, pas d'analyses.
+
+Les scores et les événements du ciel sont des prévisions de nuages, d'humidité, de visibilité et de pluie, pas une promesse de ce que fera le ciel. Restez à l'abri pendant les orages.
+
+Politique de confidentialité: https://jackwallner.github.io/sunset/privacy-policy.html
+Conditions d'utilisation: https://jackwallner.github.io/sunset/terms.html

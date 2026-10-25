@@ -1,0 +1,1 @@
+Pronóstico de hora dorada: un puntaje por amanecer y atardecer, con alertas

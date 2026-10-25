@@ -1,0 +1,34 @@
+Sunset assegna un punteggio a ogni alba e tramonto con ore di anticipo, così puoi essere fuori per quelli più belli invece di saperlo dopo.
+
+OGNI ALBA E TRAMONTO HA UN PUNTEGGIO
+Sunset legge le previsioni di nuvole, umidità e visibilità per il minuto esatto in cui il sole sorge o tramonta e le trasforma in un punteggio da 0 a 100 con un riepilogo chiaro: nuvole alte e sottili su un orizzonte aperto, un banco di nuvole basse verso il sole, pioggia in quel momento, oppure cielo sereno e un limpido bagliore dorato. Segui albe, tramonti o entrambi.
+
+PERCHÉ IL CIELO SI ACCENDERÀ O NO
+Quattro fattori mostrano cosa determina il punteggio:
+• Colore: nuvole alte e medie che catturano la luce
+• Strisce: cirri sottili con spazio per illuminarsi
+• Orizzonte: cielo aperto verso il sole, comprese le nuvole basse a 80 km a est o a ovest che decidono se la luce passa
+• Limpidezza: aria secca e pulita per tonalità vivaci
+
+AVVISI GRATUITI
+Una notifica prima dei tramonti che valgono l'uscita e la sera prima di un'alba spettacolare, così puoi impostare la sveglia. Gli avvisi vengono ricalcolati al cambiare delle previsioni, quindi un cielo che si copre perde il suo avviso.
+
+ORA D'ORO E WIDGET
+Vedi l'orario di ogni alba e tramonto e la finestra in cui i colori raggiungono il picco, ovunque tu sia. Un widget nella schermata Home mostra il prossimo punteggio.
+
+SUN+
+• Il punteggio di ogni alba e tramonto della settimana
+• Avvisi prima dell'arrivo dei temporali
+• Un segnale quando rovesci e sole basso potrebbero formare un arcobaleno
+• Avvisi di nebbia per una luce morbida e suggestiva
+• Punteggio e anticipo degli avvisi a tua scelta
+
+Sun+ è disponibile come abbonamento mensile o annuale con prova gratuita per i nuovi abbonati, oppure come acquisto unico a vita. I prezzi vengono mostrati nell'app prima dell'acquisto e variano in base all'area geografica. Il pagamento viene addebitato sul tuo account Google Play. Gli abbonamenti si rinnovano automaticamente se non vengono annullati prima della fine del periodo corrente. Gestisci o annulla in qualsiasi momento in Google Play, in Pagamenti e abbonamenti.
+
+PRIVACY
+Sunset chiede una sola volta la tua posizione approssimativa e invia solo coordinate arrotondate al servizio meteo Open-Meteo per ottenere le previsioni. Nessun account, nessun tracciamento, nessuna analisi.
+
+I punteggi e gli eventi del cielo sono previsioni di nuvole, umidità, visibilità e pioggia, non una promessa di ciò che farà il cielo. Resta al riparo durante i temporali.
+
+Informativa sulla privacy: https://jackwallner.github.io/sunset/privacy-policy.html
+Termini di utilizzo: https://jackwallner.github.io/sunset/terms.html

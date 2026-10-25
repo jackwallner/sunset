@@ -1,0 +1,34 @@
+Sunset memberi skor kepada setiap matahari terbit dan terbenam berjam-jam lebih awal, supaya anda berada di luar untuk yang indah dan bukan mendengarnya kemudian.
+
+SETIAP MATAHARI TERBIT DAN TERBENAM MENDAPAT SKOR
+Sunset membaca ramalan awan, kelembapan dan jarak penglihatan untuk minit tepat matahari terbit atau terbenam, lalu menukarnya kepada skor 0 hingga 100 dengan ringkasan yang jelas: awan tinggi nipis di atas ufuk terbuka, jalur awan rendah ke arah matahari, hujan pada ketika itu, atau langit cerah dengan sinar emas yang bersih. Jejaki matahari terbit, terbenam atau kedua-duanya.
+
+MENGAPA LANGIT AKAN BERSINAR ATAU TIDAK
+Empat faktor menunjukkan apa yang menentukan skor:
+• Warna: awan tinggi dan sederhana yang menangkap cahaya
+• Jalur: awan sirus nipis dengan ruang untuk bersinar
+• Ufuk: langit terbuka ke arah matahari, termasuk awan rendah 80 km ke timur atau barat yang menentukan sama ada cahaya dapat menembusi
+• Kejernihan: udara kering dan bersih untuk warna yang hidup
+
+MAKLUMAN PERCUMA
+Pemberitahuan sebelum matahari terbenam yang berbaloi dikejar dan malam sebelum matahari terbit yang indah, supaya anda boleh menetapkan penggera. Makluman dibina semula apabila ramalan berubah, jadi langit yang mendung kehilangan maklumannya.
+
+WAKTU EMAS DAN WIDGET
+Lihat masa setiap matahari terbit dan terbenam serta tempoh warna mencapai kemuncak, di mana-mana anda berada. Widget skrin utama memaparkan skor seterusnya.
+
+SUN+
+• Skor setiap matahari terbit dan terbenam untuk seminggu akan datang
+• Makluman sebelum ribut petir tiba
+• Isyarat apabila hujan renyai dan matahari rendah boleh membentuk pelangi
+• Makluman kabus untuk cahaya lembut yang syahdu
+• Skor makluman dan masa pemberitahuan pilihan anda
+
+Sun+ tersedia sebagai langganan bulanan atau tahunan dengan percubaan percuma untuk pelanggan baharu, atau sebagai pembelian sekali sahaja seumur hidup. Harga dipaparkan dalam apl sebelum anda membeli dan berbeza mengikut wilayah. Bayaran dikenakan pada akaun Google Play anda. Langganan diperbaharui secara automatik melainkan dibatalkan sebelum tamat tempoh semasa. Urus atau batalkan pada bila-bila masa dalam Google Play di bawah Pembayaran & langganan.
+
+PRIVASI
+Sunset meminta lokasi anggaran anda sekali sahaja dan hanya menghantar koordinat yang dibundarkan kepada perkhidmatan cuaca Open-Meteo untuk mendapatkan ramalan. Tiada akaun, tiada penjejakan, tiada analitik.
+
+Skor dan peristiwa langit ialah ramalan awan, kelembapan, jarak penglihatan dan hujan, bukan janji tentang apa yang akan berlaku di langit. Kekal di dalam bangunan semasa ribut petir.
+
+Dasar Privasi: https://jackwallner.github.io/sunset/privacy-policy.html
+Terma Penggunaan: https://jackwallner.github.io/sunset/terms.html

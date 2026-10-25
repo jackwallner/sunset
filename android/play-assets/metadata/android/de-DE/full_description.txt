@@ -1,0 +1,34 @@
+Sunset bewertet jeden Sonnenaufgang und Sonnenuntergang schon Stunden im Voraus, damit du bei den besonderen draußen sein kannst, statt später davon zu hören.
+
+JEDER SONNENAUF- UND -UNTERGANG BEKOMMT EINE BEWERTUNG
+Sunset liest die Vorhersage für Wolken, Luftfeuchtigkeit und Sicht für die genaue Minute, in der die Sonne auf- oder untergeht, und macht daraus eine Bewertung von 0 bis 100 mit verständlicher Zusammenfassung: dünne hohe Wolken über offenem Horizont, eine tiefe Wolkenbank in Richtung Sonne, Regen im entscheidenden Moment oder klarer Himmel mit sauberem goldenem Glühen. Verfolge Sonnenaufgänge, Sonnenuntergänge oder beides.
+
+WARUM DER HIMMEL LEUCHTET ODER NICHT
+Vier Faktoren zeigen, was die Bewertung bestimmt:
+• Farbe: hohe und mittelhohe Wolken, die das Licht einfangen
+• Schleier: dünne Zirruswolken mit Platz zum Leuchten
+• Horizont: offener Himmel in Richtung Sonne, einschließlich tiefer Wolken 80 km östlich oder westlich, die darüber entscheiden, ob das Licht überhaupt durchkommt
+• Klarheit: trockene, saubere Luft für kräftige Töne
+
+KOSTENLOSE WARNUNGEN
+Eine Benachrichtigung vor den Sonnenuntergängen, für die sich der Weg nach draußen lohnt, und am Abend vor einem großartigen Sonnenaufgang, damit du dir einen Wecker stellen kannst. Die Warnungen werden mit der Vorhersage neu berechnet, ein zuziehender Himmel verliert also seine Warnung.
+
+GOLDENE STUNDE UND WIDGET
+Sieh die Zeit jedes Sonnenauf- und -untergangs und das Zeitfenster, in dem die Farben ihren Höhepunkt erreichen, für deinen jeweiligen Standort. Ein Widget für den Home-Bildschirm zeigt die nächste Bewertung.
+
+SUN+
+• Jede Sonnenauf- und -untergangsbewertung für die kommende Woche
+• Warnungen, bevor Gewitter aufziehen
+• Ein Hinweis, wenn Schauer und tiefstehende Sonne einen Regenbogen ermöglichen könnten
+• Nebelwarnungen für weiches, stimmungsvolles Licht
+• Eigene Warnschwelle und Vorlaufzeit
+
+Sun+ gibt es als Monats- oder Jahresabo mit kostenloser Testphase für neue Abonnenten oder als einmaligen Lifetime-Kauf. Die Preise werden vor dem Kauf in der App angezeigt und unterscheiden sich je nach Region. Die Zahlung erfolgt über dein Google-Play-Konto. Abos verlängern sich automatisch, sofern sie nicht vor Ende des aktuellen Zeitraums gekündigt werden. Verwalten oder kündigen kannst du jederzeit in Google Play unter Zahlungen & Abos.
+
+DATENSCHUTZ
+Sunset fragt einmalig nach deinem ungefähren Standort und sendet nur gerundete Koordinaten an den Wetterdienst Open-Meteo, um die Vorhersage abzurufen. Kein Konto, kein Tracking, keine Analysen.
+
+Bewertungen und Himmelsereignisse sind Vorhersagen für Wolken, Luftfeuchtigkeit, Sicht und Regen, kein Versprechen, was der Himmel tun wird. Bleibe bei Gewittern drinnen.
+
+Datenschutzerklärung: https://jackwallner.github.io/sunset/privacy-policy.html
+Nutzungsbedingungen: https://jackwallner.github.io/sunset/terms.html

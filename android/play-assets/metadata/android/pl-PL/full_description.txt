@@ -1,0 +1,34 @@
+Sunset ocenia każdy wschód i zachód słońca z wielogodzinnym wyprzedzeniem, abyś był na zewnątrz przy tych najpiękniejszych, zamiast dowiadywać się o nich później.
+
+KAŻDY WSCHÓD I ZACHÓD DOSTAJE OCENĘ
+Sunset odczytuje prognozę chmur, wilgotności i widoczności na dokładną minutę wschodu lub zachodu słońca i zamienia ją w ocenę od 0 do 100 z czytelnym podsumowaniem: cienkie wysokie chmury nad otwartym horyzontem, pas niskich chmur w stronę słońca, deszcz w tym momencie albo czyste niebo i czysta złota poświata. Śledź wschody, zachody lub jedno i drugie.
+
+DLACZEGO NIEBO ZAPŁONIE LUB NIE
+Cztery czynniki pokazują, co decyduje o ocenie:
+• Kolor: wysokie i średnie chmury łapiące światło
+• Smugi: cienkie chmury pierzaste z miejscem na blask
+• Horyzont: otwarte niebo w stronę słońca, w tym niskie chmury 80 km na wschód lub zachód, które decydują, czy światło w ogóle dotrze
+• Przejrzystość: suche, czyste powietrze dla intensywnych barw
+
+BEZPŁATNE POWIADOMIENIA
+Powiadomienie przed zachodami, dla których warto wyjść, oraz wieczorem przed świetnym wschodem, żebyś mógł nastawić budzik. Powiadomienia są przeliczane wraz z prognozą, więc niebo, które się zachmurza, traci swoje powiadomienie.
+
+ZŁOTA GODZINA I WIDŻET
+Sprawdź godzinę każdego wschodu i zachodu oraz okno, w którym kolory osiągają szczyt, gdziekolwiek jesteś. Widżet na ekranie głównym pokazuje następną ocenę.
+
+SUN+
+• Ocena każdego wschodu i zachodu na cały tydzień
+• Powiadomienia, zanim nadejdą burze
+• Sygnał, gdy przelotny deszcz i niskie słońce mogą dać tęczę
+• Powiadomienia o mgle dla miękkiego, nastrojowego światła
+• Własny próg oceny i czas wyprzedzenia
+
+Sun+ jest dostępny w subskrypcji miesięcznej lub rocznej z bezpłatnym okresem próbnym dla nowych subskrybentów albo jako jednorazowy zakup na zawsze. Ceny są widoczne w aplikacji przed zakupem i różnią się w zależności od regionu. Płatność jest pobierana z Twojego konta Google Play. Subskrypcje odnawiają się automatycznie, jeśli nie zostaną anulowane przed końcem bieżącego okresu. Zarządzaj lub anuluj w dowolnym momencie w Google Play, w sekcji Płatności i subskrypcje.
+
+PRYWATNOŚĆ
+Sunset jednorazowo prosi o Twoją przybliżoną lokalizację i wysyła tylko zaokrąglone współrzędne do serwisu pogodowego Open-Meteo, aby pobrać prognozę. Bez konta, bez śledzenia, bez analityki.
+
+Oceny i zjawiska na niebie to prognozy chmur, wilgotności, widoczności i deszczu, a nie obietnica tego, co zrobi niebo. Podczas burz pozostań w pomieszczeniu.
+
+Polityka prywatności: https://jackwallner.github.io/sunset/privacy-policy.html
+Warunki korzystania: https://jackwallner.github.io/sunset/terms.html

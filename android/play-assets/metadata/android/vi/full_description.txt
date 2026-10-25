@@ -1,0 +1,34 @@
+Sunset chấm điểm mọi bình minh và hoàng hôn trước hàng giờ, để bạn có mặt ngoài trời vào những khoảnh khắc đẹp thay vì nghe kể lại sau đó.
+
+MỌI BÌNH MINH VÀ HOÀNG HÔN ĐỀU CÓ ĐIỂM
+Sunset đọc dự báo mây, độ ẩm và tầm nhìn cho đúng phút mặt trời mọc hoặc lặn rồi chuyển thành điểm từ 0 đến 100 kèm tóm tắt dễ hiểu: mây cao mỏng trên đường chân trời thoáng, dải mây thấp hướng về mặt trời, mưa đúng lúc đó, hoặc bầu trời quang với ánh vàng trong trẻo. Theo dõi bình minh, hoàng hôn hoặc cả hai.
+
+VÌ SAO BẦU TRỜI SẼ RỰC LÊN HAY KHÔNG
+Bốn yếu tố cho thấy điều gì quyết định điểm số:
+• Màu sắc: mây cao và mây tầng giữa bắt sáng
+• Vệt mây: mây ti mỏng có chỗ để tỏa sáng
+• Đường chân trời: bầu trời thoáng về phía mặt trời, gồm cả mây thấp cách 80 km về phía đông hoặc tây, thứ quyết định ánh sáng có xuyên qua được hay không
+• Độ trong: không khí khô, sạch cho sắc màu rực rỡ
+
+THÔNG BÁO MIỄN PHÍ
+Một thông báo trước những hoàng hôn đáng để ra ngoài và tối hôm trước một bình minh đẹp, để bạn đặt báo thức. Thông báo được tạo lại khi dự báo thay đổi, nên bầu trời kéo mây sẽ mất thông báo của nó.
+
+GIỜ VÀNG VÀ WIDGET
+Xem giờ của từng bình minh và hoàng hôn cùng khung thời gian màu sắc đạt đỉnh, dù bạn ở đâu. Widget trên màn hình chính hiển thị điểm tiếp theo.
+
+SUN+
+• Điểm của mọi bình minh và hoàng hôn trong tuần tới
+• Thông báo trước khi giông bão kéo đến
+• Nhắc khi mưa rào và mặt trời thấp có thể tạo cầu vồng
+• Thông báo sương mù cho ánh sáng dịu, đầy cảm xúc
+• Điểm thông báo và thời gian báo trước tùy chỉnh
+
+Sun+ có dạng gói đăng ký theo tháng hoặc theo năm với dùng thử miễn phí cho người đăng ký mới, hoặc mua một lần dùng trọn đời. Giá được hiển thị trong ứng dụng trước khi bạn mua và khác nhau theo khu vực. Khoản thanh toán được tính vào tài khoản Google Play của bạn. Gói đăng ký tự động gia hạn trừ khi bị hủy trước khi kết thúc kỳ hiện tại. Quản lý hoặc hủy bất cứ lúc nào trong Google Play tại mục Thanh toán và gói đăng ký.
+
+QUYỀN RIÊNG TƯ
+Sunset chỉ hỏi vị trí gần đúng của bạn một lần và chỉ gửi tọa độ đã làm tròn đến dịch vụ thời tiết Open-Meteo để lấy dự báo. Không tài khoản, không theo dõi, không phân tích.
+
+Điểm số và sự kiện bầu trời là dự báo về mây, độ ẩm, tầm nhìn và mưa, không phải lời hứa về những gì bầu trời sẽ làm. Hãy ở trong nhà khi có giông bão.
+
+Chính sách quyền riêng tư: https://jackwallner.github.io/sunset/privacy-policy.html
+Điều khoản sử dụng: https://jackwallner.github.io/sunset/terms.html

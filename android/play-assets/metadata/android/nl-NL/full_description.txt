@@ -1,0 +1,34 @@
+Sunset geeft elke zonsopkomst en zonsondergang uren van tevoren een score, zodat je buiten bent voor de mooie in plaats van er later over te horen.
+
+ELKE ZONSOPKOMST EN ZONSONDERGANG KRIJGT EEN SCORE
+Sunset leest de voorspelling voor wolken, luchtvochtigheid en zicht voor de exacte minuut waarop de zon opkomt of ondergaat en maakt er een score van 0 tot 100 van met een heldere samenvatting: dunne hoge wolken boven een open horizon, een bank lage wolken richting de zon, regen op dat moment, of een heldere lucht met een zuivere gouden gloed. Volg zonsopkomsten, zonsondergangen of beide.
+
+WAAROM DE LUCHT WEL OF NIET OPLICHT
+Vier factoren laten zien wat de score bepaalt:
+• Kleur: hoge en middelhoge wolken die het licht opvangen
+• Strepen: dunne cirruswolken met ruimte om te gloeien
+• Horizon: open lucht richting de zon, inclusief lage wolken 80 km naar het oosten of westen die bepalen of het licht doorkomt
+• Helderheid: droge, schone lucht voor levendige tinten
+
+GRATIS MELDINGEN
+Een melding vóór de zonsondergangen die de moeite waard zijn en de avond voor een mooie zonsopkomst, zodat je een wekker kunt zetten. Meldingen worden herberekend als de voorspelling verandert, dus een lucht die dichttrekt verliest zijn melding.
+
+GOUDEN UUR EN WIDGET
+Zie de tijd van elke zonsopkomst en zonsondergang en het moment waarop de kleuren pieken, waar je ook bent. Een widget op het beginscherm toont de volgende score.
+
+SUN+
+• Elke score voor zonsopkomst en zonsondergang van de komende week
+• Meldingen voordat onweer opkomt
+• Een seintje als buien en een lage zon een regenboog kunnen geven
+• Mistmeldingen voor zacht, stemmig licht
+• Je eigen meldingsscore en aanlooptijd
+
+Sun+ is beschikbaar als maand- of jaarabonnement met een gratis proefperiode voor nieuwe abonnees, of als eenmalige levenslange aankoop. Prijzen zie je in de app voordat je koopt en verschillen per regio. De betaling wordt afgeschreven van je Google Play-account. Abonnementen worden automatisch verlengd, tenzij je opzegt vóór het einde van de lopende periode. Beheer of zeg op wanneer je wilt in Google Play onder Betalingen en abonnementen.
+
+PRIVACY
+Sunset vraagt één keer om je geschatte locatie en stuurt alleen afgeronde coördinaten naar de weerdienst Open-Meteo om de voorspelling op te halen. Geen account, geen tracking, geen analyses.
+
+Scores en luchtgebeurtenissen zijn voorspellingen van wolken, luchtvochtigheid, zicht en regen, geen belofte van wat de lucht zal doen. Blijf binnen bij onweer.
+
+Privacybeleid: https://jackwallner.github.io/sunset/privacy-policy.html
+Gebruiksvoorwaarden: https://jackwallner.github.io/sunset/terms.html

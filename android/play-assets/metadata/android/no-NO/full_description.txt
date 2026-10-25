@@ -1,0 +1,34 @@
+Sunset gir hver soloppgang og solnedgang en poengsum timer i forveien, så du kan være ute for de fine i stedet for å høre om dem etterpå.
+
+HVER SOLOPPGANG OG SOLNEDGANG FÅR EN POENGSUM
+Sunset leser prognosen for skyer, luftfuktighet og sikt for det nøyaktige minuttet solen står opp eller går ned, og gjør den om til en poengsum fra 0 til 100 med et tydelig sammendrag: tynne høye skyer over en åpen horisont, et belte av lave skyer mot solen, regn akkurat da, eller klar himmel og et rent gyllent skjær. Følg soloppganger, solnedganger eller begge deler.
+
+HVORFOR HIMMELEN LYSER OPP ELLER IKKE
+Fire faktorer viser hva som styrer poengsummen:
+• Farge: høye og middels høye skyer som fanger lyset
+• Striper: tynne cirrusskyer med plass til å gløde
+• Horisont: åpen himmel mot solen, inkludert lave skyer 80 km mot øst eller vest som avgjør om lyset i det hele tatt slipper gjennom
+• Klarhet: tørr, ren luft for levende toner
+
+GRATIS VARSLER
+Et varsel før solnedgangene det er verdt å gå ut for, og kvelden før en flott soloppgang, så du kan stille vekkerklokken. Varslene beregnes på nytt når prognosen endrer seg, så en himmel som trekker til mister varselet sitt.
+
+GYLNE TIMEN OG WIDGET
+Se tidspunktet for hver soloppgang og solnedgang og tidsvinduet når fargene topper seg, uansett hvor du er. En widget på startskjermen viser neste poengsum.
+
+SUN+
+• Poengsummen for hver soloppgang og solnedgang den neste uken
+• Varsler før tordenvær trekker inn
+• Et hint når byger og lav sol kan gi en regnbue
+• Tåkevarsler til mykt, stemningsfullt lys
+• Din egen varselpoengsum og varseltid
+
+Sun+ er tilgjengelig som månedlig eller årlig abonnement med gratis prøveperiode for nye abonnenter, eller som et engangskjøp for livet. Priser vises i appen før du kjøper og varierer fra region til region. Betalingen belastes Google Play-kontoen din. Abonnementer fornyes automatisk med mindre de sies opp før utgangen av gjeldende periode. Administrer eller si opp når som helst i Google Play under Betalinger og abonnementer.
+
+PERSONVERN
+Sunset ber om din omtrentlige posisjon én gang og sender bare avrundede koordinater til værtjenesten Open-Meteo for å hente prognosen. Ingen konto, ingen sporing, ingen analyse.
+
+Poengsummer og himmelhendelser er prognoser for skyer, luftfuktighet, sikt og regn, ikke et løfte om hva himmelen kommer til å gjøre. Hold deg innendørs under tordenvær.
+
+Personvernerklæring: https://jackwallner.github.io/sunset/privacy-policy.html
+Brukervilkår: https://jackwallner.github.io/sunset/terms.html

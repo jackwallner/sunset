@@ -1,0 +1,34 @@
+Sunset oceni vsak sončni vzhod in zahod več ur vnaprej, da boste zunaj pri najlepših in ne boste o njih slišali šele pozneje.
+
+VSAK VZHOD IN ZAHOD DOBI OCENO
+Sunset prebere napoved oblakov, vlažnosti in vidljivosti za natančno minuto vzhoda ali zahoda sonca in jo spremeni v oceno od 0 do 100 z jasnim povzetkom: tanki visoki oblaki nad odprtim obzorjem, pas nizkih oblakov proti soncu, dež v tistem trenutku ali jasno nebo in čist zlat sijaj. Spremljajte vzhode, zahode ali oboje.
+
+ZAKAJ BO NEBO ZASIJALO ALI NE
+Štirje dejavniki kažejo, kaj določa oceno:
+• Barva: visoki in srednji oblaki, ki ujamejo svetlobo
+• Proge: tanki cirusi s prostorom za sijaj
+• Obzorje: odprto nebo proti soncu, vključno z nizkimi oblaki 80 km proti vzhodu ali zahodu, ki odločajo, ali svetloba sploh pride skozi
+• Jasnost: suh, čist zrak za žive tone
+
+BREZPLAČNA OBVESTILA
+Obvestilo pred zahodi, zaradi katerih se splača iti ven, in večer pred čudovitim vzhodom, da lahko nastavite budilko. Obvestila se preračunajo ob spremembi napovedi, zato nebo, ki se zagrne, izgubi svoje obvestilo.
+
+ZLATA URA IN WIDGET
+Oglejte si čas vsakega vzhoda in zahoda ter okno, ko barve dosežejo vrh, kjerkoli ste. Widget na začetnem zaslonu prikazuje naslednjo oceno.
+
+SUN+
+• Ocena vsakega vzhoda in zahoda za naslednji teden
+• Obvestila, preden pridejo nevihte
+• Opozorilo, ko lahko plohe in nizko sonce naredijo mavrico
+• Obvestila o megli za mehko, razpoloženjsko svetlobo
+• Lastna meja ocene in čas vnaprej
+
+Sun+ je na voljo kot mesečna ali letna naročnina z brezplačnim preizkusom za nove naročnike ali kot enkraten nakup za vedno. Cene so prikazane v aplikaciji pred nakupom in se razlikujejo po regijah. Plačilo se zaračuna vašemu računu Google Play. Naročnine se samodejno obnavljajo, razen če jih prekličete pred koncem trenutnega obdobja. Upravljajte ali prekličite kadar koli v Google Play pod Plačila in naročnine.
+
+ZASEBNOST
+Sunset enkrat zaprosi za vaš približni položaj in vremenski storitvi Open-Meteo pošlje samo zaokrožene koordinate za prenos napovedi. Brez računa, brez sledenja, brez analitike.
+
+Ocene in nebesni dogodki so napovedi oblakov, vlažnosti, vidljivosti in dežja, ne obljuba, kaj bo storilo nebo. Med nevihtami ostanite v zaprtih prostorih.
+
+Pravilnik o zasebnosti: https://jackwallner.github.io/sunset/privacy-policy.html
+Pogoji uporabe: https://jackwallner.github.io/sunset/terms.html

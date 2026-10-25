@@ -1,0 +1,34 @@
+Sunset pisteyttää jokaisen auringonnousun ja -laskun tuntien etukäteen, jotta voit olla ulkona upeimpien aikaan etkä kuule niistä vasta jälkeenpäin.
+
+JOKAINEN AURINGONNOUSU JA -LASKU SAA PISTEET
+Sunset lukee pilvisyyden, kosteuden ja näkyvyyden ennusteen tarkalle minuutille, jolloin aurinko nousee tai laskee, ja muuttaa sen pisteiksi 0-100 selkeän yhteenvedon kera: ohuita korkeita pilviä avoimen horisontin yllä, matalien pilvien vyö auringon suunnassa, sadetta juuri sillä hetkellä tai kirkas taivas ja puhdas kultainen hehku. Seuraa auringonnousuja, -laskuja tai molempia.
+
+MIKSI TAIVAS SYTTYY TAI EI
+Neljä tekijää näyttää, mikä pisteisiin vaikuttaa:
+• Väri: korkeat ja keskikorkeat pilvet, jotka tavoittavat valon
+• Juovat: ohuet harsopilvet, joilla on tilaa hehkua
+• Horisontti: avoin taivas auringon suunnassa, mukaan lukien 80 km päässä idässä tai lännessä olevat matalat pilvet, jotka ratkaisevat, pääseekö valo ollenkaan läpi
+• Kirkkaus: kuiva, puhdas ilma eloisille sävyille
+
+MAKSUTTOMAT ILMOITUKSET
+Ilmoitus ennen auringonlaskuja, joiden vuoksi kannattaa lähteä ulos, ja iltaa ennen upeaa auringonnousua, jotta voit asettaa herätyksen. Ilmoitukset lasketaan uudelleen ennusteen muuttuessa, joten pilveen peittyvä taivas menettää ilmoituksensa.
+
+KULTAINEN HETKI JA WIDGET
+Näe jokaisen auringonnousun ja -laskun aika sekä ajanjakso, jolloin värit ovat parhaimmillaan, missä tahansa oletkin. Aloitusnäytön widget näyttää seuraavat pisteet.
+
+SUN+
+• Jokaisen auringonnousun ja -laskun pisteet koko tulevalle viikolle
+• Ilmoitukset ennen ukkosta
+• Vihje, kun sadekuurot ja matala aurinko voivat luoda sateenkaaren
+• Sumuilmoitukset pehmeää, tunnelmallista valoa varten
+• Oma ilmoituksen pistemäärä ja ennakointiaika
+
+Sun+ on saatavilla kuukausi- tai vuositilauksena, johon uusille tilaajille kuuluu ilmainen kokeilu, tai kertaostoksena elinikäiseksi. Hinnat näytetään sovelluksessa ennen ostoa ja vaihtelevat alueittain. Maksu veloitetaan Google Play -tililtäsi. Tilaukset uusiutuvat automaattisesti, ellei niitä peruta ennen nykyisen jakson päättymistä. Hallinnoi tai peruuta milloin tahansa Google Playssa kohdassa Maksut ja tilaukset.
+
+YKSITYISYYS
+Sunset kysyy likimääräistä sijaintiasi kerran ja lähettää vain pyöristetyt koordinaatit Open-Meteo-säätietopalveluun ennusteen hakemiseksi. Ei tiliä, ei seurantaa, ei analytiikkaa.
+
+Pisteet ja taivaan tapahtumat ovat pilvisyyden, kosteuden, näkyvyyden ja sateen ennusteita, eivät lupaus siitä, mitä taivas tekee. Pysy sisällä ukkosen aikana.
+
+Tietosuojakäytäntö: https://jackwallner.github.io/sunset/privacy-policy.html
+Käyttöehdot: https://jackwallner.github.io/sunset/terms.html

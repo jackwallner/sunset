@@ -1,0 +1,34 @@
+O Sunset atribui uma nota a cada nascer e pôr do sol com horas de antecedência, para estar no exterior nos melhores em vez de ouvir falar deles depois.
+
+CADA NASCER E PÔR DO SOL TEM UMA NOTA
+O Sunset lê a previsão de nuvens, humidade e visibilidade para o minuto exato em que o sol nasce ou se põe e transforma-a numa nota de 0 a 100 com um resumo claro: nuvens altas e finas sobre um horizonte aberto, um banco de nuvens baixas na direção do sol, chuva nesse momento, ou céu limpo com um brilho dourado nítido. Acompanhe nasceres do sol, pores do sol ou ambos.
+
+PORQUE É QUE O CÉU VAI OU NÃO ACENDER
+Quatro fatores mostram o que determina a nota:
+• Cor: nuvens altas e médias que captam a luz
+• Riscos: cirros finos com espaço para brilhar
+• Horizonte: céu aberto na direção do sol, incluindo as nuvens baixas a 80 km a este ou oeste que decidem se a luz chega
+• Limpidez: ar seco e limpo para tons vivos
+
+ALERTAS GRATUITOS
+Uma notificação antes dos pores do sol que valem a pena e na noite anterior a um grande nascer do sol, para programar o despertador. Os alertas são refeitos conforme a previsão muda, por isso um céu que fecha perde o alerta.
+
+HORA DOURADA E WIDGET
+Veja a hora de cada nascer e pôr do sol e a janela em que a cor atinge o pico, onde quer que esteja. Um widget no ecrã principal mostra a próxima nota.
+
+SUN+
+• A nota de cada nascer e pôr do sol da semana
+• Alertas antes da chegada de trovoadas
+• Um aviso quando aguaceiros e sol baixo podem formar um arco-íris
+• Alertas de nevoeiro para uma luz suave e misteriosa
+• A sua própria nota de alerta e antecedência
+
+O Sun+ está disponível como subscrição mensal ou anual com avaliação gratuita para novos subscritores, ou como compra única vitalícia. Os preços são apresentados na app antes da compra e variam consoante a região. O pagamento é cobrado na sua conta Google Play. As subscrições renovam automaticamente, a menos que sejam canceladas antes do fim do período atual. Gira ou cancele a qualquer momento no Google Play, em Pagamentos e subscrições.
+
+PRIVACIDADE
+O Sunset pede a sua localização aproximada uma única vez e envia apenas coordenadas arredondadas ao serviço meteorológico Open-Meteo para obter a previsão. Sem conta, sem monitorização, sem análises.
+
+As notas e os eventos do céu são previsões de nuvens, humidade, visibilidade e chuva, não uma promessa do que o céu fará. Abrigue-se durante trovoadas.
+
+Política de Privacidade: https://jackwallner.github.io/sunset/privacy-policy.html
+Termos de Utilização: https://jackwallner.github.io/sunset/terms.html

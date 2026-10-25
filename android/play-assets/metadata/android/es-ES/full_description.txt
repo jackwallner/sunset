@@ -1,0 +1,34 @@
+Sunset puntúa cada amanecer y atardecer con horas de antelación, para que estés fuera en los mejores en lugar de enterarte después.
+
+CADA AMANECER Y ATARDECER TIENE UNA PUNTUACIÓN
+Sunset lee la previsión de nubes, humedad y visibilidad para el minuto exacto en que sale o se pone el sol y la convierte en una puntuación de 0 a 100 con un resumen claro: nubes altas y finas sobre un horizonte despejado, un banco de nubes bajas hacia el sol, lluvia en ese momento, o un cielo despejado con un resplandor dorado limpio. Sigue amaneceres, atardeceres o ambos.
+
+POR QUÉ EL CIELO SE ENCENDERÁ O NO
+Cuatro factores muestran qué determina la puntuación:
+• Color: nubes altas y medias que atrapan la luz
+• Vetas: cirros finos con espacio para brillar
+• Horizonte: cielo abierto hacia el sol, incluidas las nubes bajas a 80 km al este u oeste que deciden si la luz llega
+• Claridad: aire seco y limpio para tonos vivos
+
+AVISOS GRATUITOS
+Una notificación antes de los atardeceres que merecen la pena y la noche anterior a un gran amanecer, para que programes la alarma. Los avisos se recalculan cuando cambia la previsión, así que un cielo que se cubre pierde su aviso.
+
+HORA DORADA Y WIDGET
+Consulta la hora de cada amanecer y atardecer y el momento en que el color alcanza su punto máximo, estés donde estés. Un widget en la pantalla de inicio muestra la próxima puntuación.
+
+SUN+
+• La puntuación de cada amanecer y atardecer de la semana
+• Avisos antes de que lleguen tormentas
+• Un aviso cuando los chubascos y un sol bajo podrían formar un arcoíris
+• Avisos de niebla para una luz suave y misteriosa
+• Tu propia puntuación de aviso y tiempo de antelación
+
+Sun+ está disponible como suscripción mensual o anual con prueba gratuita para nuevos suscriptores, o como compra única de por vida. Los precios se muestran en la app antes de comprar y varían según la región. El pago se carga en tu cuenta de Google Play. Las suscripciones se renuevan automáticamente salvo que se cancelen antes del final del periodo actual. Gestiona o cancela en cualquier momento en Google Play, en Pagos y suscripciones.
+
+PRIVACIDAD
+Sunset pide tu ubicación aproximada una sola vez y envía solo coordenadas redondeadas al servicio meteorológico Open-Meteo para obtener la previsión. Sin cuenta, sin seguimiento, sin analíticas.
+
+Las puntuaciones y los eventos del cielo son previsiones de nubes, humedad, visibilidad y lluvia, no una promesa de lo que hará el cielo. Resguárdate durante las tormentas.
+
+Política de privacidad: https://jackwallner.github.io/sunset/privacy-policy.html
+Condiciones de uso: https://jackwallner.github.io/sunset/terms.html

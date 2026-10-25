@@ -1,0 +1,34 @@
+Sunset puntua cada sortida i posta de sol amb hores d'antelació, perquè siguis a l'aire lliure per a les millors en lloc d'assabentar-te'n després.
+
+CADA SORTIDA I POSTA DE SOL TÉ UNA PUNTUACIÓ
+Sunset llegeix la previsió de núvols, humitat i visibilitat per al minut exacte en què surt o es pon el sol i la converteix en una puntuació de 0 a 100 amb un resum clar: núvols alts i prims sobre un horitzó obert, un banc de núvols baixos cap al sol, pluja en aquell moment, o un cel clar i una resplendor daurada neta. Segueix sortides, postes o totes dues.
+
+PER QUÈ EL CEL S'ENCENDRÀ O NO
+Quatre factors mostren què determina la puntuació:
+• Color: núvols alts i mitjans que atrapen la llum
+• Vetes: cirrus prims amb espai per brillar
+• Horitzó: cel obert cap al sol, incloent-hi els núvols baixos a 80 km a l'est o a l'oest que decideixen si la llum arriba
+• Claredat: aire sec i net per a tons vius
+
+AVISOS GRATUÏTS
+Una notificació abans de les postes de sol que val la pena veure i la nit abans d'una gran sortida de sol, perquè puguis programar l'alarma. Els avisos es refan quan canvia la previsió, així que un cel que s'ennuvola perd el seu avís.
+
+HORA DAURADA I WIDGET
+Consulta l'hora de cada sortida i posta de sol i la franja en què el color assoleix el punt àlgid, estiguis on estiguis. Un widget a la pantalla d'inici mostra la propera puntuació.
+
+SUN+
+• La puntuació de cada sortida i posta de la setmana vinent
+• Avisos abans que arribin tempestes
+• Un avís quan els ruixats i un sol baix poden formar un arc de Sant Martí
+• Avisos de boira per a una llum suau i misteriosa
+• La teva pròpia puntuació d'avís i temps d'antelació
+
+Sun+ està disponible com a subscripció mensual o anual amb prova gratuïta per als nous subscriptors, o com a compra única de per vida. Els preus es mostren a l'aplicació abans de comprar i varien segons la regió. El pagament es carrega al teu compte de Google Play. Les subscripcions es renoven automàticament tret que es cancel·lin abans del final del període actual. Gestiona-les o cancel·la-les en qualsevol moment a Google Play, a Pagaments i subscripcions.
+
+PRIVADESA
+Sunset demana la teva ubicació aproximada una sola vegada i només envia coordenades arrodonides al servei meteorològic Open-Meteo per obtenir la previsió. Sense compte, sense seguiment, sense analítiques.
+
+Les puntuacions i els esdeveniments del cel són previsions de núvols, humitat, visibilitat i pluja, no una promesa del que farà el cel. Queda't a cobert durant les tempestes.
+
+Política de privadesa: https://jackwallner.github.io/sunset/privacy-policy.html
+Condicions d'ús: https://jackwallner.github.io/sunset/terms.html

@@ -1,0 +1,34 @@
+Sunset poängsätter varje soluppgång och solnedgång timmar i förväg, så att du kan vara ute för de fina i stället för att höra om dem efteråt.
+
+VARJE SOLUPPGÅNG OCH SOLNEDGÅNG FÅR EN POÄNG
+Sunset läser prognosen för moln, luftfuktighet och sikt för den exakta minut då solen går upp eller ner och gör om den till en poäng från 0 till 100 med en tydlig sammanfattning: tunna höga moln över en öppen horisont, en bank av låga moln mot solen, regn just då, eller klar himmel och ett rent gyllene sken. Följ soluppgångar, solnedgångar eller båda.
+
+VARFÖR HIMLEN LYSER UPP ELLER INTE
+Fyra faktorer visar vad som styr poängen:
+• Färg: höga och medelhöga moln som fångar ljuset
+• Strimmor: tunna cirrusmoln med plats att glöda
+• Horisont: öppen himmel mot solen, inklusive låga moln 80 km österut eller västerut som avgör om ljuset alls kommer fram
+• Klarhet: torr, ren luft för levande toner
+
+GRATIS AVISERINGAR
+En avisering före de solnedgångar som är värda att gå ut för, och kvällen före en riktigt fin soluppgång, så att du kan ställa väckarklockan. Aviseringarna räknas om när prognosen ändras, så en himmel som mulnar förlorar sin avisering.
+
+GYLLENE TIMMEN OCH WIDGET
+Se tiden för varje soluppgång och solnedgång och tidsfönstret då färgerna är som starkast, var du än är. En widget på startskärmen visar nästa poäng.
+
+SUN+
+• Poängen för varje soluppgång och solnedgång veckan framåt
+• Aviseringar innan åskoväder drar in
+• En varning när skurar och låg sol kan ge en regnbåge
+• Dimaviseringar för mjukt, stämningsfullt ljus
+• Din egen aviseringspoäng och förvarningstid
+
+Sun+ finns som månads- eller årsprenumeration med gratis provperiod för nya prenumeranter, eller som engångsköp för livet. Priser visas i appen innan du köper och varierar mellan regioner. Betalning debiteras ditt Google Play-konto. Prenumerationer förnyas automatiskt om de inte avslutas före slutet av den aktuella perioden. Hantera eller avsluta när som helst i Google Play under Betalningar och prenumerationer.
+
+INTEGRITET
+Sunset frågar efter din ungefärliga plats en gång och skickar bara avrundade koordinater till vädertjänsten Open-Meteo för att hämta prognosen. Inget konto, ingen spårning, ingen analys.
+
+Poäng och himmelshändelser är prognoser för moln, luftfuktighet, sikt och regn, inte ett löfte om vad himlen kommer att göra. Håll dig inomhus vid åskväder.
+
+Integritetspolicy: https://jackwallner.github.io/sunset/privacy-policy.html
+Användarvillkor: https://jackwallner.github.io/sunset/terms.html

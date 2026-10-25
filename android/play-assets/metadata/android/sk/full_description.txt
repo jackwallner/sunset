@@ -1,0 +1,34 @@
+Sunset hodnotí každý východ aj západ slnka niekoľko hodín vopred, aby ste boli vonku pri tých najkrajších, namiesto toho, aby ste o nich počuli až potom.
+
+KAŽDÝ VÝCHOD A ZÁPAD MÁ SKÓRE
+Sunset číta predpoveď oblačnosti, vlhkosti a dohľadnosti pre presnú minútu východu alebo západu slnka a mení ju na skóre od 0 do 100 s prehľadným zhrnutím: tenká vysoká oblačnosť nad otvoreným obzorom, pás nízkej oblačnosti smerom k slnku, dážď v danej chvíli, alebo jasná obloha a čistá zlatá žiara. Sledujte východy, západy, alebo oboje.
+
+PREČO SA OBLOHA ROZSVIETI, ALEBO NIE
+Štyri faktory ukazujú, čo skóre ovplyvňuje:
+• Farba: vysoká a stredná oblačnosť, ktorá zachytí svetlo
+• Pásy: tenká cirrovitá oblačnosť s priestorom na žiaru
+• Obzor: otvorená obloha smerom k slnku vrátane nízkej oblačnosti 80 km na východ alebo západ, ktorá rozhoduje, či svetlo vôbec prejde
+• Priezračnosť: suchý, čistý vzduch pre sýto zafarbenú oblohu
+
+UPOZORNENIA ZADARMO
+Oznámenie pred západmi, kvôli ktorým sa oplatí vyraziť, a večer pred skvelým východom, aby ste si mohli nastaviť budík. Upozornenia sa prepočítavajú podľa predpovede, takže obloha, ktorá sa zatiahne, o svoje upozornenie príde.
+
+ZLATÁ HODINKA A WIDGET
+Zistite čas každého východu a západu a okno, keď farby vrcholia, kdekoľvek ste. Widget na domovskej obrazovke ukazuje ďalšie skóre.
+
+SUN+
+• Skóre každého východu a západu na týždeň dopredu
+• Upozornenia, kým dorazia búrky
+• Upozornenie, keď prehánky a nízke slnko môžu vytvoriť dúhu
+• Upozornenia na hmlu pre jemné, nostalgické svetlo
+• Vlastný prah skóre a predstih upozornenia
+
+Sun+ je dostupné ako mesačné alebo ročné predplatné so skúšobným obdobím zadarmo pre nových predplatiteľov, alebo ako jednorazový nákup na celý život. Ceny sa zobrazujú v aplikácii pred nákupom a líšia sa podľa regiónu. Platba sa strháva z vášho účtu Google Play. Predplatné sa automaticky obnovuje, ak ho nezrušíte pred koncom aktuálneho obdobia. Spravovať alebo zrušiť ho môžete kedykoľvek v Google Play v časti Platby a predplatné.
+
+SÚKROMIE
+Sunset raz požiada o vašu približnú polohu a meteorologickej službe Open-Meteo posiela iba zaokrúhlené súradnice na získanie predpovede. Žiadny účet, žiadne sledovanie, žiadna analytika.
+
+Skóre a javy na oblohe sú predpovede oblačnosti, vlhkosti, dohľadnosti a dažďa, nie sľub toho, čo obloha urobí. Pri búrkach zostaňte vnútri.
+
+Zásady ochrany osobných údajov: https://jackwallner.github.io/sunset/privacy-policy.html
+Podmienky používania: https://jackwallner.github.io/sunset/terms.html

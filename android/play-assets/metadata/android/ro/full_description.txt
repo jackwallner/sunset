@@ -1,0 +1,34 @@
+Sunset notează fiecare răsărit și apus cu ore înainte, ca să fii afară pentru cele frumoase, nu să afli despre ele mai târziu.
+
+FIECARE RĂSĂRIT ȘI APUS PRIMEȘTE UN SCOR
+Sunset citește prognoza de nori, umiditate și vizibilitate pentru minutul exact în care răsare sau apune soarele și o transformă într-un scor de la 0 la 100, cu un rezumat clar: nori înalți și subțiri peste un orizont deschis, un banc de nori joși spre soare, ploaie chiar atunci sau cer senin și o strălucire aurie curată. Urmărește răsărituri, apusuri sau pe amândouă.
+
+DE CE SE VA APRINDE CERUL SAU NU
+Patru factori arată ce determină scorul:
+• Culoare: nori înalți și medii care prind lumina
+• Dungi: cirrus subțire cu loc să strălucească
+• Orizont: cer deschis spre soare, inclusiv norii joși aflați la 80 km spre est sau vest, care decid dacă lumina ajunge deloc
+• Claritate: aer uscat și curat pentru tonuri vii
+
+ALERTE GRATUITE
+O notificare înaintea apusurilor pentru care merită să ieși și în seara dinaintea unui răsărit frumos, ca să îți poți pune alarma. Alertele se refac pe măsură ce prognoza se schimbă, deci un cer care se acoperă își pierde alerta.
+
+ORA DE AUR ȘI WIDGET
+Vezi ora fiecărui răsărit și apus și intervalul în care culorile ating apogeul, oriunde te-ai afla. Un widget pe ecranul principal arată următorul scor.
+
+SUN+
+• Scorul fiecărui răsărit și apus pentru săptămâna următoare
+• Alerte înainte să vină furtunile
+• Un semnal când averse și un soare jos pot crea un curcubeu
+• Alerte de ceață pentru o lumină blândă și misterioasă
+• Propriul prag de scor și timp de anticipare
+
+Sun+ este disponibil ca abonament lunar sau anual, cu perioadă de probă gratuită pentru abonații noi, sau ca achiziție unică pe viață. Prețurile sunt afișate în aplicație înainte de cumpărare și variază în funcție de regiune. Plata este debitată din contul tău Google Play. Abonamentele se reînnoiesc automat, dacă nu sunt anulate înainte de sfârșitul perioadei curente. Gestionează sau anulează oricând în Google Play, la Plăți și abonamente.
+
+CONFIDENȚIALITATE
+Sunset îți cere o singură dată locația aproximativă și trimite doar coordonate rotunjite serviciului meteo Open-Meteo pentru a obține prognoza. Fără cont, fără urmărire, fără analize.
+
+Scorurile și evenimentele cerului sunt prognoze de nori, umiditate, vizibilitate și ploaie, nu o promisiune a ceea ce va face cerul. Rămâi la adăpost în timpul furtunilor.
+
+Politica de confidențialitate: https://jackwallner.github.io/sunset/privacy-policy.html
+Termeni de utilizare: https://jackwallner.github.io/sunset/terms.html

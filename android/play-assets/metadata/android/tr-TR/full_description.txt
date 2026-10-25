@@ -1,0 +1,34 @@
+Sunset her gün doğumunu ve batımını saatler öncesinden puanlar; böylece güzel olanlarda dışarıda olursunuz, sonradan duymazsınız.
+
+HER GÜN DOĞUMU VE BATIMI BİR PUAN ALIR
+Sunset, güneşin doğduğu ya da battığı tam dakika için bulut, nem ve görüş tahminini okur ve bunu 0 ile 100 arasında, anlaşılır bir özetle puana dönüştürür: açık ufuk üzerinde ince yüksek bulutlar, güneşe doğru alçak bulut kümesi, o anda yağmur ya da açık gökyüzü ve temiz altın bir parıltı. Gün doğumlarını, gün batımlarını ya da ikisini birden izleyin.
+
+GÖKYÜZÜ NEDEN PARLAR YA DA PARLAMAZ
+Dört etken puanı neyin belirlediğini gösterir:
+• Renk: ışığı yakalayan yüksek ve orta bulutlar
+• Çizgiler: parlayacak alanı olan ince sirrus bulutları
+• Ufuk: güneşe doğru açık gökyüzü; ışığın geçip geçmeyeceğine karar veren, doğuda veya batıda 80 km uzaktaki alçak bulutlar da dahil
+• Berraklık: canlı tonlar için kuru, temiz hava
+
+ÜCRETSİZ BİLDİRİMLER
+Dışarı çıkmaya değer gün batımlarından önce ve harika bir gün doğumunun önceki akşamı bildirim gelir; böylece alarm kurabilirsiniz. Tahmin değiştikçe bildirimler yeniden oluşturulur, dolayısıyla bulutlanan bir gökyüzü bildirimini kaybeder.
+
+ALTIN SAAT VE WIDGET
+Nerede olursanız olun her gün doğumu ve batımının saatini ve renklerin zirve yaptığı zaman aralığını görün. Ana ekran widget'ı bir sonraki puanı gösterir.
+
+SUN+
+• Önümüzdeki hafta için her gün doğumu ve batımı puanı
+• Gök gürültülü fırtınalar gelmeden önce bildirimler
+• Sağanak ve alçak güneşin gökkuşağı oluşturabileceği zamanlarda uyarı
+• Yumuşak, esrarengiz ışık için sis bildirimleri
+• Kendi bildirim puanınız ve bildirim süreniz
+
+Sun+, yeni aboneler için ücretsiz deneme ile aylık veya yıllık abonelik olarak ya da tek seferlik ömür boyu satın alma olarak sunulur. Fiyatlar satın almadan önce uygulamada gösterilir ve bölgeye göre değişir. Ödeme Google Play hesabınızdan tahsil edilir. Abonelikler, mevcut dönemin bitiminden önce iptal edilmedikçe otomatik olarak yenilenir. İstediğiniz zaman Google Play'de Ödemeler ve abonelikler bölümünden yönetebilir veya iptal edebilirsiniz.
+
+GİZLİLİK
+Sunset yaklaşık konumunuzu bir kez ister ve tahmini almak için Open-Meteo hava durumu hizmetine yalnızca yuvarlanmış koordinatlar gönderir. Hesap yok, izleme yok, analiz yok.
+
+Puanlar ve gökyüzü olayları bulut, nem, görüş ve yağmur tahminleridir; gökyüzünün ne yapacağına dair söz değildir. Gök gürültülü fırtınalarda içeride kalın.
+
+Gizlilik Politikası: https://jackwallner.github.io/sunset/privacy-policy.html
+Kullanım Koşulları: https://jackwallner.github.io/sunset/terms.html

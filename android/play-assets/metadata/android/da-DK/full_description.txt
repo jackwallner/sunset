@@ -1,0 +1,34 @@
+Sunset giver hver solopgang og solnedgang en score timer i forvejen, så du kan være ude til de flotte i stedet for at høre om dem bagefter.
+
+HVER SOLOPGANG OG SOLNEDGANG FÅR EN SCORE
+Sunset læser prognosen for skyer, luftfugtighed og sigtbarhed for det præcise minut, solen står op eller går ned, og gør den til en score fra 0 til 100 med en klar opsummering: tynde høje skyer over en åben horisont, et bånd af lave skyer mod solen, regn i netop det øjeblik, eller klar himmel og et rent gyldent skær. Følg solopgange, solnedgange eller begge dele.
+
+HVORFOR HIMLEN LYSER OP ELLER IKKE
+Fire faktorer viser, hvad der driver scoren:
+• Farve: høje og mellemhøje skyer, der fanger lyset
+• Striber: tynde cirrusskyer med plads til at gløde
+• Horisont: åben himmel mod solen, herunder lave skyer 80 km mod øst eller vest, som afgør, om lyset overhovedet slipper igennem
+• Klarhed: tør, ren luft til levende toner
+
+GRATIS VARSLER
+En notifikation før de solnedgange, der er værd at gå ud for, og aftenen før en flot solopgang, så du kan stille vækkeuret. Varslerne genberegnes, når prognosen ændrer sig, så en himmel, der trækker til, mister sit varsel.
+
+GYLDEN TIME OG WIDGET
+Se tidspunktet for hver solopgang og solnedgang og det tidsvindue, hvor farverne topper, uanset hvor du er. En widget på startskærmen viser den næste score.
+
+SUN+
+• Scoren for hver solopgang og solnedgang i den kommende uge
+• Varsler, før tordenvejr trækker ind
+• Et praj, når byger og lav sol kan give en regnbue
+• Tågevarsler til blødt, stemningsfuldt lys
+• Din egen varselsscore og varselstid
+
+Sun+ fås som månedligt eller årligt abonnement med gratis prøveperiode til nye abonnenter eller som et engangskøb for livet. Priser vises i appen, før du køber, og varierer fra region til region. Betalingen trækkes på din Google Play-konto. Abonnementer fornyes automatisk, medmindre de opsiges før udgangen af den aktuelle periode. Administrer eller opsig når som helst i Google Play under Betalinger og abonnementer.
+
+PRIVATLIV
+Sunset beder om din omtrentlige placering én gang og sender kun afrundede koordinater til vejrtjenesten Open-Meteo for at hente prognosen. Ingen konto, ingen sporing, ingen analyse.
+
+Score og himmelbegivenheder er prognoser for skyer, luftfugtighed, sigtbarhed og regn, ikke et løfte om, hvad himlen vil gøre. Bliv indendørs under tordenvejr.
+
+Privatlivspolitik: https://jackwallner.github.io/sunset/privacy-policy.html
+Brugsvilkår: https://jackwallner.github.io/sunset/terms.html

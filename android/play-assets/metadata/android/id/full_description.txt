@@ -1,0 +1,34 @@
+Sunset menilai setiap matahari terbit dan terbenam berjam-jam sebelumnya, sehingga Anda bisa berada di luar saat yang indah, bukan baru mendengarnya kemudian.
+
+SETIAP MATAHARI TERBIT DAN TERBENAM MENDAPAT SKOR
+Sunset membaca prakiraan awan, kelembapan, dan jarak pandang untuk menit tepat matahari terbit atau terbenam, lalu mengubahnya menjadi skor 0 sampai 100 dengan ringkasan yang jelas: awan tinggi tipis di atas cakrawala terbuka, jajaran awan rendah ke arah matahari, hujan pada saat itu, atau langit cerah dengan cahaya emas yang bersih. Pantau matahari terbit, terbenam, atau keduanya.
+
+MENGAPA LANGIT AKAN MENYALA ATAU TIDAK
+Empat faktor menunjukkan apa yang menentukan skor:
+• Warna: awan tinggi dan menengah yang menangkap cahaya
+• Guratan: awan sirus tipis dengan ruang untuk bersinar
+• Cakrawala: langit terbuka ke arah matahari, termasuk awan rendah 80 km ke timur atau barat yang menentukan apakah cahaya bisa menembus
+• Kejernihan: udara kering dan bersih untuk warna yang hidup
+
+NOTIFIKASI GRATIS
+Notifikasi sebelum matahari terbenam yang layak dikejar dan malam sebelum matahari terbit yang indah, sehingga Anda bisa memasang alarm. Notifikasi disusun ulang saat prakiraan berubah, jadi langit yang menjadi mendung kehilangan notifikasinya.
+
+GOLDEN HOUR DAN WIDGET
+Lihat waktu setiap matahari terbit dan terbenam serta rentang saat warna mencapai puncak, di mana pun Anda berada. Widget layar utama menampilkan skor berikutnya.
+
+SUN+
+• Skor setiap matahari terbit dan terbenam untuk seminggu ke depan
+• Notifikasi sebelum badai petir datang
+• Pemberitahuan saat hujan singkat dan matahari rendah bisa membentuk pelangi
+• Notifikasi kabut untuk cahaya lembut yang syahdu
+• Skor notifikasi dan waktu pemberitahuan sesuai keinginan Anda
+
+Sun+ tersedia sebagai langganan bulanan atau tahunan dengan uji coba gratis untuk pelanggan baru, atau sebagai pembelian sekali bayar seumur hidup. Harga ditampilkan di aplikasi sebelum Anda membeli dan bervariasi menurut wilayah. Pembayaran ditagihkan ke akun Google Play Anda. Langganan diperpanjang otomatis kecuali dibatalkan sebelum akhir periode saat ini. Kelola atau batalkan kapan saja di Google Play melalui Pembayaran & langganan.
+
+PRIVASI
+Sunset meminta lokasi perkiraan Anda satu kali dan hanya mengirim koordinat yang dibulatkan ke layanan cuaca Open-Meteo untuk mengambil prakiraan. Tanpa akun, tanpa pelacakan, tanpa analitik.
+
+Skor dan peristiwa langit adalah prakiraan awan, kelembapan, jarak pandang, dan hujan, bukan janji tentang apa yang akan terjadi di langit. Tetaplah di dalam ruangan saat badai petir.
+
+Kebijakan Privasi: https://jackwallner.github.io/sunset/privacy-policy.html
+Ketentuan Penggunaan: https://jackwallner.github.io/sunset/terms.html

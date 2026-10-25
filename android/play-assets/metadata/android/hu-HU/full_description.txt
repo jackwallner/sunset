@@ -1,0 +1,34 @@
+A Sunset órákkal előre pontozza minden napkeltét és naplementét, hogy a szépeknél te is kint lehess, ne pedig utólag halljál róluk.
+
+MINDEN NAPKELTE ÉS NAPLEMENTE PONTSZÁMOT KAP
+A Sunset beolvassa a felhőzet, a páratartalom és a látótávolság előrejelzését a napkelte vagy naplemente pontos percére, és 0 és 100 közötti pontszámmá alakítja érthető összefoglalóval: vékony magas felhők nyílt horizont felett, alacsony felhősáv a nap irányában, eső az adott pillanatban, vagy tiszta ég és tiszta arany fény. Követheted a napkeltéket, a naplementéket vagy mindkettőt.
+
+MIÉRT GYÚL FEL AZ ÉG, VAGY MIÉRT NEM
+Négy tényező mutatja, mi határozza meg a pontszámot:
+• Szín: a fényt megfogó magas és közepes felhők
+• Csíkok: vékony fátyolfelhők, amelyeknek van helyük izzani
+• Horizont: nyílt ég a nap irányában, beleértve a 80 km-re keletre vagy nyugatra lévő alacsony felhőket, amelyek eldöntik, átjut-e egyáltalán a fény
+• Tisztaság: száraz, tiszta levegő élénk színekhez
+
+INGYENES ÉRTESÍTÉSEK
+Értesítés a kimenést érdemlő naplemente előtt, valamint a nagyszerű napkelte előtti este, hogy beállíthasd az ébresztőt. Az értesítések az előrejelzéssel együtt újraszámolódnak, így a beborulő ég elveszíti az értesítését.
+
+ARANYÓRA ÉS WIDGET
+Nézd meg minden napkelte és naplemente idejét és azt az időablakot, amikor a színek tetőznek, bárhol vagy is. A kezdőképernyő-widget a következő pontszámot mutatja.
+
+SUN+
+• Minden napkelte és naplemente pontszáma a következő hétre
+• Értesítések, mielőtt a zivatarok megérkeznek
+• Jelzés, ha záporok és alacsony nap szivárványt hozhatnak
+• Ködértesítések lágy, hangulatos fényhez
+• Saját értesítési pontszám és előrejelzési idő
+
+A Sun+ havi vagy éves előfizetéssel érhető el, új előfizetőknek ingyenes próbaidővel, vagy egyszeri, élethosszig tartó vásárlással. Az árak vásárlás előtt megjelennek az alkalmazásban, és régiónként eltérnek. A fizetés a Google Play-fiókodon keresztül történik. Az előfizetések automatikusan megújulnak, hacsak az aktuális időszak vége előtt nem mondod le őket. Kezeld vagy mondd le bármikor a Google Playben, a Fizetések és előfizetések menüpontban.
+
+ADATVÉDELEM
+A Sunset egyszer kéri a hozzávetőleges helyzetedet, és csak kerekített koordinátákat küld az Open-Meteo időjárás-szolgáltatásnak az előrejelzés lekéréséhez. Nincs fiók, nincs követés, nincs analitika.
+
+A pontszámok és az égi események a felhőzet, a páratartalom, a látótávolság és az eső előrejelzései, nem ígéret arra, mit fog tenni az ég. Zivatar idején maradj bent.
+
+Adatvédelmi irányelvek: https://jackwallner.github.io/sunset/privacy-policy.html
+Felhasználási feltételek: https://jackwallner.github.io/sunset/terms.html
