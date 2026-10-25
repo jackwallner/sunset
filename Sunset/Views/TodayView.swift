@@ -145,7 +145,7 @@ struct TodayView: View {
                 .fixedSize(horizontal: false, vertical: true)
             Divider()
             HStack {
-                stat("Best light", "\(SunsetFormat.time(hero.bestWindowStart, zone: zone))–\(SunsetFormat.time(hero.bestWindowEnd, zone: zone))")
+                stat("Best light", "\(SunsetFormat.time(hero.bestWindowStart, zone: zone)) to \(SunsetFormat.time(hero.bestWindowEnd, zone: zone))")
                 Spacer()
                 stat("Rain chance", "\(hero.score.rainChance)%")
             }

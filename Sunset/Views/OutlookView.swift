@@ -200,7 +200,7 @@ struct ShowDetailView: View {
                             .fixedSize(horizontal: false, vertical: true)
                         Divider()
                         HStack {
-                            detail("Best light", "\(SunsetFormat.time(show.bestWindowStart, zone: zone))–\(SunsetFormat.time(show.bestWindowEnd, zone: zone))")
+                            detail("Best light", "\(SunsetFormat.time(show.bestWindowStart, zone: zone)) to \(SunsetFormat.time(show.bestWindowEnd, zone: zone))")
                             Spacer()
                             detail("Rain", "\(show.score.rainChance)%")
                         }

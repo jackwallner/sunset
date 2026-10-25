@@ -128,7 +128,7 @@ struct SkyEventRow: View {
                 .background(.white.opacity(0.12), in: RoundedRectangle(cornerRadius: 10))
             VStack(alignment: .leading, spacing: 3) {
                 Text(event.kind.title).font(.headline)
-                Text("\(SunsetFormat.dayLabel(event.start, zone: zone)), \(SunsetFormat.time(event.start, zone: zone))–\(SunsetFormat.time(event.end, zone: zone))")
+                Text("\(SunsetFormat.dayLabel(event.start, zone: zone)), \(SunsetFormat.time(event.start, zone: zone)) to \(SunsetFormat.time(event.end, zone: zone))")
                     .font(.subheadline)
                     .foregroundStyle(Theme.textSecondary)
             }
