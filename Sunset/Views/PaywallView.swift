@@ -5,6 +5,7 @@ struct PaywallView: View {
     let source: String
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @EnvironmentObject private var store: StoreService
     @State private var selectedIdentifier: String?
     @State private var isRestoring = false
@@ -22,12 +23,9 @@ struct PaywallView: View {
                         .multilineTextAlignment(.center)
                         .foregroundStyle(Theme.textSecondary)
 
-                    VStack(alignment: .leading, spacing: 12) {
-                        ForEach(PlusBenefit.all) { item in
-                            benefit(item.symbol, item.text)
-                        }
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                    // At accessibility sizes the benefits fill the first screen, so
+                    // the plans come first and keep a price in view (3.1.2).
+                    if !dynamicTypeSize.isAccessibilitySize { benefits }
 
                     ForEach(store.packages, id: \.identifier) { package in
                         Button {
@@ -97,6 +95,8 @@ struct PaywallView: View {
                         .multilineTextAlignment(.center)
                         .foregroundStyle(Theme.textSecondary)
 
+                    if dynamicTypeSize.isAccessibilitySize { benefits }
+
                     Button {
                         Task {
                             isRestoring = true
@@ -133,6 +133,15 @@ struct PaywallView: View {
             if store.packages.isEmpty && !store.isLoadingProducts { store.start(forceRefresh: true) }
         }
         .onDisappear { store.clearError() }
+    }
+
+    private var benefits: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            ForEach(PlusBenefit.all) { item in
+                benefit(item.symbol, item.text)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var selectedPackage: Package? {
