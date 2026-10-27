@@ -1,0 +1,13 @@
+# Sunset Forecast & Alerts
+
+> Sunset scores every sunrise and sunset from 0 to 100 using the cloud, humidity and visibility forecast, with a free alert before the good ones.
+
+## App
+
+- [Sunset Forecast & Alerts](https://jackwallner.github.io/sunset/index.html.md): Sunset scores every sunrise and sunset from 0 to 100 using the cloud, humidity and visibility forecast, with a free alert before the good ones.
+
+## Optional
+
+- [Privacy Policy | Sunset](https://jackwallner.github.io/sunset/privacy-policy.html.md)
+- [Support | Sunset](https://jackwallner.github.io/sunset/support.html.md)
+- [Terms of Use | Sunset](https://jackwallner.github.io/sunset/terms.html.md)
