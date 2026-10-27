@@ -1,6 +1,6 @@
 # Terms of Use | Sunset
 
-Web page: https://jackwallner.github.io/sunset/terms.html
+Web page: https://jackwallner.com/ios/sunset/terms.html
 
 Effective October 20, 2026
 

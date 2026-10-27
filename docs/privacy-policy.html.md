@@ -1,6 +1,6 @@
 # Privacy Policy | Sunset
 
-Web page: https://jackwallner.github.io/sunset/privacy-policy.html
+Web page: https://jackwallner.com/ios/sunset/privacy-policy.html
 
 Effective October 20, 2026
 

@@ -1,6 +1,6 @@
 # Support | Sunset
 
-Web page: https://jackwallner.github.io/sunset/support.html
+Web page: https://jackwallner.com/ios/sunset/support.html
 
 Help and contact
 
