@@ -184,19 +184,30 @@ private struct PlanCard: View {
     let detail: String?
     let isSelected: Bool
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                 .font(.title3)
                 .foregroundStyle(isSelected ? Theme.gold : Theme.textSecondary)
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title).font(.headline)
-                if let detail {
-                    Text(detail).font(.caption).foregroundStyle(Theme.mint)
+            // At accessibility sizes the price goes under the title so the
+            // amount never breaks across lines.
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title).font(.headline)
+                    priceText
+                    detailText
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
+            } else {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(title).font(.headline)
+                    detailText
+                }
+                Spacer(minLength: 8)
+                priceText
             }
-            Spacer(minLength: 8)
-            Text(price).fontWeight(.semibold)
         }
         .padding(18)
         .glass(cornerRadius: 18, tint: 0.24)
@@ -208,6 +219,16 @@ private struct PlanCard: View {
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title), \(price)")
         .accessibilityValue(isSelected ? "Selected" : "Not selected")
+    }
+
+    private var priceText: some View {
+        Text(price).fontWeight(.semibold).lineLimit(1).minimumScaleFactor(0.6)
+    }
+
+    @ViewBuilder private var detailText: some View {
+        if let detail {
+            Text(detail).font(.caption).foregroundStyle(Theme.mint)
+        }
     }
 }
 
