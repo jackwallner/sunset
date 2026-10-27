@@ -5,3 +5,4 @@
 {"created": "2026-10-27T00:10:28+00:00", "id": "Q005", "match": "motion-jump|test2TabsUpgradeAndReturn|settings|", "reason": "frames around the candidate are identical Settings frames; instant tab switch", "status": "accepted"}
 {"created": "2026-10-27T00:10:28+00:00", "id": "Q006", "match": "motion-jump|today(_:in:)|today-after-upgrade|", "reason": "frames around the candidate are identical Today frames; instant tab switch back to Today", "status": "accepted"}
 {"created": "2026-10-27T00:10:28+00:00", "id": "Q007", "match": "motion-jump|test2TabsUpgradeAndReturn|upgrade|", "reason": "the Sun+ sheet sliding up over Outlook; system sheet presentation", "status": "accepted"}
+{"created": "2026-10-27T00:37:14+00:00", "id": "Q008", "match": "blank-launch|today(_:in:)|today|", "reason": "Launch timed while host load ran 15 to 40 on 8 cores; simulator timing, same order of events as a clean launch", "status": "accepted"}
