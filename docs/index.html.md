@@ -14,6 +14,8 @@ score, with a free alert before the ones worth going out for.
 
 [Download on the App Store](https://apps.apple.com/us/app/sunset-sunrise-prediction/id6821025282?pt=128748779&ct=jw-sunset-home&mt=8)
 
+## How it works
+
 01
 
 ### Color and streaks
