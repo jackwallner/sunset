@@ -1,5 +1,7 @@
 # Support | Sunset
 
+> Help and contact for Sunset, the sunset and sunrise forecast app for iPhone.
+
 Web page: https://jackwallner.com/ios/sunset/support.html
 
 Help and contact

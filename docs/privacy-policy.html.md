@@ -1,5 +1,7 @@
 # Privacy Policy | Sunset
 
+> Privacy policy for Sunset, the sunset and sunrise forecast app for iPhone.
+
 Web page: https://jackwallner.com/ios/sunset/privacy-policy.html
 
 Effective October 20, 2026

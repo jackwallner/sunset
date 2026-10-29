@@ -1,5 +1,7 @@
 # Terms of Use | Sunset
 
+> Terms of use for Sunset, the sunset and sunrise forecast app for iPhone.
+
 Web page: https://jackwallner.com/ios/sunset/terms.html
 
 Effective October 20, 2026

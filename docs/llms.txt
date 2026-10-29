@@ -8,6 +8,6 @@
 
 ## Optional
 
-- [Privacy Policy | Sunset](https://jackwallner.com/ios/sunset/privacy-policy.html.md)
-- [Support | Sunset](https://jackwallner.com/ios/sunset/support.html.md)
-- [Terms of Use | Sunset](https://jackwallner.com/ios/sunset/terms.html.md)
+- [Privacy Policy | Sunset](https://jackwallner.com/ios/sunset/privacy-policy.html.md): Privacy policy for Sunset, the sunset and sunrise forecast app for iPhone.
+- [Support | Sunset](https://jackwallner.com/ios/sunset/support.html.md): Help and contact for Sunset, the sunset and sunrise forecast app for iPhone.
+- [Terms of Use | Sunset](https://jackwallner.com/ios/sunset/terms.html.md): Terms of use for Sunset, the sunset and sunrise forecast app for iPhone.
