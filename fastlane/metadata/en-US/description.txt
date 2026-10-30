@@ -1,4 +1,4 @@
-Sunset scores every sunrise and sunset, hours before it happens, so you can be outside for the great ones instead of hearing about them later.
+Sunset is a free sunrise and sunset forecast app. It scores every sunrise and sunset from 0 to 100, hours before it happens, so you can be outside for the great ones. Alerts for the great ones are free, and there is no account.
 
 EVERY SUNRISE AND SUNSET GETS A SCORE
 Sunset reads the cloud, humidity and visibility forecast for the exact minute the sun comes up or goes down and turns it into a 0 to 100 score with a plain-English summary: thin high clouds over an open horizon, a bank of low cloud toward the sun, rain at the moment, or a clear sky and a clean gold glow. Watch sunrises, sunsets, or both.
@@ -30,5 +30,5 @@ Sunset asks for your approximate location once and sends only rounded coordinate
 
 Scores and sky events are forecasts of cloud, humidity, visibility and rain, not a promise of what the sky will do. Stay indoors during thunderstorms.
 
-Privacy Policy: https://jackwallner.github.io/sunset/privacy-policy.html
+Privacy Policy: https://jackwallner.com/ios/sunset/privacy-policy.html
 Terms of Use: https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
