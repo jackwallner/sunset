@@ -30,5 +30,5 @@ Sunset meminta lokasi anggaran anda sekali sahaja dan hanya menghantar koordinat
 
 Skor dan peristiwa langit ialah ramalan awan, kelembapan, jarak penglihatan dan hujan, bukan janji tentang apa yang akan berlaku di langit. Kekal di dalam bangunan semasa ribut petir.
 
-Dasar Privasi: https://jackwallner.github.io/sunset/privacy-policy.html
-Terma Penggunaan: https://jackwallner.github.io/sunset/terms.html
+Dasar Privasi: https://jackwallner.com/ios/sunset/privacy-policy.html
+Terma Penggunaan: https://jackwallner.com/ios/sunset/terms.html

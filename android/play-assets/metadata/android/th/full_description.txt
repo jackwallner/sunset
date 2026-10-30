@@ -30,5 +30,5 @@ Sunset ขอตำแหน่งโดยประมาณของคุณ�
 
 คะแนนและเหตุการณ์บนท้องฟ้าเป็นการพยากรณ์เมฆ ความชื้น ทัศนวิสัย และฝน ไม่ใช่คำมั่นว่าท้องฟ้าจะเป็นอย่างไร โปรดอยู่ในอาคารขณะเกิดพายุฝนฟ้าคะนอง
 
-นโยบายความเป็นส่วนตัว: https://jackwallner.github.io/sunset/privacy-policy.html
-ข้อกำหนดการใช้งาน: https://jackwallner.github.io/sunset/terms.html
+นโยบายความเป็นส่วนตัว: https://jackwallner.com/ios/sunset/privacy-policy.html
+ข้อกำหนดการใช้งาน: https://jackwallner.com/ios/sunset/terms.html

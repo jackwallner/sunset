@@ -30,5 +30,5 @@ Sunset beder om din omtrentlige placering én gang og sender kun afrundede koord
 
 Score og himmelbegivenheder er prognoser for skyer, luftfugtighed, sigtbarhed og regn, ikke et løfte om, hvad himlen vil gøre. Bliv indendørs under tordenvejr.
 
-Privatlivspolitik: https://jackwallner.github.io/sunset/privacy-policy.html
-Brugsvilkår: https://jackwallner.github.io/sunset/terms.html
+Privatlivspolitik: https://jackwallner.com/ios/sunset/privacy-policy.html
+Brugsvilkår: https://jackwallner.com/ios/sunset/terms.html

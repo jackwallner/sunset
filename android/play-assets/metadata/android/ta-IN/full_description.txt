@@ -30,5 +30,5 @@ Sunset உங்கள் தோராயமான இருப்பிடத�
 
 மதிப்பெண்களும் வான நிகழ்வுகளும் மேகம், ஈரப்பதம், பார்வைத்திறன், மழை ஆகியவற்றின் முன்னறிவிப்புகள்; வானம் என்ன செய்யும் என்பதற்கான உறுதி அல்ல. இடியுடன் கூடிய மழையின்போது வீட்டுக்குள்ளேயே இருங்கள்.
 
-தனியுரிமைக் கொள்கை: https://jackwallner.github.io/sunset/privacy-policy.html
-பயன்பாட்டு விதிமுறைகள்: https://jackwallner.github.io/sunset/terms.html
+தனியுரிமைக் கொள்கை: https://jackwallner.com/ios/sunset/privacy-policy.html
+பயன்பாட்டு விதிமுறைகள்: https://jackwallner.com/ios/sunset/terms.html

@@ -30,5 +30,5 @@ Sunset jednom traži vašu približnu lokaciju i vremenskoj usluzi Open-Meteo š
 
 Ocjene i događaji na nebu prognoze su oblaka, vlage, vidljivosti i kiše, a ne obećanje što će nebo učiniti. Tijekom grmljavine ostanite unutra.
 
-Pravilnik o privatnosti: https://jackwallner.github.io/sunset/privacy-policy.html
-Uvjeti korištenja: https://jackwallner.github.io/sunset/terms.html
+Pravilnik o privatnosti: https://jackwallner.com/ios/sunset/privacy-policy.html
+Uvjeti korištenja: https://jackwallner.com/ios/sunset/terms.html

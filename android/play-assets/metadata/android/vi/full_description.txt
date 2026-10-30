@@ -30,5 +30,5 @@ Sunset chỉ hỏi vị trí gần đúng của bạn một lần và chỉ gử
 
 Điểm số và sự kiện bầu trời là dự báo về mây, độ ẩm, tầm nhìn và mưa, không phải lời hứa về những gì bầu trời sẽ làm. Hãy ở trong nhà khi có giông bão.
 
-Chính sách quyền riêng tư: https://jackwallner.github.io/sunset/privacy-policy.html
-Điều khoản sử dụng: https://jackwallner.github.io/sunset/terms.html
+Chính sách quyền riêng tư: https://jackwallner.com/ios/sunset/privacy-policy.html
+Điều khoản sử dụng: https://jackwallner.com/ios/sunset/terms.html

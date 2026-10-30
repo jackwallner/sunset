@@ -30,5 +30,5 @@ A Sunset egyszer kéri a hozzávetőleges helyzetedet, és csak kerekített koor
 
 A pontszámok és az égi események a felhőzet, a páratartalom, a látótávolság és az eső előrejelzései, nem ígéret arra, mit fog tenni az ég. Zivatar idején maradj bent.
 
-Adatvédelmi irányelvek: https://jackwallner.github.io/sunset/privacy-policy.html
-Felhasználási feltételek: https://jackwallner.github.io/sunset/terms.html
+Adatvédelmi irányelvek: https://jackwallner.com/ios/sunset/privacy-policy.html
+Felhasználási feltételek: https://jackwallner.com/ios/sunset/terms.html

@@ -30,5 +30,5 @@ Sunset demande une seule fois votre position approximative et envoie uniquement 
 
 Les scores et les événements du ciel sont des prévisions de nuages, d'humidité, de visibilité et de pluie, pas une promesse de ce que fera le ciel. Restez à l'abri pendant les orages.
 
-Politique de confidentialité: https://jackwallner.github.io/sunset/privacy-policy.html
-Conditions d'utilisation: https://jackwallner.github.io/sunset/terms.html
+Politique de confidentialité: https://jackwallner.com/ios/sunset/privacy-policy.html
+Conditions d'utilisation: https://jackwallner.com/ios/sunset/terms.html

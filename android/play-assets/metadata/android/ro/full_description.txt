@@ -30,5 +30,5 @@ Sunset îți cere o singură dată locația aproximativă și trimite doar coord
 
 Scorurile și evenimentele cerului sunt prognoze de nori, umiditate, vizibilitate și ploaie, nu o promisiune a ceea ce va face cerul. Rămâi la adăpost în timpul furtunilor.
 
-Politica de confidențialitate: https://jackwallner.github.io/sunset/privacy-policy.html
-Termeni de utilizare: https://jackwallner.github.io/sunset/terms.html
+Politica de confidențialitate: https://jackwallner.com/ios/sunset/privacy-policy.html
+Termeni de utilizare: https://jackwallner.com/ios/sunset/terms.html

@@ -30,5 +30,5 @@ Sunset നിങ്ങളുടെ ഏകദേശ ലൊക്കേഷൻ ഒ�
 
 സ്കോറുകളും ആകാശ സംഭവങ്ങളും മേഘം, ഈർപ്പം, ദൃശ്യപരത, മഴ എന്നിവയുടെ പ്രവചനങ്ങളാണ്, ആകാശം എന്തു ചെയ്യുമെന്നതിന്റെ വാഗ്ദാനമല്ല. ഇടിമിന്നൽ സമയത്ത് വീടിനുള്ളിൽ തന്നെ കഴിയുക.
 
-സ്വകാര്യതാ നയം: https://jackwallner.github.io/sunset/privacy-policy.html
-ഉപയോഗ നിബന്ധനകൾ: https://jackwallner.github.io/sunset/terms.html
+സ്വകാര്യതാ നയം: https://jackwallner.com/ios/sunset/privacy-policy.html
+ഉപയോഗ നിബന്ധനകൾ: https://jackwallner.com/ios/sunset/terms.html

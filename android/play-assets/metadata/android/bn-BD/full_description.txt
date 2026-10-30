@@ -30,5 +30,5 @@ Sunset একবার আপনার আনুমানিক অবস্থ�
 
 স্কোর ও আকাশের ঘটনাগুলো মেঘ, আর্দ্রতা, দৃশ্যমানতা ও বৃষ্টির পূর্বাভাস, আকাশ কী করবে তার প্রতিশ্রুতি নয়। বজ্রঝড়ের সময় ঘরের ভেতরে থাকুন।
 
-গোপনীয়তা নীতি: https://jackwallner.github.io/sunset/privacy-policy.html
-ব্যবহারের শর্তাবলি: https://jackwallner.github.io/sunset/terms.html
+গোপনীয়তা নীতি: https://jackwallner.com/ios/sunset/privacy-policy.html
+ব্যবহারের শর্তাবলি: https://jackwallner.com/ios/sunset/terms.html

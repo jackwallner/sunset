@@ -30,5 +30,5 @@ O Sunset pede a sua localização aproximada uma única vez e envia apenas coord
 
 As notas e os eventos do céu são previsões de nuvens, humidade, visibilidade e chuva, não uma promessa do que o céu fará. Abrigue-se durante trovoadas.
 
-Política de Privacidade: https://jackwallner.github.io/sunset/privacy-policy.html
-Termos de Utilização: https://jackwallner.github.io/sunset/terms.html
+Política de Privacidade: https://jackwallner.com/ios/sunset/privacy-policy.html
+Termos de Utilização: https://jackwallner.com/ios/sunset/terms.html

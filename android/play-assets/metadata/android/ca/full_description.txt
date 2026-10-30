@@ -30,5 +30,5 @@ Sunset demana la teva ubicació aproximada una sola vegada i només envia coorde
 
 Les puntuacions i els esdeveniments del cel són previsions de núvols, humitat, visibilitat i pluja, no una promesa del que farà el cel. Queda't a cobert durant les tempestes.
 
-Política de privadesa: https://jackwallner.github.io/sunset/privacy-policy.html
-Condicions d'ús: https://jackwallner.github.io/sunset/terms.html
+Política de privadesa: https://jackwallner.com/ios/sunset/privacy-policy.html
+Condicions d'ús: https://jackwallner.com/ios/sunset/terms.html

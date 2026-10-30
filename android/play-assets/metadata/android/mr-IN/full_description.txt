@@ -30,5 +30,5 @@ Sunset तुमचे अंदाजे स्थान एकदाच वि
 
 स्कोअर आणि आकाशातील घटना हे ढग, आर्द्रता, दृश्यमानता आणि पावसाचे अंदाज आहेत, आकाश काय करेल याचे आश्वासन नाही. वादळी पावसात घरातच राहा.
 
-गोपनीयता धोरण: https://jackwallner.github.io/sunset/privacy-policy.html
-वापराच्या अटी: https://jackwallner.github.io/sunset/terms.html
+गोपनीयता धोरण: https://jackwallner.com/ios/sunset/privacy-policy.html
+वापराच्या अटी: https://jackwallner.com/ios/sunset/terms.html

@@ -30,5 +30,5 @@ Sunset enkrat zaprosi za vaš približni položaj in vremenski storitvi Open-Met
 
 Ocene in nebesni dogodki so napovedi oblakov, vlažnosti, vidljivosti in dežja, ne obljuba, kaj bo storilo nebo. Med nevihtami ostanite v zaprtih prostorih.
 
-Pravilnik o zasebnosti: https://jackwallner.github.io/sunset/privacy-policy.html
-Pogoji uporabe: https://jackwallner.github.io/sunset/terms.html
+Pravilnik o zasebnosti: https://jackwallner.com/ios/sunset/privacy-policy.html
+Pogoji uporabe: https://jackwallner.com/ios/sunset/terms.html

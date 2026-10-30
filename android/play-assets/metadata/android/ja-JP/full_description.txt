@@ -30,5 +30,5 @@ Sunsetが大まかな位置情報を求めるのは1回だけで、予報の取�
 
 スコアと空のイベントは、雲、湿度、視程、雨の予報であり、空の実際の様子を約束するものではありません。雷雨のときは屋内にいてください。
 
-プライバシーポリシー: https://jackwallner.github.io/sunset/privacy-policy.html
-利用規約: https://jackwallner.github.io/sunset/terms.html
+プライバシーポリシー: https://jackwallner.com/ios/sunset/privacy-policy.html
+利用規約: https://jackwallner.com/ios/sunset/terms.html

@@ -30,5 +30,5 @@ Sunset pide tu ubicación aproximada una sola vez y envía solo coordenadas redo
 
 Las puntuaciones y los eventos del cielo son previsiones de nubes, humedad, visibilidad y lluvia, no una promesa de lo que hará el cielo. Resguárdate durante las tormentas.
 
-Política de privacidad: https://jackwallner.github.io/sunset/privacy-policy.html
-Condiciones de uso: https://jackwallner.github.io/sunset/terms.html
+Política de privacidad: https://jackwallner.com/ios/sunset/privacy-policy.html
+Condiciones de uso: https://jackwallner.com/ios/sunset/terms.html

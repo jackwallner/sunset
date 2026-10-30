@@ -30,5 +30,5 @@ Sunset మీ సుమారు లొకేషన్‌ను ఒక్కస�
 
 స్కోర్‌లు, ఆకాశ సంఘటనలు మేఘాలు, తేమ, దృశ్యమానత, వర్షం అంచనాలు, ఆకాశం ఏం చేస్తుందనే హామీ కాదు. ఉరుములతో కూడిన తుఫానుల సమయంలో ఇంట్లోనే ఉండండి.
 
-గోప్యతా విధానం: https://jackwallner.github.io/sunset/privacy-policy.html
-వినియోగ నిబంధనలు: https://jackwallner.github.io/sunset/terms.html
+గోప్యతా విధానం: https://jackwallner.com/ios/sunset/privacy-policy.html
+వినియోగ నిబంధనలు: https://jackwallner.com/ios/sunset/terms.html
