@@ -6,6 +6,10 @@
 
 - [Sunset & Sunrise Prediction: Sky Quality Forecast](https://jackwallner.com/ios/sunset/index.html.md): Sunset & Sunrise Prediction rates every sunrise and sunset from 0 to 100 from the cloud, humidity and visibility forecast, plus a free alert for good ones.
 
+## Guides
+
+- [Best Sunset Prediction App for iPhone: 5 Compared](https://jackwallner.com/ios/sunset/best-sunset-prediction-app.html.md): Five iPhone sunset prediction apps compared: a 0 to 100 sky score, quality forecasts, alerts and Apple Watch support. Ratings as of October 2026.
+
 ## Optional
 
 - [Privacy Policy | Sunset](https://jackwallner.com/ios/sunset/privacy-policy.html.md): Privacy policy for Sunset, the sunset and sunrise forecast app for iPhone.
