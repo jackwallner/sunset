@@ -1,6 +1,6 @@
 # Sunset & Sunrise Prediction: Sky Quality Forecast
 
-> Sunset & Sunrise Prediction scores every sunrise and sunset from 0 to 100 using the cloud, humidity and visibility forecast, with a free alert before the good ones.
+> Sunset & Sunrise Prediction rates every sunrise and sunset from 0 to 100 from the cloud, humidity and visibility forecast, plus a free alert for good ones.
 
 Web page: https://jackwallner.com/ios/sunset/
 
