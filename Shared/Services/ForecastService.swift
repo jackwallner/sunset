@@ -70,12 +70,7 @@ enum ForecastService {
         let here = decoded[0]
         let west = decoded[1]
         let east = decoded[2]
-        guard let zone = TimeZone(identifier: here.timezone) else { throw Failure.badResponse }
-
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.timeZone = zone
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
+        guard let formatter = labelFormatter(for: here) else { throw Failure.badResponse }
 
         let hourDates = here.hourly.time.compactMap { formatter.date(from: $0) }
         guard hourDates.count == here.hourly.time.count, !hourDates.isEmpty else { throw Failure.badResponse }
@@ -137,12 +132,40 @@ enum ForecastService {
             precipitationChance: value(here.hourly.precipitationChance, 0)
         )
     }
+
+    /// Reads the time labels of one point. Open-Meteo writes all of a point's
+    /// times, hourly and daily, on one clock: its `utc_offset_seconds`, the
+    /// offset in force when the request was made, kept for the whole window.
+    /// A daylight saving change inside the window does not move the labels
+    /// (24 a day, always), so reading them in the named zone puts every day
+    /// after a fall-back an hour late and refuses the gap hour after a
+    /// spring-forward, which fails the whole forecast. The named zone only
+    /// reads responses that carry no offset.
+    private static func labelFormatter(for point: OpenMeteoPoint) -> DateFormatter? {
+        let zone = point.utcOffsetSeconds.flatMap { TimeZone(secondsFromGMT: $0) }
+            ?? TimeZone(identifier: point.timezone)
+        guard let zone else { return nil }
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = zone
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
+        return formatter
+    }
 }
 
 struct OpenMeteoPoint: Decodable {
     let timezone: String
+    /// The one UTC offset every time written for this point is on.
+    let utcOffsetSeconds: Int?
     let hourly: Hourly
     let daily: Daily
+
+    enum CodingKeys: String, CodingKey {
+        case timezone
+        case utcOffsetSeconds = "utc_offset_seconds"
+        case hourly
+        case daily
+    }
 
     struct Hourly: Decodable {
         let time: [String]
