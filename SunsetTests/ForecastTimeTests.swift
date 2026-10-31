@@ -80,6 +80,65 @@ final class ForecastTimeTests: XCTestCase {
         XCTAssertEqual(after.sunset.bestWindowStart, utc("2026-11-02T00:46:00Z"))
     }
 
+    /// An ocean point is resolved to an `Etc/GMT` zone, one hour behind Los
+    /// Angeles in daylight saving time (San Diego sunsets, Honolulu, Lisbon,
+    /// Cape Town and every east-coast sunrise do the same). Its rows must be
+    /// matched by moment, not by position.
+    func testASunwardPointOnAnotherClockIsReadAtTheSameMoment() throws {
+        var westLow = Array(repeating: Double?(0), count: 48)
+        // West labels 17:00 and 18:00 on the -8 h clock are 18:00 and 19:00 PDT.
+        westLow[17] = 90
+        westLow[18] = 90
+        let days = ["2026-10-08", "2026-10-09"]
+        let here = point(zone: "America/Los_Angeles", offset: -25_200, days: days,
+                         sunrise: ["2026-10-08T07:18", "2026-10-09T07:19"],
+                         sunset: ["2026-10-08T18:30", "2026-10-09T18:28"])
+        let west = point(zone: "Etc/GMT+8", offset: -28_800, days: days, low: westLow,
+                         sunrise: ["2026-10-08T06:18", "2026-10-09T06:19"],
+                         sunset: ["2026-10-08T17:30", "2026-10-09T17:28"])
+        let forecast = try parse(here, west: west)
+
+        XCTAssertEqual(forecast.days[0].sunset.conditions.cloudLowTowardSun, 90, accuracy: 0.01)
+        XCTAssertEqual(forecast.days[0].sunset.conditions.cloudLow, 0, accuracy: 0.01)
+    }
+
+    /// The east point one hour ahead (Denver beside Los Angeles) for a sunrise.
+    func testAnEastPointAheadOfTheUserIsReadAtTheSameMoment() throws {
+        var eastLow = Array(repeating: Double?(0), count: 48)
+        // East labels 08:00 and 09:00 on the -6 h clock are 07:00 and 08:00 PDT.
+        eastLow[8] = 80
+        eastLow[9] = 80
+        let days = ["2026-10-08", "2026-10-09"]
+        let here = point(zone: "America/Los_Angeles", offset: -25_200, days: days,
+                         sunrise: ["2026-10-08T07:18", "2026-10-09T07:19"],
+                         sunset: ["2026-10-08T18:30", "2026-10-09T18:28"])
+        let east = point(zone: "America/Denver", offset: -21_600, days: days, low: eastLow,
+                         sunrise: ["2026-10-08T08:18", "2026-10-09T08:19"],
+                         sunset: ["2026-10-08T19:30", "2026-10-09T19:28"])
+        let forecast = try parse(here, east: east)
+
+        XCTAssertEqual(forecast.days[0].sunrise.conditions.cloudLowTowardSun, 80, accuracy: 0.01)
+    }
+
+    /// Clocks half an hour apart blend the sunward rows at the moment instead
+    /// of snapping to one. St. John's keeps UTC-2:30 in summer; the Atlantic
+    /// east of it is `Etc/GMT+3`.
+    func testRowsAHalfHourApartAreBlendedAtTheMoment() throws {
+        let ramp = (0 ..< 48).map { Double?(Double($0 % 24) * 4) }
+        let days = ["2026-10-08", "2026-10-09"]
+        let here = point(zone: "America/St_Johns", offset: -9_000, days: days,
+                         sunrise: ["2026-10-08T07:18", "2026-10-09T07:19"],
+                         sunset: ["2026-10-08T18:40", "2026-10-09T18:28"])
+        let east = point(zone: "Etc/GMT+3", offset: -10_800, days: days, low: ramp,
+                         sunrise: ["2026-10-08T06:48", "2026-10-09T06:49"],
+                         sunset: ["2026-10-08T18:10", "2026-10-09T17:58"])
+        let forecast = try parse(here, east: east)
+
+        // 07:18 on the -2:30 clock is 09:48 UTC, label 06:48 on the -3:00
+        // clock: rows 06 (24) and 07 (28), 0.8 of the way between them.
+        XCTAssertEqual(forecast.days[0].sunrise.conditions.cloudLowTowardSun, 27.2, accuracy: 0.01)
+    }
+
     /// Older responses and cached fixtures carry no offset: the named zone
     /// still reads them, as before.
     func testWithoutAnOffsetTheNamedZoneReadsTheLabels() throws {

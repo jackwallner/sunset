@@ -68,21 +68,24 @@ enum ForecastService {
         let decoded = try JSONDecoder().decode([OpenMeteoPoint].self, from: data)
         guard decoded.count == 3 else { throw Failure.badResponse }
         let here = decoded[0]
-        let west = decoded[1]
-        let east = decoded[2]
         guard let formatter = labelFormatter(for: here) else { throw Failure.badResponse }
 
         let hourDates = here.hourly.time.compactMap { formatter.date(from: $0) }
         guard hourDates.count == here.hourly.time.count, !hourDates.isEmpty else { throw Failure.badResponse }
 
+        // The points are not on the same clock, so the sunward rows are taken
+        // at the moments of `here`'s hours rather than by position.
+        let westLow = lowCloud(of: decoded[1], on: hourDates)
+        let eastLow = lowCloud(of: decoded[2], on: hourDates)
+
         func show(_ event: SunEvent, at time: Date) -> SunShow? {
             guard let position = hourDates.lastIndex(where: { $0 <= time }) else { return nil }
-            let toward = event == .sunset ? west : east
+            let towardLow = event == .sunset ? westLow : eastLow
             let next = min(position + 1, hourDates.count - 1)
             let weight = next == position ? 0 : time.timeIntervalSince(hourDates[position]) / 3600
             let sky = SunsetScorer.interpolate(
-                conditions(here, toward, at: position),
-                conditions(here, toward, at: next),
+                conditions(here, towardLow, at: position),
+                conditions(here, towardLow, at: next),
                 weight: weight
             )
             return SunShow(event: event, time: time, conditions: sky, score: SunsetScorer.score(sky, event: event))
@@ -117,7 +120,7 @@ enum ForecastService {
         )
     }
 
-    private static func conditions(_ here: OpenMeteoPoint, _ toward: OpenMeteoPoint, at index: Int) -> SkyConditions {
+    private static func conditions(_ here: OpenMeteoPoint, _ towardLow: [Double?], at index: Int) -> SkyConditions {
         func value(_ array: [Double?], _ fallback: Double) -> Double {
             guard index < array.count, let v = array[index] else { return fallback }
             return v
@@ -126,7 +129,7 @@ enum ForecastService {
             cloudLow: value(here.hourly.cloudLow, 0),
             cloudMid: value(here.hourly.cloudMid, 0),
             cloudHigh: value(here.hourly.cloudHigh, 0),
-            cloudLowTowardSun: value(toward.hourly.cloudLow, value(here.hourly.cloudLow, 0)),
+            cloudLowTowardSun: value(towardLow, value(here.hourly.cloudLow, 0)),
             humidity: value(here.hourly.humidity, 60),
             visibility: value(here.hourly.visibility, 20_000),
             precipitationChance: value(here.hourly.precipitationChance, 0)
@@ -139,8 +142,9 @@ enum ForecastService {
     /// A daylight saving change inside the window does not move the labels
     /// (24 a day, always), so reading them in the named zone puts every day
     /// after a fall-back an hour late and refuses the gap hour after a
-    /// spring-forward, which fails the whole forecast. The named zone only
-    /// reads responses that carry no offset.
+    /// spring-forward, which fails the whole forecast. With `timezone=auto`
+    /// each point also gets its own clock: an ocean point is an `Etc/GMT` zone.
+    /// The named zone only reads responses that carry no offset.
     private static func labelFormatter(for point: OpenMeteoPoint) -> DateFormatter? {
         let zone = point.utcOffsetSeconds.flatMap { TimeZone(secondsFromGMT: $0) }
             ?? TimeZone(identifier: point.timezone)
@@ -150,6 +154,28 @@ enum ForecastService {
         formatter.timeZone = zone
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm"
         return formatter
+    }
+
+    /// A sunward point's low cloud at each of `hours`. Its rows are read on its
+    /// own clock; an hour that falls between two of them (clocks a half hour
+    /// apart) blends the two. Empty when the point's times cannot be read, so
+    /// the local low cloud stands in.
+    private static func lowCloud(of point: OpenMeteoPoint, on hours: [Date]) -> [Double?] {
+        guard let formatter = labelFormatter(for: point) else { return [] }
+        let dates = point.hourly.time.compactMap { formatter.date(from: $0) }
+        guard dates.count == point.hourly.time.count, !dates.isEmpty else { return [] }
+        let values = point.hourly.cloudLow
+        return hours.map { hour in
+            guard let row = dates.lastIndex(where: { $0 <= hour }) else { return values.element(0) }
+            let next = min(row + 1, dates.count - 1)
+            let span = dates[next].timeIntervalSince(dates[row])
+            let weight = span > 0 ? hour.timeIntervalSince(dates[row]) / span : 0
+            // On a row: that row, even when the model left it empty. Between
+            // two rows: both of them, or nothing.
+            guard weight > 0 else { return values.element(row) }
+            guard let before = values.element(row), let after = values.element(next) else { return nil }
+            return before + (after - before) * weight
+        }
     }
 }
 
