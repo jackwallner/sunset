@@ -132,8 +132,18 @@ final class ReleaseJourneysUITests: XCTestCase {
         button.tap()
     }
 
+    /// The bottom bar is a tab bar on a phone and a floating capsule on the
+    /// unfolded Duo, where it is not a `tabBars` element; the Outlook is a
+    /// separate pane there, not a tab.
+    private func tabButton(_ label: String, in app: XCUIApplication) -> XCUIElement {
+        let bar = app.tabBars.buttons[label].firstMatch
+        if bar.exists { return bar }
+        let capsule = app.buttons.matching(NSPredicate(format: "label == %@", label)).firstMatch
+        return capsule.exists ? capsule : bar
+    }
+
     private func tapTab(_ label: String, in app: XCUIApplication) {
-        let button = app.tabBars.buttons[label].firstMatch
+        let button = tabButton(label, in: app)
         XCTAssertTrue(button.waitForExistence(timeout: 15))
         button.tap()
     }
@@ -144,7 +154,7 @@ final class ReleaseJourneysUITests: XCTestCase {
     }
 
     private func today(_ name: String, in app: XCUIApplication, journey: String = #function) {
-        XCTAssertTrue(app.tabBars.buttons["Today"].firstMatch.waitForExistence(timeout: 20))
+        XCTAssertTrue(tabButton("Today", in: app).waitForExistence(timeout: 20))
         QA.checkpoint(app, name, journey: journey)
     }
 }
