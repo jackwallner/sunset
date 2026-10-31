@@ -80,6 +80,23 @@ final class ForecastTimeTests: XCTestCase {
         XCTAssertEqual(after.sunset.bestWindowStart, utc("2026-11-02T00:46:00Z"))
     }
 
+    /// The alert is the visible cost of that hour: a 45 minute lead on a sunset
+    /// read an hour late fired at 5:11 PM, 15 minutes after the 4:56 PM sunset.
+    @MainActor
+    func testTheAlertForADayAfterFallBackFiresBeforeTheRealSunset() throws {
+        let here = point(zone: "America/Los_Angeles", offset: -25_200, days: ["2026-10-31", "2026-11-01"],
+                         sunrise: ["2026-10-31T07:48", "2026-11-01T07:50"],
+                         sunset: ["2026-10-31T17:58", "2026-11-01T17:56"])
+        let forecast = try parse(here)
+
+        let planned = NotificationService.plan(forecast: forecast, watched: [.sunset], threshold: 0, leadMinutes: 45,
+                                               skyEventKinds: [], now: utc("2026-10-31T16:00:00Z"))
+
+        XCTAssertEqual(planned.map(\.fireDate), [utc("2026-11-01T00:13:00Z"), utc("2026-11-02T00:11:00Z")])
+        XCTAssertEqual(local(planned[1].fireDate, "America/Los_Angeles").hour, 16)
+        XCTAssertLessThan(planned[1].fireDate, forecast.days[1].sunset.time)
+    }
+
     /// An ocean point is resolved to an `Etc/GMT` zone, one hour behind Los
     /// Angeles in daylight saving time (San Diego sunsets, Honolulu, Lisbon,
     /// Cape Town and every east-coast sunrise do the same). Its rows must be
