@@ -26,7 +26,8 @@ final class ReleaseJourneysUITests: XCTestCase {
         let app = XCUIApplication(bundleIdentifier: "com.jackwallner.sunset")
         QA.launch(app, arguments: ["-DemoLocation", "-DemoForecast"])
         today("today", in: app)
-        tapTab("Outlook", in: app)
+        // Unfolded, the Outlook is the trailing pane and has no tab.
+        if tabButton("Outlook", in: app).waitForExistence(timeout: 3) { tapTab("Outlook", in: app) }
         QA.checkpoint(app, "outlook")
         tapTab("Settings", in: app)
         QA.checkpoint(app, "settings")
@@ -142,10 +143,17 @@ final class ReleaseJourneysUITests: XCTestCase {
         return capsule.exists ? capsule : bar
     }
 
+    /// A tap can miss the unfolded Duo's capsule; a short press on the
+    /// button's own coordinate selects it there too.
     private func tapTab(_ label: String, in app: XCUIApplication) {
         let button = tabButton(label, in: app)
         XCTAssertTrue(button.waitForExistence(timeout: 15))
         button.tap()
+        let selected = NSPredicate(format: "isSelected == true")
+        let wait = XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: selected, object: button)], timeout: 3)
+        if wait != .completed {
+            button.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).press(forDuration: 0.05)
+        }
     }
 
     private func checkpoint(_ name: String, button label: String, in app: XCUIApplication, journey: String = #function) {
