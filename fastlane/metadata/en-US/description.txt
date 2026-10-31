@@ -1,4 +1,4 @@
-Sunset is a free sunrise and sunset forecast app. It scores every sunrise and sunset from 0 to 100, hours before it happens, so you can be outside for the great ones. Alerts for the great ones are free, and there is no account.
+Sunset is a free sunset and sunrise forecast app that tells you whether tonight's sunset or tomorrow's sunrise will be colorful. It scores every sunrise and sunset from 0 to 100, hours ahead, from the cloud, humidity and visibility forecast at that exact minute. Alerts for the great ones are free, and there is no account.
 
 EVERY SUNRISE AND SUNSET GETS A SCORE
 Sunset reads the cloud, humidity and visibility forecast for the exact minute the sun comes up or goes down and turns it into a 0 to 100 score with a plain-English summary: thin high clouds over an open horizon, a bank of low cloud toward the sun, rain at the moment, or a clear sky and a clean gold glow. Watch sunrises, sunsets, or both.
@@ -13,10 +13,12 @@ Four factors show what is driving the score:
 FREE ALERTS
 A notification before the sunsets worth going out for, and the evening before a great sunrise, so you can set an alarm. Alerts are rebuilt as the forecast changes, so a sky that clouds over loses its alert.
 
-BEST LIGHT AND WIDGET
-See each sunrise and sunset time and the window when the color peaks, for wherever you are. A Home Screen widget shows the next score.
+GOLDEN HOUR AND WIDGET
+See each sunrise and sunset time and the golden hour window when the color peaks, for wherever you are. A Home Screen widget shows the next score.
 
-SUN+
+FREE AND SUN+
+Free: scores for today and tomorrow, the four factors, the widget, and sunrise and sunset alerts.
+Sun+ adds:
 • Every sunrise and sunset score for the week ahead
 • Alerts before thunderstorms roll in
 • A heads-up when showers and a low sun could make a rainbow
