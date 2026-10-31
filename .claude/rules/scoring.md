@@ -32,7 +32,20 @@ three points come back in one Open-Meteo request as a three-element array;
 anything shorter is rejected so a silent fallback cannot score the wrong sky.
 
 Conditions at the minute are a linear blend of the hourly rows either side of
-the daily `sunrise`/`sunset` time, in the response's own time zone.
+the daily `sunrise`/`sunset` time.
+
+Open-Meteo writes every time label of a point (hourly and daily) on one fixed
+clock, its `utc_offset_seconds`: the offset in force when the request was made,
+kept for the whole window, with 24 labels a day even across a daylight saving
+change (checked 2026-10-31: Sydney's 2026-10-04 spring-forward day still has a
+`02:00` row). Read the labels with `TimeZone(secondsFromGMT:)`, never with the
+named zone: the named zone refuses the gap hour (the whole forecast failed for
+the week before a spring-forward) and puts every day after a fall-back an hour
+late. The named zone is for display only, and for responses that carry no
+offset. `timezone=auto` also gives each of the three points its own clock (an
+ocean point is `Etc/GMT+8` beside Los Angeles at UTC-7), so the sunward rows are
+matched to the user's hours by moment, never by row index. The Android parity
+fixtures that drop the London gap hour are synthetic; the live API does not.
 
 Sky events (`SkyEventDetector`), per hour at the user's point, merged into
 runs: thunderstorm = WMO code 95 to 99; fog = code 45/48 or visibility under
