@@ -14,6 +14,7 @@ import java.net.URLEncoder
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.ZoneOffset
 import kotlin.math.abs
 import kotlin.math.cos
 import kotlin.math.floor
@@ -94,18 +95,23 @@ object ForecastService {
         val here = Point(points.getJSONObject(0))
         val west = Point(points.getJSONObject(1))
         val east = Point(points.getJSONObject(2))
-        val zone = runCatching { ZoneId.of(here.timezone) }.getOrNull() ?: throw Failure("bad time zone")
+        val zone = here.clock() ?: throw Failure("bad time zone")
 
         val hourDates = here.times.map { parseTime(it, zone) ?: throw Failure("bad hour") }
         if (hourDates.isEmpty()) throw Failure("no hours")
 
+        // The points are not on the same clock, so the sunward rows are taken
+        // at the moments of `here`'s hours rather than by position.
+        val westLow = lowCloud(west, hourDates)
+        val eastLow = lowCloud(east, hourDates)
+
         fun show(event: SunEvent, time: Instant): SunShow? {
             val position = hourDates.indexOfLast { !it.isAfter(time) }
             if (position < 0) return null
-            val toward = if (event == SunEvent.SUNSET) west else east
+            val towardLow = if (event == SunEvent.SUNSET) westLow else eastLow
             val next = min(position + 1, hourDates.size - 1)
             val weight = if (next == position) 0.0 else (time.epochSecond - hourDates[position].epochSecond) / 3600.0
-            val sky = SunsetScorer.interpolate(conditions(here, toward, position), conditions(here, toward, next), weight)
+            val sky = SunsetScorer.interpolate(conditions(here, towardLow, position), conditions(here, towardLow, next), weight)
             return SunShow(event, time, sky, SunsetScorer.score(sky, event))
         }
 
@@ -139,20 +145,64 @@ object ForecastService {
         )
     }
 
-    /** Like iOS's strict DateFormatter: a local time that falls in a DST gap is invalid, not shifted. */
+    /**
+     * Like iOS's strict DateFormatter: a local time that falls in a DST gap is
+     * invalid, not shifted. A fixed offset (see [clock]) has no gaps.
+     */
     private fun parseTime(value: String, zone: ZoneId): Instant? = runCatching {
         val local = LocalDateTime.parse(value)
         val zoned = local.atZone(zone)
         if (zoned.toLocalDateTime() != local) null else zoned.toInstant()
     }.getOrNull()
 
-    private fun conditions(here: Point, toward: Point, index: Int): SkyConditions {
+    /**
+     * The clock a point's time labels are written on. Open-Meteo writes all of a
+     * point's times, hourly and daily, on one clock: its `utc_offset_seconds`,
+     * the offset in force when the request was made, kept for the whole window.
+     * A daylight saving change inside the window does not move the labels (24 a
+     * day, always), so reading them in the named zone puts every day after a
+     * fall-back an hour late and refuses the gap hour after a spring-forward,
+     * which fails the whole forecast. With `timezone=auto` each point also gets
+     * its own clock: an ocean point is an `Etc/GMT` zone. The named zone only
+     * reads responses that carry no offset.
+     */
+    private fun Point.clock(): ZoneId? =
+        utcOffsetSeconds?.let { runCatching { ZoneOffset.ofTotalSeconds(it) }.getOrNull() }
+            ?: runCatching { ZoneId.of(timezone) }.getOrNull()
+
+    /**
+     * A sunward point's low cloud at each of [hours]. Its rows are read on its
+     * own clock; an hour that falls between two of them (clocks a half hour
+     * apart) blends the two. Empty when the point's times cannot be read, so the
+     * local low cloud stands in.
+     */
+    private fun lowCloud(point: Point, hours: List<Instant>): List<Double?> {
+        val zone = point.clock() ?: return emptyList()
+        val dates = point.times.map { parseTime(it, zone) ?: return emptyList() }
+        if (dates.isEmpty()) return emptyList()
+        val values = point.cloudLow
+        return hours.map { hour ->
+            val row = dates.indexOfLast { !it.isAfter(hour) }
+            if (row < 0) return@map values.getOrNull(0)
+            val next = min(row + 1, dates.size - 1)
+            val span = (dates[next].epochSecond - dates[row].epochSecond).toDouble()
+            val weight = if (span > 0) (hour.epochSecond - dates[row].epochSecond) / span else 0.0
+            // On a row: that row, even when the model left it empty. Between two
+            // rows: both of them, or nothing.
+            if (weight <= 0) return@map values.getOrNull(row)
+            val before = values.getOrNull(row) ?: return@map null
+            val after = values.getOrNull(next) ?: return@map null
+            before + (after - before) * weight
+        }
+    }
+
+    private fun conditions(here: Point, towardLow: List<Double?>, index: Int): SkyConditions {
         fun value(array: List<Double?>, fallback: Double) = array.getOrNull(index) ?: fallback
         return SkyConditions(
             cloudLow = value(here.cloudLow, 0.0),
             cloudMid = value(here.cloudMid, 0.0),
             cloudHigh = value(here.cloudHigh, 0.0),
-            cloudLowTowardSun = value(toward.cloudLow, value(here.cloudLow, 0.0)),
+            cloudLowTowardSun = value(towardLow, value(here.cloudLow, 0.0)),
             humidity = value(here.humidity, 60.0),
             visibility = value(here.visibility, 20_000.0),
             precipitationChance = value(here.precipitationChance, 0.0),
@@ -162,6 +212,8 @@ object ForecastService {
     /** One Open-Meteo location. The three newer hourly series are optional, as on iOS. */
     private class Point(json: JSONObject) {
         val timezone: String = json.getString("timezone")
+        /** The one UTC offset every time written for this point is on, when the response carries it. */
+        val utcOffsetSeconds: Int? = if (json.has("utc_offset_seconds") && !json.isNull("utc_offset_seconds")) json.getInt("utc_offset_seconds") else null
         private val hourly = json.getJSONObject("hourly")
         private val daily = json.getJSONObject("daily")
         val times: List<String> = strings(hourly.getJSONArray("time"))
