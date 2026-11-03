@@ -1,1 +1,1 @@
-First release.
+More alerts for colorful sunsets and sunrises: the score now spots more skies with good color. Fixes and improvements.
