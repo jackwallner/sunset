@@ -28,7 +28,11 @@ paths:
   scored skies (all 15 summaries), 320 sun elevations, 4,212 sky-event cases,
   six request URLs, two parsed forecasts (incl. a London DST day), 216 alert
   plans (2,743 alerts), the copy helpers and the demo week. Rerun it whenever
-  those Swift files change. The command-line Swift on the fleet Macs is 5.7,
+  those Swift files change. `scripts/sync-android-live.sh` does the same for the recorded
+  live responses (`live/*.json`, request points in `live/places.json`) into
+  `live-expected.json` and `live-plan-expected.json`. Run both on jmbp2
+  (macOS 14): jmbp's macOS 12 time zone data puts Havana an hour off after
+  Cuba's 2026-11-01 change. The command-line Swift on the fleet Macs is 5.7,
   so `android-export/legacy_swift.py` adds `return` to switch-expression arms
   in a temporary copy; `Shared/` is never modified.
 - Platform equivalents: CoreLocation reduced accuracy = `ACCESS_COARSE_LOCATION`

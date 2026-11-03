@@ -22,6 +22,24 @@ final class SunsetScorerTests: XCTestCase {
         XCTAssertTrue(score.summary.contains("clear"))
     }
 
+    func testOneLayerAloneClearsTheAlertScore() {
+        // Real skies rarely stack both layers at their ideal cover, so the old
+        // model alerted on about 3% of shows (92 days, 24 cities).
+        let thinCirrus = SunsetScorer.score(sky(high: 20, humidity: 65))
+        let midOnly = SunsetScorer.score(sky(mid: 25, humidity: 65))
+        XCTAssertGreaterThanOrEqual(thinCirrus.total, AlertSettings.defaultThreshold)
+        XCTAssertGreaterThanOrEqual(midOnly.total, AlertSettings.defaultThreshold)
+    }
+
+    func testHighCloudScoresTheSameAcrossItsBand() {
+        let thin = SunsetScorer.score(sky(high: 20))
+        let half = SunsetScorer.score(sky(high: 50))
+        let thick = SunsetScorer.score(sky(high: 70))
+        XCTAssertEqual(thin.total, half.total)
+        XCTAssertEqual(thick.total, half.total)
+        XCTAssertLessThan(SunsetScorer.score(sky(high: 100)).total, half.total - 25)
+    }
+
     func testLowOvercastIsDull() {
         let score = SunsetScorer.score(sky(low: 100, mid: 60, high: 20, humidity: 90, visibility: 8_000))
         XCTAssertLessThan(score.total, 30)

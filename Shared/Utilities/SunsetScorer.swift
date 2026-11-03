@@ -13,17 +13,20 @@ import Foundation
 /// Pure and deterministic so it is pinned by tests and runs in the widget.
 enum SunsetScorer {
     static func score(_ sky: SkyConditions, event: SunEvent = .sunset) -> SunsetScore {
-        let highBell = bell(sky.cloudHigh, center: 50, width: 32)
-        let midBell = bell(sky.cloudMid, center: 35, width: 30)
+        // Full credit across the whole band of cover that lights up, not just
+        // at one ideal number: a 20% cirrus deck lights up as well as a 50% one.
+        let highGlow = band(sky.cloudHigh, full: 20, fades: 70, gone: 100, tail: 0.25)
+        let midGlow = band(sky.cloudMid, full: 15, fades: 50, gone: 90, tail: 0)
 
-        // Clear skies still make a clean, if plain, sunset: the floor is 30.
-        let lift: Double = 0.65 * highBell + 0.35 * midBell
-        let color: Double = 30 + 70 * lift
+        // Either layer alone can make the show; both together only adds a
+        // little. Clear skies still make a clean, if plain, sunset: the floor is 40.
+        let lift: Double = 1 - (1 - highGlow) * (1 - 0.9 * midGlow)
+        let color: Double = 40 + 60 * lift
 
         // Streaks are cirrus with nothing underneath hiding them.
         let midShade: Double = 1 - 0.5 * sky.cloudMid / 100
         let lowShade: Double = 1 - 0.7 * sky.cloudLow / 100
-        let streaks: Double = 100 * highBell * midShade * lowShade
+        let streaks: Double = 100 * highGlow * midShade * lowShade
 
         let lowCover: Double = 0.35 * sky.cloudLow + 0.65 * sky.cloudLowTowardSun
         let horizon: Double = 100 * (1 - lowCover / 100)
@@ -118,9 +121,12 @@ enum SunsetScorer {
         )
     }
 
-    private static func bell(_ value: Double, center: Double, width: Double) -> Double {
-        let z = (value - center) / width
-        return exp(-z * z)
+    /// 0 at no cover, rising to 1 at `full`, flat until `fades`, then down to
+    /// `tail` at `gone` and beyond.
+    private static func band(_ value: Double, full: Double, fades: Double, gone: Double, tail: Double) -> Double {
+        if value <= full { return clamp(value / full) }
+        if value <= fades { return 1 }
+        return 1 - (1 - tail) * clamp((value - fades) / (gone - fades))
     }
 
     private static func clamp(_ value: Double) -> Double {

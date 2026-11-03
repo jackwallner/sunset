@@ -53,6 +53,6 @@ class LivePlanParityTest {
                 alerts += got.size
             }
         }
-        assertEquals(3130, alerts)
+        assertEquals(3187, alerts)
     }
 }

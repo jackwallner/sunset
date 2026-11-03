@@ -1,0 +1,206 @@
+{
+ "Adelaide": {
+  "lat": -34.93,
+  "lon": 138.6
+ },
+ "Anchorage": {
+  "lat": 61.22,
+  "lon": -149.9
+ },
+ "Apia": {
+  "lat": -13.83,
+  "lon": -171.76
+ },
+ "Athens": {
+  "lat": 37.98,
+  "lon": 23.73
+ },
+ "Auckland": {
+  "lat": -36.85,
+  "lon": 174.76
+ },
+ "Bangkok": {
+  "lat": 13.76,
+  "lon": 100.5
+ },
+ "Beirut": {
+  "lat": 33.89,
+  "lon": 35.5
+ },
+ "Berlin": {
+  "lat": 52.52,
+  "lon": 13.4
+ },
+ "Buenos_Aires": {
+  "lat": -34.6,
+  "lon": -58.38
+ },
+ "Cairo": {
+  "lat": 30.04,
+  "lon": 31.24
+ },
+ "Cape_Town": {
+  "lat": -33.92,
+  "lon": 18.42
+ },
+ "Chatham_Is": {
+  "lat": -43.95,
+  "lon": -176.55
+ },
+ "Chicago": {
+  "lat": 41.88,
+  "lon": -87.63
+ },
+ "Columbus": {
+  "lat": 39.96,
+  "lon": -82.99
+ },
+ "Denver": {
+  "lat": 39.74,
+  "lon": -104.99
+ },
+ "Detroit": {
+  "lat": 42.33,
+  "lon": -83.05
+ },
+ "Dubai": {
+  "lat": 25.2,
+  "lon": 55.27
+ },
+ "El_Paso": {
+  "lat": 31.76,
+  "lon": -106.49
+ },
+ "Fairbanks": {
+  "lat": 64.84,
+  "lon": -147.72
+ },
+ "Fiji_Suva": {
+  "lat": -18.14,
+  "lon": 178.44
+ },
+ "Halifax": {
+  "lat": 44.65,
+  "lon": -63.57
+ },
+ "Havana": {
+  "lat": 23.11,
+  "lon": -82.37
+ },
+ "Honolulu": {
+  "lat": 21.31,
+  "lon": -157.86
+ },
+ "Indianapolis": {
+  "lat": 39.77,
+  "lon": -86.16
+ },
+ "Kathmandu": {
+  "lat": 27.72,
+  "lon": 85.32
+ },
+ "Kiritimati": {
+  "lat": 1.87,
+  "lon": -157.4
+ },
+ "Lisbon": {
+  "lat": 38.72,
+  "lon": -9.14
+ },
+ "London": {
+  "lat": 51.51,
+  "lon": -0.13
+ },
+ "Longyearbyen": {
+  "lat": 78.22,
+  "lon": 15.65
+ },
+ "Lord_Howe": {
+  "lat": -31.55,
+  "lon": 159.08
+ },
+ "Los_Angeles": {
+  "lat": 34.05,
+  "lon": -118.24
+ },
+ "Madrid": {
+  "lat": 40.42,
+  "lon": -3.7
+ },
+ "Mexico_City": {
+  "lat": 19.43,
+  "lon": -99.13
+ },
+ "Moscow": {
+  "lat": 55.76,
+  "lon": 37.62
+ },
+ "Mumbai": {
+  "lat": 19.08,
+  "lon": 72.88
+ },
+ "Nairobi": {
+  "lat": -1.29,
+  "lon": 36.82
+ },
+ "New_York": {
+  "lat": 40.71,
+  "lon": -74.01
+ },
+ "Perth": {
+  "lat": -31.95,
+  "lon": 115.86
+ },
+ "Phoenix": {
+  "lat": 33.45,
+  "lon": -112.07
+ },
+ "Reykjavik": {
+  "lat": 64.15,
+  "lon": -21.94
+ },
+ "San_Diego": {
+  "lat": 32.72,
+  "lon": -117.16
+ },
+ "Santiago": {
+  "lat": -33.45,
+  "lon": -70.67
+ },
+ "Sao_Paulo": {
+  "lat": -23.55,
+  "lon": -46.63
+ },
+ "St_Johns_NL": {
+  "lat": 47.56,
+  "lon": -52.71
+ },
+ "Sydney": {
+  "lat": -33.87,
+  "lon": 151.21
+ },
+ "Tehran": {
+  "lat": 35.69,
+  "lon": 51.39
+ },
+ "Tel_Aviv": {
+  "lat": 32.09,
+  "lon": 34.78
+ },
+ "Tokyo": {
+  "lat": 35.68,
+  "lon": 139.69
+ },
+ "Tromso": {
+  "lat": 69.65,
+  "lon": 18.96
+ },
+ "Ushuaia": {
+  "lat": -54.8,
+  "lon": -68.3
+ },
+ "Vancouver_WA": {
+  "lat": 45.63,
+  "lon": -122.52
+ }
+}

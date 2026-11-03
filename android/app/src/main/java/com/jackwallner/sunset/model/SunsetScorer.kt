@@ -1,6 +1,5 @@
 package com.jackwallner.sunset.model
 
-import kotlin.math.exp
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.pow
@@ -13,17 +12,20 @@ import kotlin.math.pow
  */
 object SunsetScorer {
     fun score(sky: SkyConditions, event: SunEvent = SunEvent.SUNSET): SunsetScore {
-        val highBell = bell(sky.cloudHigh, center = 50.0, width = 32.0)
-        val midBell = bell(sky.cloudMid, center = 35.0, width = 30.0)
+        // Full credit across the whole band of cover that lights up, not just
+        // at one ideal number: a 20% cirrus deck lights up as well as a 50% one.
+        val highGlow = band(sky.cloudHigh, full = 20.0, fades = 70.0, gone = 100.0, tail = 0.25)
+        val midGlow = band(sky.cloudMid, full = 15.0, fades = 50.0, gone = 90.0, tail = 0.0)
 
-        // Clear skies still make a clean, if plain, sunset: the floor is 30.
-        val lift = 0.65 * highBell + 0.35 * midBell
-        val color = 30 + 70 * lift
+        // Either layer alone can make the show; both together only adds a
+        // little. Clear skies still make a clean, if plain, sunset: the floor is 40.
+        val lift = 1 - (1 - highGlow) * (1 - 0.9 * midGlow)
+        val color = 40 + 60 * lift
 
         // Streaks are cirrus with nothing underneath hiding them.
         val midShade = 1 - 0.5 * sky.cloudMid / 100
         val lowShade = 1 - 0.7 * sky.cloudLow / 100
-        val streaks = 100 * highBell * midShade * lowShade
+        val streaks = 100 * highGlow * midShade * lowShade
 
         val lowCover = 0.35 * sky.cloudLow + 0.65 * sky.cloudLowTowardSun
         val horizon = 100 * (1 - lowCover / 100)
@@ -97,9 +99,11 @@ object SunsetScorer {
         )
     }
 
-    private fun bell(value: Double, center: Double, width: Double): Double {
-        val z = (value - center) / width
-        return exp(-z * z)
+    /** 0 at no cover, rising to 1 at [full], flat until [fades], then down to [tail] at [gone] and beyond. */
+    private fun band(value: Double, full: Double, fades: Double, gone: Double, tail: Double): Double = when {
+        value <= full -> clamp(value / full)
+        value <= fades -> 1.0
+        else -> 1 - (1 - tail) * clamp((value - fades) / (gone - fades))
     }
 
     private fun clamp(value: Double) = min(1.0, max(0.0, value))

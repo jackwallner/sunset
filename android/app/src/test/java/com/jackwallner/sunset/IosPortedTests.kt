@@ -45,6 +45,20 @@ class SunsetScorerTests {
         assertTrue(score.summary.contains("clear"))
     }
 
+    @Test fun oneLayerAloneClearsTheAlertScore() {
+        val thinCirrus = SunsetScorer.score(sky(high = 20.0, humidity = 65.0))
+        val midOnly = SunsetScorer.score(sky(mid = 25.0, humidity = 65.0))
+        assertTrue(thinCirrus.total >= 70)
+        assertTrue(midOnly.total >= 70)
+    }
+
+    @Test fun highCloudScoresTheSameAcrossItsBand() {
+        val half = SunsetScorer.score(sky(high = 50.0)).total
+        assertEquals(half, SunsetScorer.score(sky(high = 20.0)).total)
+        assertEquals(half, SunsetScorer.score(sky(high = 70.0)).total)
+        assertTrue(SunsetScorer.score(sky(high = 100.0)).total < half - 25)
+    }
+
     @Test fun lowOvercastIsDull() {
         val score = SunsetScorer.score(sky(low = 100.0, mid = 60.0, high = 20.0, humidity = 90.0, visibility = 8_000.0))
         assertTrue(score.total < 30)
