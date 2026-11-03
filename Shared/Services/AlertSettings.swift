@@ -16,14 +16,15 @@ final class AlertSettings: ObservableObject {
         static let skyEvents = "sunset.alerts.skyEvents"
         static let onboarded = "sunset.onboarded"
         static let opens = "sunset.opens"
+        static let firstOpen = "sunset.firstOpen"
         static let reviewAsked = "sunset.reviewAsked"
     }
 
-    static let thresholds = [50, 60, 70, 80, 90]
-    static let leadOptions = [30, 45, 60, 90, 120]
+    nonisolated static let thresholds = [50, 60, 70, 80, 90]
+    nonisolated static let leadOptions = [30, 45, 60, 90, 120]
     /// Free alerts use these; Sun+ can change them.
-    static let defaultThreshold = 70
-    static let defaultLead = 45
+    nonisolated static let defaultThreshold = 70
+    nonisolated static let defaultLead = 45
 
     /// Sunrise, sunset, or both. Never empty.
     @Published var watched: Set<SunEvent> {
@@ -95,15 +96,35 @@ final class AlertSettings: ObservableObject {
     func effectiveThreshold(isPro: Bool) -> Int { isPro ? threshold : Self.defaultThreshold }
     func effectiveLead(isPro: Bool) -> Int { isPro ? leadMinutes : Self.defaultLead }
 
-    func recordOpen() {
+    func recordOpen(now: Date = .now) {
+        if defaults.object(forKey: Key.firstOpen) == nil { defaults.set(now, forKey: Key.firstOpen) }
         openCount += 1
     }
 
-    /// The third open while looking at a show worth seeing is the moment to
-    /// ask, once, straight through `requestReview()`.
-    func shouldRequestReview(score: Int) -> Bool {
-        guard !reviewAsked, openCount >= 3, score >= 60 else { return false }
+    /// Asked once, on the way back from a show worth seeing that the user
+    /// opened themselves, and only after they have lived with the app for a
+    /// couple of days. Never on launch.
+    func shouldRequestReview(score: Int, now: Date = .now) -> Bool {
+        let first = defaults.object(forKey: Key.firstOpen) as? Date
+        let days = first.map { Int(now.timeIntervalSince($0) / 86_400) } ?? 0
+        guard Self.reviewEligible(
+            asked: reviewAsked, onboarded: hasOnboarded,
+            opens: openCount, daysSinceFirstOpen: days, score: score
+        ) else { return false }
         reviewAsked = true
         return true
+    }
+
+    nonisolated static let reviewMinimumOpens = 3
+    nonisolated static let reviewMinimumDays = 2
+    nonisolated static let reviewMinimumScore = 60
+
+    nonisolated static func reviewEligible(
+        asked: Bool, onboarded: Bool, opens: Int, daysSinceFirstOpen: Int, score: Int
+    ) -> Bool {
+        !asked && onboarded
+            && opens >= reviewMinimumOpens
+            && daysSinceFirstOpen >= reviewMinimumDays
+            && score >= reviewMinimumScore
     }
 }

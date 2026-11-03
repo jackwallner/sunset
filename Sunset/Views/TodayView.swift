@@ -92,11 +92,23 @@ struct TodayView: View {
         }
         .sheet(isPresented: $showPaywall) { PaywallView(source: "today_sky_events") }
         .sheet(isPresented: $showAlertSetup) { AlertSetupSheet() }
-        .onAppear {
-            if !LaunchArguments.isScreenshotRun,
-               let score = forecastStore.nextShow?.score.total, settings.shouldRequestReview(score: score) {
-                requestReview()
-            }
+        .onChange(of: showHeroDetail) { wasShown, isShown in
+            if wasShown, !isShown { requestReviewAfterDetail(score: forecastStore.nextShow?.score.total) }
+        }
+        .onChange(of: pickedShow) { viewed, now in
+            if now == nil { requestReviewAfterDetail(score: viewed?.score.total) }
+        }
+    }
+
+    /// Back from a good show the user chose to look at: a beat later, with
+    /// nothing else on screen, is the one place the review prompt may appear.
+    private func requestReviewAfterDetail(score: Int?) {
+        guard !LaunchArguments.isScreenshotRun, let score else { return }
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(0.8))
+            guard !showPaywall, !showAlertSetup, !showHeroDetail, pickedShow == nil,
+                  settings.shouldRequestReview(score: score) else { return }
+            requestReview()
         }
     }
 
