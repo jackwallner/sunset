@@ -22,7 +22,7 @@ final class SunsetScorerTests: XCTestCase {
         XCTAssertTrue(score.summary.contains("clear"))
     }
 
-    func testOneLayerAloneClearsTheAlertScore() {
+    @MainActor func testOneLayerAloneClearsTheAlertScore() {
         // Real skies rarely stack both layers at their ideal cover, so the old
         // model alerted on about 3% of shows (92 days, 24 cities).
         let thinCirrus = SunsetScorer.score(sky(high: 20, humidity: 65))
