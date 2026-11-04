@@ -165,12 +165,12 @@ private struct DaySky: View {
     var body: some View {
         ZStack {
             LinearGradient(
-                colors: Theme.sky(score: show.score.total, event: show.event),
+                colors: Theme.readableSkyRGB(score: show.score.total, event: show.event).map(\.color),
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing
             )
             LinearGradient(
-                colors: [.black.opacity(0.42), .black.opacity(0.18)],
+                colors: [.black.opacity(0.24), .clear],
                 startPoint: .leading,
                 endPoint: .trailing
             )
@@ -183,6 +183,7 @@ struct ShowDetailView: View {
     let zone: TimeZone
     let placeName: String?
     @Environment(\.isLeadingPane) private var isLeadingPane
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     /// Unfolded: the viewport and the summary card's height.
     @State private var paneViewport: CGFloat = 0
     @State private var summaryHeight: CGFloat = 0
@@ -193,7 +194,7 @@ struct ShowDetailView: View {
             ScrollView {
                 VStack(spacing: 16) {
                     SkyHero(show: show, zone: zone, title: SunsetFormat.headline(show, zone: zone), placeName: placeName)
-                        .containerRelativeFrame(.vertical) { length, _ in heroHeight ?? max(240, length * 0.34) }
+                        .modifier(HeroFrame { heroHeight ?? max(240, $0 * 0.34) })
                         .padding(.bottom, 12)
                     Card {
                         Text(show.score.summary)
@@ -242,7 +243,7 @@ struct ShowDetailView: View {
             }
             #endif
         }
-        .background { SkyBackdrop(score: show.score.total, event: show.event, horizon: 0.42) }
+        .background { SkyBackdrop(score: show.score.total, event: show.event, horizon: dynamicTypeSize.isAccessibilitySize ? 0.62 : 0.42) }
         .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationTitle(SunsetFormat.monthDay(show.time, zone: zone))

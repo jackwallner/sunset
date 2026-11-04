@@ -62,6 +62,11 @@ enum Theme {
         }
     }
 
+    /// The score's sky dimmed so secondary text holds 4.5:1 anywhere on it.
+    static func readableSkyRGB(score: Int, event: SunEvent = .sunset) -> [RGB] {
+        skyRGB(score: score, event: event).map(\.readable)
+    }
+
     static func skyGradient(score: Int, event: SunEvent = .sunset) -> LinearGradient {
         LinearGradient(colors: sky(score: score, event: event), startPoint: .top, endPoint: .bottom)
     }
@@ -80,8 +85,8 @@ enum Theme {
         let water = 1 - h
         let stops: [(RGB, Double)] = [
             (night.mixed(with: sky[0], 0.35), 0),
-            (sky[0].scaled(dim), h * 0.45),
-            (sky[1].scaled(dim), h * 0.82),
+            (sky[0].scaled(dim).readable, h * 0.45),
+            (sky[1].scaled(dim).readable, h * 0.9),
             (sky[2].scaled(min(1, dim + 0.08)), h),
             (sky[2].scaled(0.5), h + 0.01),
             (sky[1].scaled(0.42), h + water * 0.22),
@@ -113,6 +118,21 @@ struct RGB: Sendable {
     }
 
     var color: Color { Color(red: red, green: green, blue: blue) }
+
+    /// WCAG relative luminance.
+    var luminance: Double {
+        func linear(_ value: Double) -> Double {
+            value <= 0.04045 ? value / 12.92 : pow((value + 0.055) / 1.055, 2.4)
+        }
+        return 0.2126 * linear(red) + 0.7152 * linear(green) + 0.0722 * linear(blue)
+    }
+
+    /// Same hue, dimmed until light text reads on it.
+    var readable: RGB {
+        let limit = 0.12
+        guard luminance > limit else { return self }
+        return scaled(pow(limit / luminance, 1 / 2.4))
+    }
 
     func scaled(_ factor: Double) -> RGB {
         RGB(red * factor, green * factor, blue * factor)

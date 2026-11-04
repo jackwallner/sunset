@@ -9,6 +9,7 @@ struct TodayView: View {
     @EnvironmentObject private var settings: AlertSettings
     @EnvironmentObject private var store: StoreService
     @Environment(\.requestReview) private var requestReview
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
     @State private var showPaywall = false
     @State private var showAlertSetup = false
     @State private var showHeroDetail = false
@@ -49,7 +50,7 @@ struct TodayView: View {
             #endif
         }
         .background {
-            SkyBackdrop(score: hero?.score.total ?? 40, event: hero?.event ?? .sunset, horizon: 0.46)
+            SkyBackdrop(score: hero?.score.total ?? 40, event: hero?.event ?? .sunset, horizon: horizon)
         }
         .toolbar(.hidden, for: .navigationBar)
         // With no bar, fade the status bar strip into the night at the top
@@ -58,7 +59,7 @@ struct TodayView: View {
         .overlay(alignment: .top) {
             GeometryReader { geometry in
                 let top = geometry.safeAreaInsets.top
-                let night = Theme.backdropStops(score: hero?.score.total ?? 40, event: hero?.event ?? .sunset, horizon: 0.46)[0].color
+                let night = Theme.backdropStops(score: hero?.score.total ?? 40, event: hero?.event ?? .sunset, horizon: horizon)[0].color
                 LinearGradient(
                     stops: [
                         .init(color: night, location: 0),
@@ -128,6 +129,11 @@ struct TodayView: View {
         #endif
     }
 
+    /// Accessibility sizes make the hero taller, so the horizon sits lower.
+    private var horizon: Double {
+        dynamicTypeSize.isAccessibilitySize ? 0.62 : 0.46
+    }
+
     private var hero: SunShow? {
         forecastStore.forecast?.upcomingShows(settings.watched).first
     }
@@ -147,7 +153,7 @@ struct TodayView: View {
         }
         .buttonStyle(.plain)
         .accessibilityHint("Shows cloud cover and the full breakdown")
-        .containerRelativeFrame(.vertical) { length, _ in heroHeight ?? max(260, length * 0.40) }
+        .modifier(HeroFrame { heroHeight ?? max(260, $0 * 0.40) })
         .padding(.top, 18)
         .padding(.bottom, 4)
 

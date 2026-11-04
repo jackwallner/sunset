@@ -17,13 +17,15 @@ struct SkyBackdrop: View {
                     endPoint: .bottom
                 )
                 // The sun just under the horizon: a warm bloom that grows
-                // with the score.
+                // with the score, flat along the horizon so it stays clear
+                // of the text above it.
                 RadialGradient(
                     colors: [Theme.glow(score: score, event: event).opacity(0.25 + 0.4 * Double(score) / 100), .clear],
                     center: UnitPoint(x: 0.5, y: horizon),
                     startRadius: 0,
                     endRadius: geometry.size.width * 0.75
                 )
+                .scaleEffect(x: 1, y: 0.12, anchor: UnitPoint(x: 0.5, y: horizon))
                 .blendMode(.screen)
             }
         }
@@ -41,22 +43,13 @@ struct SkyHero: View {
     let zone: TimeZone
     let title: String
     let placeName: String?
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            HStack(alignment: .firstTextBaseline) {
-                Text(title)
-                    .font(.headline)
-                Spacer()
-                if let placeName {
-                    Label(placeName, systemImage: "location.fill")
-                        .font(.subheadline.weight(.medium))
-                        .labelStyle(.titleAndIcon)
-                        .lineLimit(1)
-                }
-            }
-            .foregroundStyle(.white.opacity(0.9))
-            Spacer(minLength: 0)
+            header
+                .foregroundStyle(.white.opacity(0.9))
+            Spacer(minLength: dynamicTypeSize.isAccessibilitySize ? 12 : 0)
             HStack(alignment: .lastTextBaseline, spacing: 10) {
                 Text("\(show.score.total)")
                     .font(.system(size: 112, weight: .bold, design: .rounded))
@@ -69,13 +62,54 @@ struct SkyHero: View {
             .shadow(color: .black.opacity(0.18), radius: 12, y: 4)
             Label("\(show.event.title) \(SunsetFormat.time(show.time, zone: zone))", systemImage: show.event.symbol)
                 .font(.title3.weight(.medium))
-                .foregroundStyle(.white.opacity(0.92))
+                .foregroundStyle(.white)
         }
         .padding(.horizontal, 6)
         .padding(.vertical, 8)
         .frame(maxHeight: .infinity)
         .accessibilityElement(children: .combine)
         .accessibilityLabel("\(title), score \(show.score.total), \(show.score.grade.rawValue). \(show.event.title) at \(SunsetFormat.time(show.time, zone: zone))")
+    }
+
+    /// Accessibility sizes stack the title over the place, so neither truncates.
+    @ViewBuilder
+    private var header: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: 4) {
+                Text(title).font(.headline)
+                place
+            }
+        } else {
+            HStack(alignment: .firstTextBaseline) {
+                Text(title).font(.headline)
+                Spacer()
+                place.lineLimit(1)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var place: some View {
+        if let placeName {
+            Label(placeName, systemImage: "location.fill")
+                .font(.subheadline.weight(.medium))
+                .labelStyle(.titleAndIcon)
+        }
+    }
+}
+
+/// The hero's height on a screen, except at accessibility sizes, where it
+/// grows to fit its text.
+struct HeroFrame: ViewModifier {
+    let height: (CGFloat) -> CGFloat
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    func body(content: Content) -> some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            content
+        } else {
+            content.containerRelativeFrame(.vertical) { length, _ in height(length) }
+        }
     }
 }
 
