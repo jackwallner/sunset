@@ -19,15 +19,19 @@ struct SkyBackdrop: View {
                 // The sun just under the horizon: a warm bloom that grows
                 // with the score, flat along the horizon so it stays clear
                 // of the text above it.
+                let radius = geometry.size.width * 0.75
                 RadialGradient(
                     colors: [Theme.glow(score: score, event: event).opacity(0.25 + 0.4 * Double(score) / 100), .clear],
-                    center: UnitPoint(x: 0.5, y: horizon),
+                    center: .center,
                     startRadius: 0,
-                    endRadius: geometry.size.width * 0.75
+                    endRadius: radius
                 )
-                .scaleEffect(x: 1, y: 0.12, anchor: UnitPoint(x: 0.5, y: horizon))
+                .frame(width: radius * 2, height: radius * 2)
+                .scaleEffect(x: 1, y: 0.12)
+                .position(x: geometry.size.width / 2, y: geometry.size.height * horizon)
                 .blendMode(.screen)
             }
+            .clipped()
         }
         .ignoresSafeArea()
         .animation(.easeInOut(duration: 0.6), value: score)
