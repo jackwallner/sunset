@@ -4,7 +4,7 @@ import UIKit
 enum Theme {
     /// Every screen sits on a forecast sky, so text is light everywhere.
     static let textPrimary = Color.white
-    static let textSecondary = Color.white.opacity(0.74)
+    static let textSecondary = Color.white.opacity(0.86)
     static let hairline = Color.white.opacity(0.18)
     /// A list row over the sky.
     static let row = Color.black.opacity(0.24)
