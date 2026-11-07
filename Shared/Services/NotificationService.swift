@@ -17,7 +17,15 @@ enum NotificationService {
     static let eveningBeforeHour = 20
 
     static func requestAuthorization() async -> Bool {
-        (try? await UNUserNotificationCenter.current()
+        #if DEBUG
+        // UI tests: stands in for the system prompt, which GitHub's
+        // simulators do not always show, answered Allow a moment later.
+        if ProcessInfo.processInfo.arguments.contains("-DemoNotificationPrompt") {
+            try? await Task.sleep(for: .seconds(1))
+            return true
+        }
+        #endif
+        return (try? await UNUserNotificationCenter.current()
             .requestAuthorization(options: [.alert, .sound])) == true
     }
 

@@ -89,7 +89,9 @@ Store name: `Sunset & Sunrise Prediction` (subtitle `Golden Hour Forecast & Aler
   onboarding), `-DemoPro`, `-PaywallSnapshot`, `-ScreenshotTab <n>`,
   `-OnboardingStep <n>`, `-DemoForecast` (fixed week with sky events),
   `-ScreenshotScene detail|events|alerts` (Today tab). `-DemoRestore` makes
-  Restore grant Sun+ (and each launch start free) for UI tests. `-DuoTour`
+  Restore grant Sun+ (and each launch start free) for UI tests.
+  `-DemoNotificationPrompt` answers the notification prompt with Allow after
+  a second, since GitHub's simulators do not always show it. `-DuoTour`
   walks every scene on a timer for unattended captures.
 
 ## Deep notes (load on demand)
