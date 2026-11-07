@@ -31,9 +31,10 @@ final class OnboardingDoubleTapUITests: XCTestCase {
         let app = launch(step: 1)
         button("Continue", in: app).doubleTap()
         XCTAssertTrue(app.buttons["Not now"].waitForExistence(timeout: 5), "double tap skipped the alerts page")
-        sleep(3)
+        // The answered prompt plus the alert rebuild can take seconds on a
+        // slow runner, so give the second tap time to show its effect.
+        XCTAssertFalse(app.buttons["Get Started"].waitForExistence(timeout: 10), "double tap landed on the Sun+ offer")
         XCTAssertTrue(app.buttons["Not now"].exists, "the second tap asked for notifications and left the alerts page")
-        XCTAssertFalse(app.buttons["Get Started"].exists, "double tap landed on the Sun+ offer")
     }
 
     /// The second tap used to be "Get Started", in the same slot as "Not now".
@@ -49,7 +50,7 @@ final class OnboardingDoubleTapUITests: XCTestCase {
     func testDoubleTapOnTurnOnAlertsStaysOnOffer() {
         let app = launch(step: 2)
         button("Turn on alerts", in: app).doubleTap()
-        XCTAssertTrue(app.buttons["Get Started"].waitForExistence(timeout: 10), "double tap left onboarding without the offer")
+        XCTAssertTrue(app.buttons["Get Started"].waitForExistence(timeout: 10), "the answered prompt never reached the Sun+ offer")
         sleep(3)
         XCTAssertTrue(app.buttons["Get Started"].exists, "double tap left onboarding without the offer")
     }

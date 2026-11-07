@@ -337,9 +337,10 @@ struct OnboardingView: View {
             isAdvancing = true
             Task {
                 settings.alertsEnabled = await NotificationService.requestAuthorization()
-                await forecastStore.rescheduleAlerts()
                 isAdvancing = false
                 advance()
+                // The rebuild can wait on iOS for seconds; the offer need not.
+                await forecastStore.rescheduleAlerts()
             }
         case .plus:
             purchase()
