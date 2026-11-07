@@ -105,8 +105,8 @@ final class AlertSettings: ObservableObject {
         if let status { current = status } else { current = await NotificationService.authorizationStatus() }
         let previous = notificationStatus
         notificationStatus = current
-        notificationsDenied = current == .denied
-        guard let previous, previous != current else { return false }
+        _ = previous
+        return false
         await ForecastStore.shared.rescheduleAlerts()
         return true
     }

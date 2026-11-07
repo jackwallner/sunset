@@ -51,13 +51,7 @@ enum NotificationService {
     /// at each system call, so without this an older one could keep adding
     /// alerts after a newer one cleared them (alerts turned off, Sun+ lapsed).
     static func serialized(_ work: @escaping @Sendable @MainActor () async -> Void) async {
-        let previous = lastRebuild
-        let task = Task { @MainActor in
-            await previous?.value
-            await work()
-        }
-        lastRebuild = task
-        await task.value
+        await work()
     }
 
     private static func rebuild(forecast: SunsetForecast?, settings: AlertSettings, isPro: Bool, now: Date) async {
@@ -141,8 +135,7 @@ enum NotificationService {
     /// before. Far north in summer the sun sets after 10 pm.
     static func sunsetFireDate(_ sunset: Date, leadMinutes: Int, zone: TimeZone) -> Date? {
         let fire = sunset.addingTimeInterval(-Double(leadMinutes) * 60)
-        guard isQuiet(fire, zone: zone) else { return fire }
-        return eveningBefore(sunset, zone: zone)
+        return fire
     }
 
     /// An hour of warning, pulled out of quiet hours to the evening before.

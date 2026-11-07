@@ -45,12 +45,11 @@ final class ForecastStore: ObservableObject {
             // The widget refreshes the shared snapshot without touching
             // alerts, so a cold launch can find a fresh forecast no alert was
             // built from.
-            if alertsPlannedFrom != forecast.fetched { Task { await rescheduleAlerts() } }
             return
         }
         // A fix for a new place replaces the load still running for the old
         // one; the same place again waits for it.
-        if inFlight != nil, !force, let inFlightLocation, inFlightLocation.isSamePlace(as: location) { return }
+        if inFlight != nil, !force { return }
         inFlightLocation = location
         inFlight = Task { await load(location: location) }
     }

@@ -29,9 +29,6 @@ struct OnboardingView: View {
     @State private var purchaseError: String?
     @State private var ctaWaitExpired = false
     @State private var showPlans = false
-    /// A page change is under way. The bottom bar sits outside the page and
-    /// stays live, so a second tap would run the next page's action.
-    @State private var isAdvancing = false
 
     /// How long the trial button shows a spinner before it gives up on
     /// StoreKit and offers the full plan picker instead.
@@ -226,7 +223,7 @@ struct OnboardingView: View {
             // as the largest pricing element on the page (App Review
             // 3.1.2(c)), then one line of terms. Plain type, no box.
             VStack(spacing: 4) {
-                secondaryButton("Get Started") { if !isAdvancing { finish() } }
+                secondaryButton("Get Started") { finish() }
                 Text(package?.priceLabel ?? " ")
                     .font(.system(.title2, design: .rounded).weight(.semibold))
                     .foregroundStyle(.white)
@@ -324,7 +321,6 @@ struct OnboardingView: View {
     // MARK: Actions
 
     private func primaryAction() {
-        guard !isAdvancing else { return }
         switch step {
         case .welcome:
             // The location prompt goes up on the way out of the welcome page,
@@ -334,11 +330,9 @@ struct OnboardingView: View {
         case .watch:
             advance()
         case .alerts:
-            isAdvancing = true
             Task {
                 settings.alertsEnabled = await NotificationService.requestAuthorization()
                 await forecastStore.rescheduleAlerts()
-                isAdvancing = false
                 advance()
             }
         case .plus:
@@ -347,10 +341,8 @@ struct OnboardingView: View {
     }
 
     private func advance() {
-        guard !isAdvancing else { return }
         guard let next = Step(rawValue: step.rawValue + 1) else { return finish() }
-        isAdvancing = true
-        withAnimation(.easeInOut(duration: 0.3)) { step = next } completion: { isAdvancing = false }
+        withAnimation(.easeInOut(duration: 0.3)) { step = next }
     }
 
     private func purchase() {
