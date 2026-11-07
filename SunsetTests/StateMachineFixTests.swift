@@ -35,4 +35,30 @@ final class StateMachineFixTests: XCTestCase {
         await settings.syncNotificationPermission(.denied)
         XCTAssertFalse(settings.alertsBlocked, "alerts the user turned off are off, not blocked")
     }
+
+    // MARK: B3 a widget-fresh snapshot still gets alerts
+
+    private func waitUntil(timeout: Double = 5, _ condition: () -> Bool) async {
+        let deadline = Date().addingTimeInterval(timeout)
+        while !condition(), Date() < deadline { try? await Task.sleep(for: .milliseconds(50)) }
+    }
+
+    /// Cold launch on a snapshot the widget fetched: the forecast is fresh and
+    /// for this place, so no fetch runs, but alerts must still be rebuilt from
+    /// it.
+    func testFreshSnapshotNoAlertWasBuiltFromIsRescheduledOnRefresh() async {
+        let here = ForecastCache.Location(latitude: 45.63, longitude: -122.52, placeName: "Vancouver, WA")
+        let snapshot = SunsetForecast(
+            latitude: here.latitude, longitude: here.longitude, placeName: here.placeName,
+            timeZoneID: "America/Los_Angeles", fetched: .now, days: [], skyEvents: []
+        )
+        let store = ForecastStore(forecast: snapshot)
+        XCTAssertFalse(snapshot.isStale(), "precondition: the widget's snapshot is fresh")
+        XCTAssertNil(store.alertsPlannedFrom, "precondition: nothing planned in this launch")
+
+        store.refresh(location: here)
+        await waitUntil { store.alertsPlannedFrom != nil }
+        XCTAssertEqual(store.alertsPlannedFrom, snapshot.fetched, "alerts were not rebuilt from the widget's snapshot")
+        XCTAssertFalse(store.isLoading, "a fresh snapshot needs no fetch")
+    }
 }

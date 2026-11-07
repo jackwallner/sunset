@@ -16,12 +16,14 @@ final class ForecastStore: ObservableObject {
 
     private let logger = Logger(subsystem: "com.jackwallner.sunset", category: "Forecast")
     private var inFlight: Task<Void, Never>?
+    /// When the forecast the pending alerts were built from was fetched.
+    private(set) var alertsPlannedFrom: Date?
 
-    private init() {
-        forecast = ForecastCache.forecast
+    init(forecast: SunsetForecast? = ForecastCache.forecast) {
+        self.forecast = forecast
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("-DemoForecast") {
-            forecast = DemoForecast.make()
+            self.forecast = DemoForecast.make()
         }
         #endif
     }
@@ -37,6 +39,10 @@ final class ForecastStore: ObservableObject {
         #endif
         if !force, let forecast, !forecast.isStale(), forecast.isSameLocation(as: location) {
             apply(placeName: location.placeName)
+            // The widget refreshes the shared snapshot without touching
+            // alerts, so a cold launch can find a fresh forecast no alert was
+            // built from.
+            if alertsPlannedFrom != forecast.fetched { Task { await rescheduleAlerts() } }
             return
         }
         if let inFlight, !force { _ = inFlight; return }
@@ -56,9 +62,7 @@ final class ForecastStore: ObservableObject {
             errorMessage = nil
             ForecastCache.forecast = fresh
             WidgetCenter.shared.reloadAllTimelines()
-            await NotificationService.reschedule(
-                forecast: fresh, settings: AlertSettings.shared, isPro: StoreService.shared.isPro
-            )
+            await rescheduleAlerts()
         } catch {
             logger.error("Forecast fetch failed: \(String(describing: error), privacy: .public)")
             errorMessage = forecast == nil
@@ -68,6 +72,7 @@ final class ForecastStore: ObservableObject {
     }
 
     func rescheduleAlerts() async {
+        alertsPlannedFrom = forecast?.fetched
         await NotificationService.reschedule(
             forecast: forecast, settings: AlertSettings.shared, isPro: StoreService.shared.isPro
         )
