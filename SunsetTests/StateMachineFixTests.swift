@@ -61,4 +61,42 @@ final class StateMachineFixTests: XCTestCase {
         XCTAssertEqual(store.alertsPlannedFrom, snapshot.fetched, "alerts were not rebuilt from the widget's snapshot")
         XCTAssertFalse(store.isLoading, "a fresh snapshot needs no fetch")
     }
+
+    // MARK: B6 a fix that lands while a load runs is not dropped
+
+    private let vancouver = ForecastCache.Location(latitude: 45.63, longitude: -122.52, placeName: "Vancouver, WA")
+    private let tokyo = ForecastCache.Location(latitude: 35.68, longitude: 139.69, placeName: "Tokyo")
+
+    private func waitForIdle(_ store: ForecastStore, timeout: Double = 40) async {
+        let deadline = Date().addingTimeInterval(timeout)
+        try? await Task.sleep(for: .milliseconds(300))
+        while store.isLoading, Date() < deadline { try? await Task.sleep(for: .milliseconds(250)) }
+        try? await Task.sleep(for: .seconds(2))
+        while store.isLoading, Date() < deadline { try? await Task.sleep(for: .milliseconds(250)) }
+    }
+
+    /// Control: with nothing in flight, a fix for a new place loads that place.
+    /// Real Open-Meteo network, as in the audit's repro.
+    func testFixWithNothingInFlightLoadsThatPlace() async throws {
+        let store = ForecastStore(forecast: nil)
+        await store.load(location: vancouver)
+        XCTAssertEqual(try XCTUnwrap(store.forecast, "precondition: network works").latitude, 45.63, accuracy: 0.01)
+        store.refresh(location: tokyo)
+        await waitForIdle(store)
+        XCTAssertEqual(try XCTUnwrap(store.forecast).latitude, 35.68, accuracy: 0.01)
+    }
+
+    /// Cold start: the cached place (Vancouver) starts a load, then the real
+    /// fix (Tokyo) arrives before it finishes. The newer place must win.
+    func testFixArrivingDuringLoadIsNotDropped() async throws {
+        let store = ForecastStore(forecast: nil)
+        store.refresh(location: vancouver, force: true)
+        store.refresh(location: tokyo)
+        await waitForIdle(store)
+        let forecast = try XCTUnwrap(store.forecast, "precondition: some forecast loaded")
+        XCTAssertEqual(forecast.latitude, 35.68, accuracy: 0.01,
+                       "store shows lat \(forecast.latitude) place \(forecast.placeName ?? "nil"); the second fix was ignored")
+        XCTAssertEqual(forecast.placeName, "Tokyo")
+        XCTAssertFalse(store.isLoading)
+    }
 }

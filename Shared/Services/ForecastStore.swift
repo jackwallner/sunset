@@ -16,6 +16,9 @@ final class ForecastStore: ObservableObject {
 
     private let logger = Logger(subsystem: "com.jackwallner.sunset", category: "Forecast")
     private var inFlight: Task<Void, Never>?
+    private var inFlightLocation: ForecastCache.Location?
+    /// Counts loads, so one that a newer load superseded leaves no trace.
+    private var loadGeneration = 0
     /// When the forecast the pending alerts were built from was fetched.
     private(set) var alertsPlannedFrom: Date?
 
@@ -45,7 +48,10 @@ final class ForecastStore: ObservableObject {
             if alertsPlannedFrom != forecast.fetched { Task { await rescheduleAlerts() } }
             return
         }
-        if let inFlight, !force { _ = inFlight; return }
+        // A fix for a new place replaces the load still running for the old
+        // one; the same place again waits for it.
+        if inFlight != nil, !force, let inFlightLocation, inFlightLocation.isSamePlace(as: location) { return }
+        inFlightLocation = location
         inFlight = Task { await load(location: location) }
     }
 
@@ -53,10 +59,15 @@ final class ForecastStore: ObservableObject {
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("-DemoForecast") { return }
         #endif
+        loadGeneration += 1
+        let generation = loadGeneration
         isLoading = true
-        defer { isLoading = false; inFlight = nil }
+        defer {
+            if generation == loadGeneration { isLoading = false; inFlight = nil; inFlightLocation = nil }
+        }
         do {
             var fresh = try await ForecastService.fetch(latitude: location.latitude, longitude: location.longitude)
+            guard generation == loadGeneration else { return }
             fresh.placeName = location.placeName
             forecast = fresh
             errorMessage = nil
@@ -64,6 +75,7 @@ final class ForecastStore: ObservableObject {
             WidgetCenter.shared.reloadAllTimelines()
             await rescheduleAlerts()
         } catch {
+            guard generation == loadGeneration else { return }
             logger.error("Forecast fetch failed: \(String(describing: error), privacy: .public)")
             errorMessage = forecast == nil
                 ? "Couldn't load the forecast. Check your connection and try again."
@@ -88,5 +100,11 @@ final class ForecastStore: ObservableObject {
 extension SunsetForecast {
     func isSameLocation(as location: ForecastCache.Location) -> Bool {
         abs(latitude - location.latitude) < 0.05 && abs(longitude - location.longitude) < 0.05
+    }
+}
+
+extension ForecastCache.Location {
+    func isSamePlace(as other: ForecastCache.Location) -> Bool {
+        abs(latitude - other.latitude) < 0.05 && abs(longitude - other.longitude) < 0.05
     }
 }
