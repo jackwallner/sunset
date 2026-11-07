@@ -290,6 +290,9 @@ struct TodayView: View {
 
     private var alertsSubtitle: String {
         let threshold = settings.effectiveThreshold(isPro: store.isPro)
+        if settings.alertsBlocked {
+            return "Notifications are turned off for Sunset."
+        }
         if settings.alertsEnabled {
             return "You'll hear before any \(SunsetFormat.watchedNoun(settings.watched)) scoring \(threshold) or higher."
         }
@@ -360,7 +363,6 @@ struct AlertSetupSheet: View {
     @EnvironmentObject private var settings: AlertSettings
     @EnvironmentObject private var forecastStore: ForecastStore
     @EnvironmentObject private var store: StoreService
-    @State private var denied = false
     @State private var showPaywall = false
 
     var body: some View {
@@ -371,6 +373,18 @@ struct AlertSetupSheet: View {
                         Toggle("Alerts", isOn: $settings.alertsEnabled)
                     } footer: {
                         Text("Alerts are rebuilt from the latest forecast each time the app refreshes, so a sky that clouds over loses its alert. Sunrise alerts arrive the evening before.")
+                    }
+
+                    if settings.alertsBlocked {
+                        Section {
+                            Text("Notifications are turned off for Sunset. Enable them in Settings to receive alerts.")
+                                .foregroundStyle(Theme.textSecondary)
+                            Button("Open Settings") {
+                                if let url = URL(string: UIApplication.openSettingsURLString) {
+                                    UIApplication.shared.open(url)
+                                }
+                            }
+                        }
                     }
 
                     Section {
@@ -424,18 +438,6 @@ struct AlertSetupSheet: View {
                     } footer: {
                         Text("An hour's warning before storms, rainbow chances and fog, moved to the evening before when they fall overnight.")
                     }
-
-                    if denied {
-                        Section {
-                            Text("Notifications are turned off for Sunset. Enable them in Settings to receive alerts.")
-                                .foregroundStyle(Theme.textSecondary)
-                            Button("Open Settings") {
-                                if let url = URL(string: UIApplication.openSettingsURLString) {
-                                    UIApplication.shared.open(url)
-                                }
-                            }
-                        }
-                    }
                 }
                 .listRowBackground(Theme.row)
             }
@@ -452,19 +454,15 @@ struct AlertSetupSheet: View {
             .onChange(of: settings.alertsEnabled) { _, enabled in
                 guard enabled else { Task { await forecastStore.rescheduleAlerts() }; return }
                 Task {
-                    let granted = await NotificationService.requestAuthorization()
-                    denied = !granted
+                    _ = await NotificationService.requestAuthorization()
+                    await settings.syncNotificationPermission()
                     await forecastStore.rescheduleAlerts()
                 }
             }
             .onChange(of: settings.threshold) { _, _ in Task { await forecastStore.rescheduleAlerts() } }
             .onChange(of: settings.leadMinutes) { _, _ in Task { await forecastStore.rescheduleAlerts() } }
             .onChange(of: settings.skyEventKinds) { _, _ in Task { await forecastStore.rescheduleAlerts() } }
-            .task {
-                if settings.alertsEnabled {
-                    denied = await NotificationService.authorizationStatus() == .denied
-                }
-            }
+            .task { if settings.alertsEnabled { await settings.syncNotificationPermission() } }
         }
     }
 

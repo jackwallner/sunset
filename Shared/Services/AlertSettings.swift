@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import UserNotifications
 import WidgetKit
 
 /// What the user watches and wants to be told about, backed by the App Group
@@ -58,6 +59,14 @@ final class AlertSettings: ObservableObject {
         didSet { defaults.set(skyEventKinds.map(\.rawValue).sorted(), forKey: Key.skyEvents) }
     }
 
+    /// iOS blocks Sunset's notifications. Never turns `alertsEnabled` off:
+    /// the user still wants alerts, iOS just won't deliver them yet.
+    @Published private(set) var notificationsDenied = false
+    private var notificationStatus: UNAuthorizationStatus?
+
+    /// Alerts are on here but iOS will not show them.
+    var alertsBlocked: Bool { alertsEnabled && notificationsDenied }
+
     @Published var hasOnboarded: Bool {
         didSet { defaults.set(hasOnboarded, forKey: Key.onboarded) }
     }
@@ -85,6 +94,21 @@ final class AlertSettings: ObservableObject {
             skyEventKinds = Set(SkyEvent.Kind.allCases)
         }
         hasOnboarded = defaults.bool(forKey: Key.onboarded)
+    }
+
+    /// Reads the iOS permission and rebuilds alerts when it changed since the
+    /// last read, so a grant in iOS Settings schedules tonight's alert at once.
+    /// `status` stands in for the system read in tests.
+    @discardableResult
+    func syncNotificationPermission(_ status: UNAuthorizationStatus? = nil) async -> Bool {
+        let current: UNAuthorizationStatus
+        if let status { current = status } else { current = await NotificationService.authorizationStatus() }
+        let previous = notificationStatus
+        notificationStatus = current
+        notificationsDenied = current == .denied
+        guard let previous, previous != current else { return false }
+        await ForecastStore.shared.rescheduleAlerts()
+        return true
     }
 
     func toggle(_ event: SunEvent) {

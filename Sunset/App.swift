@@ -45,12 +45,16 @@ struct SunsetApp: App {
                     if let fix = location.location {
                         forecastStore.refresh(location: fix)
                     }
+                    // Only once alerts are on: onboarding's prompt must be the
+                    // first thing that asks iOS about notifications.
+                    if settings.alertsEnabled { await settings.syncNotificationPermission() }
                 }
                 .onChange(of: scenePhase) { _, phase in
                     switch phase {
                     case .active:
                         location.refresh()
                         if let fix = location.location { forecastStore.refresh(location: fix) }
+                        if settings.alertsEnabled { Task { await settings.syncNotificationPermission() } }
                     case .background:
                         BackgroundRefresh.schedule()
                     default:

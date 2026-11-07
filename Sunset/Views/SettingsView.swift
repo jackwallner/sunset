@@ -157,6 +157,7 @@ struct SettingsView: View {
 
     private var alertsStatus: String {
         guard settings.alertsEnabled else { return "Off" }
+        if settings.alertsBlocked { return "Notifications off" }
         return "\(settings.effectiveThreshold(isPro: store.isPro))+ · \(SunsetFormat.minutes(settings.effectiveLead(isPro: store.isPro))) before"
     }
 }
