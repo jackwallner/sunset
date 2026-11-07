@@ -129,6 +129,9 @@ struct PaywallView: View {
             store.trackPaywallImpression(id: "sunset_paywall_\(source)")
         }
         .onChange(of: store.packages.map(\.identifier)) { _, _ in selectDefault() }
+        // A restore, or an Ask to Buy approved while this is open, answers
+        // the same way a purchase does.
+        .onChange(of: store.isPro) { _, isPro in if isPro { dismiss() } }
         .task {
             if store.packages.isEmpty && !store.isLoadingProducts { store.start(forceRefresh: true) }
         }

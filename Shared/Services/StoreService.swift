@@ -118,6 +118,8 @@ final class StoreService: NSObject, ObservableObject, PurchasesDelegate {
             isPro = true
             return
         }
+        // UI tests drive Restore here, so every launch starts free.
+        if ProcessInfo.processInfo.arguments.contains("-DemoRestore") { setLocalOverride(isPro: false) }
         #endif
         configureIfNeeded()
         guard isConfigured else {
@@ -177,6 +179,12 @@ final class StoreService: NSObject, ObservableObject, PurchasesDelegate {
     }
 
     func restore() async {
+        #if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-DemoRestore") {
+            setLocalOverride(isPro: true)
+            return
+        }
+        #endif
         guard isConfigured else { return }
         isLoading = true
         defer { isLoading = false }

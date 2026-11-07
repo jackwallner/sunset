@@ -88,7 +88,8 @@ Store name: `Sunset & Sunrise Prediction` (subtitle `Golden Hour Forecast & Aler
 - Launch arguments (DEBUG): `-DemoLocation` (Vancouver, WA, skips
   onboarding), `-DemoPro`, `-PaywallSnapshot`, `-ScreenshotTab <n>`,
   `-OnboardingStep <n>`, `-DemoForecast` (fixed week with sky events),
-  `-ScreenshotScene detail|events|alerts` (Today tab). `-DuoTour`
+  `-ScreenshotScene detail|events|alerts` (Today tab). `-DemoRestore` makes
+  Restore grant Sun+ (and each launch start free) for UI tests. `-DuoTour`
   walks every scene on a timer for unattended captures.
 
 ## Deep notes (load on demand)
