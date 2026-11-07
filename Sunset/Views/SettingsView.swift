@@ -62,11 +62,19 @@ struct SettingsView: View {
                 Button {
                     showAlertSetup = true
                 } label: {
-                    HStack {
-                        Text("Alerts")
-                        Spacer()
-                        Text(alertsStatus)
-                            .foregroundStyle(Theme.textSecondary)
+                    ViewThatFits(in: .horizontal) {
+                        HStack {
+                            Text("Alerts")
+                                .fixedSize(horizontal: true, vertical: false)
+                            Spacer()
+                            Text(alertsStatus)
+                                .foregroundStyle(Theme.textSecondary)
+                        }
+                        VStack(alignment: .leading, spacing: 4) {
+                            Text("Alerts")
+                            Text(alertsStatus)
+                                .foregroundStyle(Theme.textSecondary)
+                        }
                     }
                 }
                 .foregroundStyle(Theme.textPrimary)
