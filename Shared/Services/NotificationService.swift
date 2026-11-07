@@ -32,7 +32,27 @@ enum NotificationService {
         var body: String
     }
 
+    /// The last rebuild started. Each waits for the one before it.
+    private static var lastRebuild: Task<Void, Never>?
+
     static func reschedule(forecast: SunsetForecast?, settings: AlertSettings, isPro: Bool, now: Date = .now) async {
+        await serialized { await rebuild(forecast: forecast, settings: settings, isPro: isPro, now: now) }
+    }
+
+    /// Runs `work` once every earlier call has finished. A rebuild suspends
+    /// at each system call, so without this an older one could keep adding
+    /// alerts after a newer one cleared them (alerts turned off, Sun+ lapsed).
+    static func serialized(_ work: @escaping @Sendable @MainActor () async -> Void) async {
+        let previous = lastRebuild
+        let task = Task { @MainActor in
+            await previous?.value
+            await work()
+        }
+        lastRebuild = task
+        await task.value
+    }
+
+    private static func rebuild(forecast: SunsetForecast?, settings: AlertSettings, isPro: Bool, now: Date) async {
         let center = UNUserNotificationCenter.current()
         let pending = await center.pendingNotificationRequests().map(\.identifier).filter { $0.hasPrefix(prefix) }
         center.removePendingNotificationRequests(withIdentifiers: pending)

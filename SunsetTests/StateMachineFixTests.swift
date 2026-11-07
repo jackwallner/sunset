@@ -157,4 +157,27 @@ final class StateMachineFixTests: XCTestCase {
             XCTAssertEqual(alert.fireDate, date(zone, 6, 21, 20), "\(id) moves to 8 pm that evening")
         }
     }
+
+    // MARK: B7 rebuilds run one at a time
+
+    @MainActor private final class Log { var entries: [String] = [] }
+
+    /// A rebuild that is still adding alerts when a newer one starts must
+    /// finish first, so the newer plan is the one left pending.
+    func testRebuildsRunOneAtATimeInCallOrder() async {
+        let log = Log()
+        let older = Task {
+            await NotificationService.serialized {
+                log.entries.append("older start")
+                try? await Task.sleep(for: .milliseconds(300))
+                log.entries.append("older end")
+            }
+        }
+        try? await Task.sleep(for: .milliseconds(50))
+        XCTAssertEqual(log.entries, ["older start"], "precondition: the older rebuild is suspended mid-way")
+        let newer = Task { await NotificationService.serialized { log.entries.append("newer") } }
+        await older.value
+        await newer.value
+        XCTAssertEqual(log.entries, ["older start", "older end", "newer"])
+    }
 }
