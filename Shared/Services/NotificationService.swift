@@ -80,7 +80,7 @@ enum NotificationService {
             // Nobody wants a buzz at 5:40 am, so sunrise alerts land the
             // evening before, early enough to set an alarm.
             let fire = show.event == .sunset
-                ? show.time.addingTimeInterval(-Double(leadMinutes) * 60)
+                ? sunsetFireDate(show.time, leadMinutes: leadMinutes, zone: zone)
                 : eveningBefore(show.time, zone: zone)
             guard let fire, fire > now, fire < show.time else { continue }
             let time = SunsetFormat.time(show.time, zone: zone)
@@ -107,6 +107,14 @@ enum NotificationService {
             ))
         }
         return planned.sorted { $0.fireDate < $1.fireDate }
+    }
+
+    /// The lead before sunset, pulled out of quiet hours to the evening
+    /// before. Far north in summer the sun sets after 10 pm.
+    static func sunsetFireDate(_ sunset: Date, leadMinutes: Int, zone: TimeZone) -> Date? {
+        let fire = sunset.addingTimeInterval(-Double(leadMinutes) * 60)
+        guard isQuiet(fire, zone: zone) else { return fire }
+        return eveningBefore(sunset, zone: zone)
     }
 
     /// An hour of warning, pulled out of quiet hours to the evening before.

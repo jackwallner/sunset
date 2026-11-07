@@ -99,4 +99,62 @@ final class StateMachineFixTests: XCTestCase {
         XCTAssertEqual(forecast.placeName, "Tokyo")
         XCTAssertFalse(store.isLoading)
     }
+
+    // MARK: B9 sunset alerts keep the quiet hours
+
+    private func date(_ zone: TimeZone, _ month: Int, _ day: Int, _ hour: Int, _ minute: Int = 0) -> Date {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = zone
+        return calendar.date(from: DateComponents(year: 2026, month: month, day: day, hour: hour, minute: minute))!
+    }
+
+    private func show(_ event: SunEvent, _ time: Date, score: Int) -> SunShow {
+        var result = SunsetScorer.score(.clear, event: event)
+        result.total = score
+        return SunShow(event: event, time: time, conditions: .clear, score: result)
+    }
+
+    private func sunsetAlert(zone: TimeZone, sunset: (Int, Int), lead: Int) throws -> NotificationService.Planned {
+        let day = SunsetDay(
+            sunrise: show(.sunrise, date(zone, 6, 21, 3, 30), score: 80),
+            sunset: show(.sunset, date(zone, 6, 21, sunset.0, sunset.1), score: 80)
+        )
+        let forecast = SunsetForecast(
+            latitude: 60, longitude: 0, placeName: nil, timeZoneID: zone.identifier,
+            fetched: date(zone, 6, 21, 9), days: [day], skyEvents: []
+        )
+        let planned = NotificationService.plan(
+            forecast: forecast, watched: [.sunset], threshold: 70, leadMinutes: lead,
+            skyEventKinds: [], now: date(zone, 6, 21, 9)
+        )
+        XCTAssertEqual(planned.count, 1, "precondition: the 80-score sunset plans exactly one alert")
+        return try XCTUnwrap(planned.first)
+    }
+
+    func testSunsetAlertOutsideQuietHoursKeepsItsLead() throws {
+        let zone = try XCTUnwrap(TimeZone(identifier: "America/Los_Angeles"))
+        let alert = try sunsetAlert(zone: zone, sunset: (20, 35), lead: 45)
+        XCTAssertEqual(alert.fireDate, date(zone, 6, 21, 19, 50))
+    }
+
+    /// Helsinki (sunset 22:50, fires 22:05 at the default lead), Reykjavik
+    /// (23:58) and Oslo at the Sun+ 30 min lead (22:44, fires 22:14) all land in
+    /// 22:00-07:00. They move to 8 pm that evening instead.
+    func testSunsetAlertNeverFiresInQuietHours() throws {
+        let cases: [(String, (Int, Int), Int)] = [
+            ("Europe/Helsinki", (22, 50), 45),
+            ("Atlantic/Reykjavik", (23, 58), 45),
+            ("Europe/Oslo", (22, 44), 30),
+        ]
+        for (id, sunset, lead) in cases {
+            let zone = try XCTUnwrap(TimeZone(identifier: id))
+            XCTAssertTrue(
+                NotificationService.isQuiet(date(zone, 6, 21, sunset.0, sunset.1 - lead), zone: zone),
+                "precondition: \(id) sunset minus lead is quiet"
+            )
+            let alert = try sunsetAlert(zone: zone, sunset: sunset, lead: lead)
+            XCTAssertFalse(NotificationService.isQuiet(alert.fireDate, zone: zone), "\(id) fires at \(alert.fireDate), inside quiet hours")
+            XCTAssertEqual(alert.fireDate, date(zone, 6, 21, 20), "\(id) moves to 8 pm that evening")
+        }
+    }
 }
