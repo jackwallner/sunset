@@ -184,7 +184,7 @@ struct TodayView: View {
         }
         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { factorsHeight = $0 }
 
-        let next = Array(forecast.upcomingShows(settings.watched).dropFirst().prefix(2))
+        let next = Self.upNext(forecast: forecast, watched: settings.watched, isPro: store.isPro)
         if !next.isEmpty {
             Card {
                 Text("Up next").font(.headline)
@@ -216,6 +216,16 @@ struct TodayView: View {
             .font(.caption)
             .foregroundStyle(Theme.textSecondary)
             .paneCard()
+    }
+
+    /// The two shows after the hero. Free accounts stop at the Outlook's
+    /// free days: watching only sunsets or only sunrises, the second one
+    /// fell on a day the Outlook keeps behind Sun+.
+    static func upNext(forecast: SunsetForecast, watched: Set<SunEvent>, isPro: Bool, now: Date = .now) -> [SunShow] {
+        let shows = forecast.upcomingShows(watched, from: now).dropFirst()
+        guard !isPro else { return Array(shows.prefix(2)) }
+        guard let end = forecast.upcomingDays(from: now).prefix(OutlookView.freeDays).last?.sunset.time else { return [] }
+        return Array(shows.filter { $0.time <= end }.prefix(2))
     }
 
     /// Unfolded, the hero takes the height the summary and the factor grid
