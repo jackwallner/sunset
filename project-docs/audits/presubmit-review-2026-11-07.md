@@ -51,5 +51,14 @@ None. Nothing in the 1.0.3 to 1.0.4 app diff is definitely broken.
 
 ## Tests
 
-`gh-sim test --scheme Sunset` on HEAD: see the commit that adds this report
-for the run id and result.
+Not run for this review. `gh-sim test --scheme Sunset` on HEAD (run
+`sunset@20261107-225910-9720-claude-imaca07c-1107-230738-7539`) sat queued for
+the full 90 minute limit: GitHub's Macs ran 0 of 5 jobs with 22 to 25 queued
+account-wide. Fetch it later with `gh-sim get <id>` if it eventually runs.
+
+Earlier evidence on the same code: run
+`sunset@20261107-020448-47bb-claude-imac1b8a-1107-054542-5804` passed 73 of 73
+unit tests, and `...-1107-055839-4513` passed 7 of 7 UI tests, both from the
+fix session's tree. `git diff a3b5bf0 HEAD -- Shared Sunset SunsetWidget
+SunsetTests` is empty, so app and test code are unchanged since then; only
+the version and build number moved.
