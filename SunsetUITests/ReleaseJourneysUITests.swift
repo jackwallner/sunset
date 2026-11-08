@@ -105,19 +105,20 @@ final class ReleaseJourneysUITests: XCTestCase {
     private func assertWatch(_ name: String, on: Bool, in app: XCUIApplication) {
         let toggle = watchSwitch(name, in: app)
         let settled = NSPredicate(format: "value == %@", on ? "1" : "0")
-        let wait = XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: settled, object: toggle)], timeout: 5)
+        let wait = XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: settled, object: toggle)], timeout: 10)
         XCTAssertEqual(wait, .completed, "\(name) should be \(on ? "on" : "off")")
     }
 
     private func setWatch(_ name: String, on: Bool, in app: XCUIApplication) {
-        let toggle = watchSwitch(name, in: app)
         let target = on ? "1" : "0"
-        guard (toggle.value as? String) != target else { return assertWatch(name, on: on, in: app) }
-        toggle.coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
+        guard (watchSwitch(name, in: app).value as? String) != target else { return assertWatch(name, on: on, in: app) }
+        watchSwitch(name, in: app).coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
+        // Snapshots are slow at accessibility sizes: give the first tap time to land,
+        // then re-read the value fresh so a retry can never toggle it back.
         let settled = NSPredicate(format: "value == %@", target)
-        let wait = XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: settled, object: toggle)], timeout: 3)
-        // A tap can miss while the row is still settling; retry only if nothing changed.
-        if wait != .completed, (toggle.value as? String) != target { toggle.tap() }
+        let toggle = watchSwitch(name, in: app)
+        let wait = XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: settled, object: toggle)], timeout: 10)
+        if wait != .completed, (watchSwitch(name, in: app).value as? String) != target { watchSwitch(name, in: app).tap() }
         assertWatch(name, on: on, in: app)
     }
 
