@@ -77,18 +77,26 @@ enum NotificationService {
             skyEventKinds: isPro ? settings.skyEventKinds : [],
             now: now
         )
-        var calendar = Calendar.current
-        calendar.timeZone = forecast.timeZone
         for alert in planned {
             let content = UNMutableNotificationContent()
             content.title = alert.title
             content.body = alert.body
             content.sound = .default
             content.threadIdentifier = "sunset.alerts"
-            let components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: alert.fireDate)
-            let trigger = UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
+            let trigger = trigger(firing: alert.fireDate, zone: forecast.timeZone)
             try? await center.add(UNNotificationRequest(identifier: alert.identifier, content: content, trigger: trigger))
         }
+    }
+
+    /// The components carry the forecast's zone. Without it iOS reads the
+    /// wall-clock time in the device's zone, so an alert for a place on
+    /// another clock fired hours off.
+    static func trigger(firing date: Date, zone: TimeZone) -> UNCalendarNotificationTrigger {
+        var calendar = Calendar.current
+        calendar.timeZone = zone
+        var components = calendar.dateComponents([.year, .month, .day, .hour, .minute], from: date)
+        components.timeZone = zone
+        return UNCalendarNotificationTrigger(dateMatching: components, repeats: false)
     }
 
     /// Pure: what would be scheduled, in fire order. Pinned by tests.
