@@ -111,14 +111,15 @@ final class ReleaseJourneysUITests: XCTestCase {
 
     private func setWatch(_ name: String, on: Bool, in app: XCUIApplication) {
         let target = on ? "1" : "0"
-        guard (watchSwitch(name, in: app).value as? String) != target else { return assertWatch(name, on: on, in: app) }
-        watchSwitch(name, in: app).coordinate(withNormalizedOffset: CGVector(dx: 0.92, dy: 0.5)).tap()
-        // Snapshots are slow at accessibility sizes: give the first tap time to land,
-        // then re-read the value fresh so a retry can never toggle it back.
         let settled = NSPredicate(format: "value == %@", target)
-        let toggle = watchSwitch(name, in: app)
-        let wait = XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: settled, object: toggle)], timeout: 10)
-        if wait != .completed, (watchSwitch(name, in: app).value as? String) != target { watchSwitch(name, in: app).tap() }
+        // A tap can miss while the row is still settling at accessibility sizes. Retry at a
+        // different point of the row, re-reading the value fresh so a retry never toggles it back.
+        for dx in [0.92, 0.85, 0.75] {
+            guard (watchSwitch(name, in: app).value as? String) != target else { break }
+            watchSwitch(name, in: app).coordinate(withNormalizedOffset: CGVector(dx: dx, dy: 0.5)).tap()
+            let toggle = watchSwitch(name, in: app)
+            if XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: settled, object: toggle)], timeout: 6) == .completed { break }
+        }
         assertWatch(name, on: on, in: app)
     }
 
