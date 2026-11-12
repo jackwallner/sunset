@@ -31,8 +31,11 @@ struct UnfoldedSplit: Equatable, Sendable {
         return UnfoldedSplit(primaryWidth: half, secondaryX: half, secondaryWidth: width - half)
     }
 
-    static func make(_ geometry: PaneGeometry, isRegularWidth: Bool) -> UnfoldedSplit? {
-        make(width: geometry.width, isRegularWidth: isRegularWidth, fold: geometry.fold)
+    /// An iPad is one wide screen, not a folded pair: it gets the adaptive
+    /// layouts (`ColumnWidth`) instead of two phone panes.
+    static func make(_ geometry: PaneGeometry, isRegularWidth: Bool, isPad: Bool = false) -> UnfoldedSplit? {
+        guard !isPad else { return nil }
+        return make(width: geometry.width, isRegularWidth: isRegularWidth, fold: geometry.fold)
     }
 }
 
@@ -94,11 +97,15 @@ private struct LeadingPaneColumn: ViewModifier {
     @State private var geometry = PaneGeometry()
 
     func body(content: Content) -> some View {
-        let split = UnfoldedSplit.make(geometry, isRegularWidth: horizontalSizeClass == .regular)
+        let split = UnfoldedSplit.make(
+            geometry,
+            isRegularWidth: horizontalSizeClass == .regular,
+            isPad: UIDevice.current.userInterfaceIdiom == .pad
+        )
         content
             .environment(\.horizontalSizeClass, split == nil ? horizontalSizeClass : .compact)
             .frame(maxWidth: split?.primaryWidth ?? .infinity)
-            .frame(maxWidth: .infinity, alignment: .leading)
+            .frame(maxWidth: .infinity, alignment: split == nil ? .center : .leading)
             .onGeometryChange(for: PaneGeometry.self) { $0.paneGeometry } action: { geometry = $0 }
     }
 }

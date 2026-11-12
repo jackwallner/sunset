@@ -145,6 +145,7 @@ struct SettingsView: View {
         // Unfolded, tighter sections fit the Location rows above the tab bar.
         .listSectionSpacing(isLeadingPane ? .compact : .default)
         .clearsPaneBottom()
+        .readableColumn()
         .background {
             SkyBackdrop(score: forecastStore.nextShow?.score.total ?? 70, event: forecastStore.nextShow?.event ?? .sunset, horizon: 0.14)
         }

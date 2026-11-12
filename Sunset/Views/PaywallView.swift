@@ -117,6 +117,7 @@ struct PaywallView: View {
                     .foregroundStyle(Theme.textSecondary)
                 }
                 .padding(22)
+                .frame(maxWidth: 560)
                 .leadingPaneColumn()
             }
             .background { SkyBackdrop(score: 92, horizon: 0.13) }

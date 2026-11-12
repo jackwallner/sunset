@@ -11,7 +11,7 @@ settings:
     SWIFT_VERSION: "6.0"
     DEVELOPMENT_TEAM: YXG4MP6W39
     CODE_SIGN_STYLE: Automatic
-    MARKETING_VERSION: "1.0.4"
+    MARKETING_VERSION: "1.0.5"
     CURRENT_PROJECT_VERSION: "13"
     GENERATE_INFOPLIST_FILE: NO
 
@@ -69,7 +69,7 @@ targets:
         INFOPLIST_FILE: Sunset/Info.plist
         CODE_SIGN_ENTITLEMENTS: Sunset/Sunset.entitlements
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
-        TARGETED_DEVICE_FAMILY: "1"
+        TARGETED_DEVICE_FAMILY: "1,2"
     dependencies:
       - package: RevenueCat
         product: RevenueCat
@@ -89,6 +89,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.jackwallner.sunset.widget
         INFOPLIST_FILE: SunsetWidget/Info.plist
         CODE_SIGN_ENTITLEMENTS: SunsetWidget/SunsetWidget.entitlements
+        TARGETED_DEVICE_FAMILY: "1,2"
 
   SunsetTests:
     type: bundle.unit-test

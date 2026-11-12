@@ -29,6 +29,10 @@ struct SunsetApp: App {
                     store.start()
                     settings.recordOpen()
                     #if DEBUG
+                    if LaunchArguments.landscape,
+                       let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+                        scene.requestGeometryUpdate(.iOS(interfaceOrientations: .landscapeRight))
+                    }
                     if LaunchArguments.demoLocation {
                         settings.hasOnboarded = true
                         location.useDemoLocation()
@@ -69,6 +73,15 @@ enum LaunchArguments {
     static var demoLocation: Bool {
         #if DEBUG
         ProcessInfo.processInfo.arguments.contains("-DemoLocation")
+        #else
+        false
+        #endif
+    }
+
+    /// Store captures on iPad: turn the app to landscape at launch.
+    static var landscape: Bool {
+        #if DEBUG
+        ProcessInfo.processInfo.arguments.contains("-Landscape")
         #else
         false
         #endif
@@ -161,7 +174,11 @@ struct MainTabView: View {
     }
 
     private var split: UnfoldedSplit? {
-        UnfoldedSplit.make(paneGeometry, isRegularWidth: horizontalSizeClass == .regular)
+        UnfoldedSplit.make(
+            paneGeometry,
+            isRegularWidth: horizontalSizeClass == .regular,
+            isPad: UIDevice.current.userInterfaceIdiom == .pad
+        )
     }
 
     /// Each unfolded pane is phone-width, so its screen lays out as on a phone.

@@ -22,6 +22,11 @@ final class LocationService: NSObject, ObservableObject {
     private let geocoder = CLGeocoder()
     private let logger = Logger(subsystem: "com.jackwallner.sunset", category: "Location")
     private var onFix: ((ForecastCache.Location) -> Void)?
+    /// A Wi-Fi-only iPad has no GPS or cell tower to fix from, so the first
+    /// reduced-accuracy request can come back "location unknown" while Wi-Fi
+    /// positioning warms up. Ask again a few times before giving up.
+    private var unknownRetries = 0
+    private static let maxUnknownRetries = 3
 
     private override init() {
         super.init()
@@ -87,6 +92,7 @@ final class LocationService: NSObject, ObservableObject {
         }
         ForecastCache.location = fix
         status = .located(fix)
+        unknownRetries = 0
         onFix?(fix)
     }
 }
@@ -103,8 +109,15 @@ extension LocationService: CLLocationManagerDelegate {
 
     nonisolated func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         let message = String(describing: error)
+        let isUnknown = (error as? CLError)?.code == .locationUnknown
         Task { @MainActor in
             self.logger.error("Location failed: \(message, privacy: .public)")
+            if isUnknown, self.unknownRetries < Self.maxUnknownRetries {
+                self.unknownRetries += 1
+                try? await Task.sleep(for: .seconds(3))
+                self.refresh()
+                return
+            }
             if ForecastCache.location == nil { self.status = .unknown }
         }
     }
