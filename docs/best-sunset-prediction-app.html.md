@@ -6,11 +6,11 @@ Web page: https://jackwallner.com/ios/sunset/best-sunset-prediction-app.html
 
 ## Best sunset prediction app for iPhone (November 2026)
 
-By [Jack Wallner](https://jackwallner.com/). Last updated November 11, 2026.
+By [Jack Wallner](https://jackwallner.com/). Last updated November 12, 2026.
 
 A sunset prediction app tells you in advance whether the sky is likely to color up, not just when the sun goes down. Best for a simple 0 to 100 score and a free alert before the good ones: Sunset & Sunrise Prediction. Best for photographers who want Apple Watch support and flexible reminders: Alpenglow. Best for a community map of sky reports: Helio. Best for sunset forecasts plus night-sky and astronomy tools: Solora.
 
-**How we compared.** I read each App Store listing and pulled its rating, update date and Apple Watch support from Apple's public lookup on October 30, 2026 (US storefront). I did not install the competing apps, so every claim about them comes from their listings. No independent test of forecast accuracy exists for these apps, so I do not rank them on accuracy. Jack Wallner makes Sunset & Sunrise Prediction, so read its entries with that in mind.
+**How we compared.** I read each App Store listing and pulled its rating, update date and Apple Watch support from Apple's public lookup on November 12, 2026 (US storefront). I did not install the competing apps, so every claim about them comes from their listings. No independent test of forecast accuracy exists for these apps, so I do not rank them on accuracy. Jack Wallner makes Sunset & Sunrise Prediction, so read its entries with that in mind.
 
 ## How do the sunset prediction apps compare?
 
@@ -24,11 +24,11 @@ Sunset & Sunrise Prediction gives a single score and a free alert, Alpenglow and
 | Sunset Prediction AI : Solora | Sunset forecasts plus night-sky and astronomy tools | Yes | 4.29 (7) | Nov 6, 2026 |
 | Sunset Predictions: Sunix | Sunrise and sunset times, quality forecast and reminders | No | 4.50 (18) | May 25, 2026 |
 
-Ratings, update dates and Apple Watch support come from Apple's App Store lookup on October 30, 2026. Sunset & Sunrise Prediction is new and has no ratings yet, so there is no score to compare.
+Ratings, update dates and Apple Watch support come from Apple's App Store lookup on November 12, 2026. Sunset & Sunrise Prediction is new and has no ratings yet, so there is no score to compare.
 
 ## Sunset & Sunrise Prediction
 
-Sunset & Sunrise Prediction reads the cloud, humidity and visibility forecast for the minute the sun comes up or goes down and turns it into a 0 to 100 score. It looks for high and mid cloud around half cover, checks the low cloud 80 km toward the sun rather than only overhead, and counts clean, dry air in the score. A free alert goes out before the sunrises and sunsets that score well and is rebuilt as the forecast changes, so a sky that clouds over loses its alert. Sun+ is the optional upgrade, adding the full week, alerts before thunderstorms, rainbow chances and fog, and your own alert score and lead time. Scores come from the Open-Meteo weather models, only rounded coordinates leave your phone, and nothing is tracked or stored. The trade-offs: it is new with no ratings yet, it has no Apple Watch app, and a score is a good guide, not a guarantee.
+Sunset & Sunrise Prediction reads the cloud, humidity and visibility forecast for the minute the sun comes up or goes down and turns it into a 0 to 100 score. It looks for high and mid cloud around half cover, checks the low cloud 80 km toward the sun rather than only overhead, and counts clean, dry air in the score. A free alert goes out before the sunrises and sunsets that score well and is rebuilt as the forecast changes, so a sky that clouds over loses its alert. Sun+ is the optional upgrade, adding the full week, alerts before thunderstorms, rainbow chances and fog, and your own alert score and lead time. Scores come from the Open-Meteo weather models, only rounded coordinates leave your phone, and nothing is tracked. The trade-offs: it is new with no ratings yet, it has no Apple Watch app, and a score is a good guide, not a guarantee.
 
 [Download on the App Store](https://apps.apple.com/us/app/id6821025282?pt=128748779&ct=jw-sunset-best-sunset-prediction-app&mt=8)
 
@@ -88,7 +88,7 @@ They are a good guide, not a guarantee. A score is only as good as the weather f
 
 ### What does Sunset & Sunrise Prediction do with my location?
 
-Only rounded coordinates leave your phone to fetch the forecast, and nothing is tracked or stored. It needs no account.
+Only rounded coordinates leave your phone to fetch the forecast, and nothing is tracked. It needs no account.
 
 ### Which sunset app has an Apple Watch app?
 
