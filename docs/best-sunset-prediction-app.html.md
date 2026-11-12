@@ -1,12 +1,12 @@
 # Best Sunset Prediction App for iPhone: 5 Compared
 
-> Five iPhone sunset prediction apps compared: a 0 to 100 sky score, quality forecasts, alerts and Apple Watch support. Ratings as of October 2026.
+> Five iPhone sunset prediction apps compared: a 0 to 100 sky score, quality forecasts, alerts and Apple Watch support. Ratings as of November 2026.
 
 Web page: https://jackwallner.com/ios/sunset/best-sunset-prediction-app.html
 
-## Best sunset prediction app for iPhone (October 2026)
+## Best sunset prediction app for iPhone (November 2026)
 
-By [Jack Wallner](https://jackwallner.com/). Last updated October 30, 2026.
+By [Jack Wallner](https://jackwallner.com/). Last updated November 11, 2026.
 
 A sunset prediction app tells you in advance whether the sky is likely to color up, not just when the sun goes down. Best for a simple 0 to 100 score and a free alert before the good ones: Sunset & Sunrise Prediction. Best for photographers who want Apple Watch support and flexible reminders: Alpenglow. Best for a community map of sky reports: Helio. Best for sunset forecasts plus night-sky and astronomy tools: Solora.
 
@@ -18,10 +18,10 @@ Sunset & Sunrise Prediction gives a single score and a free alert, Alpenglow and
 
 | App | Best for | Apple Watch app | Rating (count) | Last updated |
 | --- | --- | --- | --- | --- |
-| Sunset & Sunrise Prediction | A 0 to 100 score for every sunrise and sunset, with a free alert | No | No ratings yet | Oct 27, 2026 |
-| Sunset Predictions: Alpenglow | Photographers who want times, quality forecasts, reminders and Apple Watch support | Yes | 4.51 (2,105) | Oct 25, 2026 |
+| Sunset & Sunrise Prediction | A 0 to 100 score for every sunrise and sunset, with a free alert | No | No ratings yet | Nov 9, 2026 |
+| Sunset Predictions: Alpenglow | Photographers who want times, quality forecasts, reminders and Apple Watch support | Yes | 4.50 (2,143) | Oct 25, 2026 |
 | Helio: Sunset Forecast | Sunset ratings with community sky reports on a map | No | 4.21 (136) | Jun 2, 2026 |
-| Sunset Prediction AI : Solora | Sunset forecasts plus night-sky and astronomy tools | Yes | 4.29 (7) | Oct 15, 2026 |
+| Sunset Prediction AI : Solora | Sunset forecasts plus night-sky and astronomy tools | Yes | 4.29 (7) | Nov 6, 2026 |
 | Sunset Predictions: Sunix | Sunrise and sunset times, quality forecast and reminders | No | 4.50 (18) | May 25, 2026 |
 
 Ratings, update dates and Apple Watch support come from Apple's App Store lookup on October 30, 2026. Sunset & Sunrise Prediction is new and has no ratings yet, so there is no score to compare.
