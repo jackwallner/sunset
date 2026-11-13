@@ -17,6 +17,9 @@ struct SunsetApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                #if DEBUG
+                .landscapePreview()
+                #endif
                 .environmentObject(settings)
                 .environmentObject(store)
                 .environmentObject(forecastStore)
@@ -69,6 +72,15 @@ enum LaunchArguments {
     static var demoLocation: Bool {
         #if DEBUG
         ProcessInfo.processInfo.arguments.contains("-DemoLocation")
+        #else
+        false
+        #endif
+    }
+
+    /// Store captures on iPad: turn the app to landscape at launch.
+    static var landscape: Bool {
+        #if DEBUG
+        ProcessInfo.processInfo.arguments.contains("-Landscape")
         #else
         false
         #endif
@@ -161,7 +173,11 @@ struct MainTabView: View {
     }
 
     private var split: UnfoldedSplit? {
-        UnfoldedSplit.make(paneGeometry, isRegularWidth: horizontalSizeClass == .regular)
+        UnfoldedSplit.make(
+            paneGeometry,
+            isRegularWidth: horizontalSizeClass == .regular,
+            isPad: UIDevice.current.userInterfaceIdiom == .pad
+        )
     }
 
     /// Each unfolded pane is phone-width, so its screen lays out as on a phone.
@@ -278,5 +294,31 @@ final class ScreenshotRouter: ObservableObject {
             try? await Task.sleep(for: .seconds(step))
         }
     }
+}
+#endif
+
+#if DEBUG
+/// `-Landscape`: lays the app out at the iPad's landscape size by turning it a
+/// quarter turn inside the portrait window. simctl cannot rotate a headless
+/// iPad, so this is how landscape layouts get captured. Rotate the PNG back to
+/// read it.
+private struct LandscapePreview: ViewModifier {
+    func body(content: Content) -> some View {
+        if LaunchArguments.landscape {
+            GeometryReader { proxy in
+                content
+                    .frame(width: proxy.size.height, height: proxy.size.width)
+                    .rotationEffect(.degrees(90))
+                    .frame(width: proxy.size.width, height: proxy.size.height)
+            }
+            .ignoresSafeArea()
+        } else {
+            content
+        }
+    }
+}
+
+extension View {
+    func landscapePreview() -> some View { modifier(LandscapePreview()) }
 }
 #endif

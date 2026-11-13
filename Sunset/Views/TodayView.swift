@@ -18,6 +18,7 @@ struct TodayView: View {
     @State private var paneViewport: CGFloat = 0
     @State private var summaryHeight: CGFloat = 0
     @State private var factorsHeight: CGFloat = 0
+    @State private var viewWidth: CGFloat = 0
     #if DEBUG
     @ObservedObject private var screenshots = ScreenshotRouter.shared
     #endif
@@ -41,6 +42,8 @@ struct TodayView: View {
                 .id("top")
             }
             .clearsPaneBottom()
+            .contentMargins(.horizontal, ColumnWidth.margin(width: viewWidth, maxWidth: isTwoColumn ? ColumnWidth.wide : ColumnWidth.reading), for: .scrollContent)
+            .trackWidth($viewWidth)
             // The size is already inside the nav and tab bars; the proxy
             // still reports their insets, so subtracting them counted the
             // bars twice (logged 2026-10-23: size 504, insets 82 and 83).
@@ -91,8 +94,8 @@ struct TodayView: View {
                 await forecastStore.load(location: fix)
             }
         }
-        .sheet(isPresented: $showPaywall) { PaywallView(source: "today_sky_events") }
-        .sheet(isPresented: $showAlertSetup) { AlertSetupSheet() }
+        .sheet(isPresented: $showPaywall) { PaywallView(source: "today_sky_events").pageSheet() }
+        .sheet(isPresented: $showAlertSetup) { AlertSetupSheet().pageSheet() }
         .onChange(of: showHeroDetail) { wasShown, isShown in
             if wasShown, !isShown { requestReviewAfterDetail(score: forecastStore.nextShow?.score.total) }
         }
@@ -138,25 +141,60 @@ struct TodayView: View {
         forecastStore.forecast?.upcomingShows(settings.watched).first
     }
 
+    /// Wide enough (an iPad, most of a landscape Split View) for two columns:
+    /// the hero and the week's next shows on the left, the breakdown and the
+    /// rest on the right.
+    private var isTwoColumn: Bool { viewWidth >= ColumnWidth.twoColumnFrom }
+
     @ViewBuilder
     private func content(forecast: SunsetForecast, hero: SunShow) -> some View {
         let zone = forecast.timeZone
+        let next = Array(forecast.upcomingShows(settings.watched).dropFirst().prefix(2))
+        if isTwoColumn {
+            HStack(alignment: .top, spacing: 20) {
+                VStack(spacing: 16) {
+                    heroButton(forecast: forecast, hero: hero)
+                    summaryCard(hero: hero, zone: zone)
+                    upNextCard(next, forecast: forecast)
+                }
+                VStack(spacing: 16) {
+                    factorsCard(hero: hero)
+                        .padding(.top, 18)
+                    skyEventsCard(forecast: forecast)
+                    alertsCard
+                    notes(forecast: forecast)
+                }
+            }
+        } else {
+            heroButton(forecast: forecast, hero: hero)
+            summaryCard(hero: hero, zone: zone)
+            factorsCard(hero: hero)
+            upNextCard(next, forecast: forecast)
+            skyEventsCard(forecast: forecast)
+            alertsCard
+            notes(forecast: forecast)
+        }
+    }
+
+    private func heroButton(forecast: SunsetForecast, hero: SunShow) -> some View {
         let heroHeight = paneHeroHeight
-        Button { showHeroDetail = true } label: {
+        return Button { showHeroDetail = true } label: {
             SkyHero(
                 show: hero,
-                zone: zone,
-                title: SunsetFormat.headline(hero, zone: zone),
+                zone: forecast.timeZone,
+                title: SunsetFormat.headline(hero, zone: forecast.timeZone),
                 placeName: forecast.placeName
             )
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityHint("Shows cloud cover and the full breakdown")
-        .modifier(HeroFrame { heroHeight ?? max(260, $0 * 0.40) })
+        .modifier(HeroFrame { heroHeight ?? min(max(260, $0 * (isTwoColumn ? 0.52 : 0.40)), isTwoColumn ? 680 : 460) })
         .padding(.top, 18)
         .padding(.bottom, 4)
+    }
 
+    private func summaryCard(hero: SunShow, zone: TimeZone) -> some View {
         Card {
             Text(hero.score.summary)
                 .font(.body)
@@ -169,7 +207,9 @@ struct TodayView: View {
             }
         }
         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { summaryHeight = $0 }
+    }
 
+    private func factorsCard(hero: SunShow) -> some View {
         Card {
             Text("What makes the score")
                 .font(.headline)
@@ -183,16 +223,18 @@ struct TodayView: View {
             }
         }
         .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { factorsHeight = $0 }
+    }
 
-        let next = Array(forecast.upcomingShows(settings.watched).dropFirst().prefix(2))
+    @ViewBuilder
+    private func upNextCard(_ next: [SunShow], forecast: SunsetForecast) -> some View {
         if !next.isEmpty {
             Card {
                 Text("Up next").font(.headline)
                 ForEach(next) { show in
                     NavigationLink {
-                        ShowDetailView(show: show, zone: zone, placeName: forecast.placeName)
+                        ShowDetailView(show: show, zone: forecast.timeZone, placeName: forecast.placeName)
                     } label: {
-                        ShowRow(show: show, zone: zone, title: SunsetFormat.headline(show, zone: zone))
+                        ShowRow(show: show, zone: forecast.timeZone, title: SunsetFormat.headline(show, zone: forecast.timeZone))
                     }
                     .buttonStyle(.plain)
                     .paneRow()
@@ -200,10 +242,10 @@ struct TodayView: View {
             }
             .id("upNext")
         }
+    }
 
-        skyEventsCard(forecast: forecast)
-        alertsCard
-
+    @ViewBuilder
+    private func notes(forecast: SunsetForecast) -> some View {
         if let message = forecastStore.errorMessage {
             Text(message)
                 .font(.footnote)
@@ -450,7 +492,7 @@ struct AlertSetupSheet: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) { Button("Done") { dismiss() } }
             }
-            .sheet(isPresented: $showPaywall) { PaywallView(source: "alert_settings") }
+            .sheet(isPresented: $showPaywall) { PaywallView(source: "alert_settings").pageSheet() }
             .onChange(of: settings.alertsEnabled) { _, enabled in
                 guard enabled else { Task { await forecastStore.rescheduleAlerts() }; return }
                 Task {

@@ -8,8 +8,11 @@ struct OutlookView: View {
     @EnvironmentObject private var store: StoreService
     @Environment(\.isTrailingPane) private var isTrailingPane
     @State private var showPaywall = false
+    @State private var viewWidth: CGFloat = 0
 
     static let freeDays = 2
+
+    private var columns: Int { ColumnWidth.outlookColumns(width: viewWidth) }
 
     var body: some View {
         ScrollView {
@@ -18,7 +21,7 @@ struct OutlookView: View {
             VStack(spacing: isTrailingPane ? 8 : 12) {
                 if let forecast = forecastStore.forecast {
                     let days = Array(forecast.upcomingDays().prefix(7))
-                    ForEach(days.prefix(store.isPro ? days.count : Self.freeDays)) { day in
+                    DayGrid(days: Array(days.prefix(store.isPro ? days.count : Self.freeDays)), columns: columns, spacing: 12) { day in
                         DayCard(day: day, forecast: forecast, watched: settings.watched)
                     }
                     if !store.isPro, days.count > Self.freeDays {
@@ -35,22 +38,22 @@ struct OutlookView: View {
             .clearsStatusClock()
         }
         .clearsPaneBottom()
+        .contentMargins(.horizontal, ColumnWidth.margin(width: viewWidth, maxWidth: ColumnWidth.wide), for: .scrollContent)
+        .trackWidth($viewWidth)
         .fillsTrailingPane()
         .background {
             SkyBackdrop(score: forecastStore.nextShow?.score.total ?? 60, event: forecastStore.nextShow?.event ?? .sunset, horizon: 0.14)
         }
         .navigationTitle("Outlook")
-        .sheet(isPresented: $showPaywall) { PaywallView(source: "outlook") }
+        .sheet(isPresented: $showPaywall) { PaywallView(source: "outlook").pageSheet() }
     }
 
     /// The real days, blurred past reading, under one unlock card.
     private func lockedWeek(_ days: [SunsetDay], forecast: SunsetForecast) -> some View {
-        VStack(spacing: 12) {
-            // Three days are enough to show what is behind the lock without a
-            // long scroll of blur under the card.
-            ForEach(days.prefix(3)) { day in
-                DayCard(day: day, forecast: forecast, watched: settings.watched, isLinked: false)
-            }
+        // Three days are enough to show what is behind the lock without a
+        // long scroll of blur under the card.
+        DayGrid(days: Array(days.prefix(3)), columns: columns, spacing: 12) { day in
+            DayCard(day: day, forecast: forecast, watched: settings.watched, isLinked: false)
         }
         .blur(radius: 9, opaque: false)
         .allowsHitTesting(false)
@@ -71,6 +74,7 @@ struct OutlookView: View {
             }
             .padding(20)
             .glass(tint: 0.3)
+            .frame(maxWidth: 440)
             .padding(.top, 40)
             .padding(.horizontal, 8)
         }
@@ -79,6 +83,36 @@ struct OutlookView: View {
     private func lastDayName(_ days: [SunsetDay], forecast: SunsetForecast) -> String {
         guard let last = days.last else { return "the week" }
         return SunsetFormat.weekday(last.sunset.time, zone: forecast.timeZone)
+    }
+}
+
+/// Day cards in rows of `columns`; one column is the phone's plain stack.
+/// A `Grid` keeps the cards of a row the same height.
+private struct DayGrid<Item: View>: View {
+    let days: [SunsetDay]
+    let columns: Int
+    let spacing: CGFloat
+    @ViewBuilder let card: (SunsetDay) -> Item
+
+    var body: some View {
+        if columns <= 1 {
+            VStack(spacing: spacing) {
+                ForEach(days) { card($0) }
+            }
+        } else {
+            Grid(horizontalSpacing: spacing, verticalSpacing: spacing) {
+                ForEach(rows, id: \.first?.id) { row in
+                    GridRow {
+                        ForEach(row) { card($0) }
+                        ForEach(0..<(columns - row.count), id: \.self) { _ in Color.clear }
+                    }
+                }
+            }
+        }
+    }
+
+    private var rows: [[SunsetDay]] {
+        stride(from: 0, to: days.count, by: columns).map { Array(days[$0..<min($0 + columns, days.count)]) }
     }
 }
 
@@ -144,7 +178,8 @@ private struct DayCard: View {
             }
         }
         .padding(18)
-        .frame(maxWidth: .infinity, alignment: .leading)
+        // Fills its grid row, so a shorter card matches its neighbour.
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
         .background { DaySky(show: lead) }
         .clipShape(RoundedRectangle(cornerRadius: Theme.cardRadius))
         .overlay(RoundedRectangle(cornerRadius: Theme.cardRadius).strokeBorder(.white.opacity(0.14), lineWidth: 1))
@@ -187,49 +222,42 @@ struct ShowDetailView: View {
     /// Unfolded: the viewport and the summary card's height.
     @State private var paneViewport: CGFloat = 0
     @State private var summaryHeight: CGFloat = 0
+    @State private var viewWidth: CGFloat = 0
+
+    /// Two columns on a wide screen: the hero and summary, then the breakdown.
+    private var isTwoColumn: Bool { viewWidth >= ColumnWidth.twoColumnFrom }
 
     var body: some View {
         let heroHeight = paneHeroHeight
         ScrollViewReader { proxy in
             ScrollView {
-                VStack(spacing: 16) {
-                    SkyHero(show: show, zone: zone, title: SunsetFormat.headline(show, zone: zone), placeName: placeName)
-                        .modifier(HeroFrame { heroHeight ?? max(240, $0 * 0.34) })
-                        .padding(.bottom, 12)
-                    Card {
-                        Text(show.score.summary)
-                            .fixedSize(horizontal: false, vertical: true)
-                        Divider()
-                        HStack {
-                            detail("Best light", "\(SunsetFormat.time(show.bestWindowStart, zone: zone)) to \(SunsetFormat.time(show.bestWindowEnd, zone: zone))")
-                            Spacer()
-                            detail("Rain", "\(show.score.rainChance)%")
+                if isTwoColumn {
+                    HStack(alignment: .top, spacing: 20) {
+                        VStack(spacing: 16) {
+                            heroBlock(heroHeight)
+                            summaryCard
+                        }
+                        VStack(spacing: 16) {
+                            factorsCard
+                            cloudCard
                         }
                     }
-                    .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { summaryHeight = $0 }
-                    Card {
-                        ForEach(show.score.factors) { factor in
-                            FactorRow(factor: factor, tone: Theme.tone(score: show.score.total))
-                                .paneRow()
-                        }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 24)
+                } else {
+                    VStack(spacing: 16) {
+                        heroBlock(heroHeight)
+                        summaryCard
+                        factorsCard
+                        cloudCard
                     }
-                    .id("factors")
-                    Card {
-                        Text("Cloud cover at \(show.event.title.lowercased())").font(.headline)
-                        cloudRow("High", show.conditions.cloudHigh)
-                        cloudRow("Mid", show.conditions.cloudMid)
-                        cloudRow("Low", show.conditions.cloudLow)
-                        cloudRow("Low, \(show.event.direction) toward the sun", show.conditions.cloudLowTowardSun)
-                        Text("Humidity \(Int(show.conditions.humidity))% · Visibility \(visibilityLabel)")
-                            .font(.caption)
-                            .foregroundStyle(Theme.textSecondary)
-                            .paneRow()
-                    }
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 24)
                 }
-                .padding(.horizontal, 16)
-                .padding(.bottom, 24)
             }
             .clearsPaneBottom()
+            .contentMargins(.horizontal, ColumnWidth.margin(width: viewWidth, maxWidth: isTwoColumn ? ColumnWidth.wide : ColumnWidth.reading), for: .scrollContent)
+            .trackWidth($viewWidth)
             // The size is already inside the nav and tab bars; the proxy
             // still reports their insets, so subtracting them counted the
             // bars twice (logged 2026-10-23: size 504, insets 82 and 83).
@@ -248,6 +276,50 @@ struct ShowDetailView: View {
         .toolbarBackground(.visible, for: .navigationBar)
         .navigationTitle(SunsetFormat.monthDay(show.time, zone: zone))
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private func heroBlock(_ heroHeight: CGFloat?) -> some View {
+        SkyHero(show: show, zone: zone, title: SunsetFormat.headline(show, zone: zone), placeName: placeName)
+            .modifier(HeroFrame { heroHeight ?? min(max(240, $0 * (isTwoColumn ? 0.46 : 0.34)), isTwoColumn ? 600 : 420) })
+            .padding(.bottom, 12)
+    }
+
+    private var summaryCard: some View {
+        Card {
+            Text(show.score.summary)
+                .fixedSize(horizontal: false, vertical: true)
+            Divider()
+            HStack {
+                detail("Best light", "\(SunsetFormat.time(show.bestWindowStart, zone: zone)) to \(SunsetFormat.time(show.bestWindowEnd, zone: zone))")
+                Spacer()
+                detail("Rain", "\(show.score.rainChance)%")
+            }
+        }
+        .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { summaryHeight = $0 }
+    }
+
+    private var factorsCard: some View {
+        Card {
+            ForEach(show.score.factors) { factor in
+                FactorRow(factor: factor, tone: Theme.tone(score: show.score.total))
+                    .paneRow()
+            }
+        }
+        .id("factors")
+    }
+
+    private var cloudCard: some View {
+        Card {
+            Text("Cloud cover at \(show.event.title.lowercased())").font(.headline)
+            cloudRow("High", show.conditions.cloudHigh)
+            cloudRow("Mid", show.conditions.cloudMid)
+            cloudRow("Low", show.conditions.cloudLow)
+            cloudRow("Low, \(show.event.direction) toward the sun", show.conditions.cloudLowTowardSun)
+            Text("Humidity \(Int(show.conditions.humidity))% · Visibility \(visibilityLabel)")
+                .font(.caption)
+                .foregroundStyle(Theme.textSecondary)
+                .paneRow()
+        }
     }
 
     /// Unfolded, the factors card is taller than the room under the hero,

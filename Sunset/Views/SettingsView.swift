@@ -9,6 +9,7 @@ struct SettingsView: View {
     @State private var showAlertSetup = false
     @State private var restoreMessage: String?
     @Environment(\.isLeadingPane) private var isLeadingPane
+    private var isPad: Bool { UIDevice.current.userInterfaceIdiom == .pad }
 
     var body: some View {
         List {
@@ -145,12 +146,17 @@ struct SettingsView: View {
         // Unfolded, tighter sections fit the Location rows above the tab bar.
         .listSectionSpacing(isLeadingPane ? .compact : .default)
         .clearsPaneBottom()
+        .readableColumn()
         .background {
             SkyBackdrop(score: forecastStore.nextShow?.score.total ?? 70, event: forecastStore.nextShow?.event ?? .sunset, horizon: 0.14)
         }
-        .navigationTitle("Settings")
-        .sheet(isPresented: $showPaywall) { PaywallView(source: "settings") }
-        .sheet(isPresented: $showAlertSetup) { AlertSetupSheet() }
+        // On iPad the column is centred under the tab bar, so a title pinned
+        // to the leading edge would sit apart from it; the tab already names
+        // the screen.
+        .navigationTitle(isPad ? "" : "Settings")
+        .navigationBarTitleDisplayMode(isPad ? .inline : .large)
+        .sheet(isPresented: $showPaywall) { PaywallView(source: "settings").pageSheet() }
+        .sheet(isPresented: $showAlertSetup) { AlertSetupSheet().pageSheet() }
         // Only a restore the user asked for answers with an alert; background
         // purchase checks that fail offline stay quiet.
         .alert("Restore purchases", isPresented: Binding(

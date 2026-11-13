@@ -28,7 +28,8 @@ The app forces `.dark` so system chrome matches.
 Three tabs: Today (next watched show as the hero, summary, factors, up next,
 sky events, alerts card), Outlook (the week), Settings (watch toggles,
 alerts). A Home Screen widget shows the next watched show. Unfolded on iPhone Duo,
-Today sits beside the Outlook, one pane either side of the fold.
+Today sits beside the Outlook, one pane either side of the fold. iPad (portrait,
+landscape, Split View) uses adaptive columns instead.
 
 Free: today and tomorrow, the factor breakdown, the widget, sunrise and
 sunset alerts at the default score (70) and lead time (45 min).
@@ -101,6 +102,7 @@ Store name: `Sunset & Sunrise Prediction` (subtitle `Golden Hour Forecast & Aler
 | `.claude/rules/scoring.md` | Why the weights are what they are | Touching `SunsetScorer` |
 | `.claude/rules/release-and-store.md` | ASC, RevenueCat, TestFlight history | Releasing |
 | `.claude/rules/iphone-duo.md` | Unfolded two-pane layout, captures | Touching `MainTabView` or `UnfoldedSplit` |
+| `.claude/rules/ipad-layout.md` | iPad: column widths, two-column Today, Outlook grid, Wi-Fi-only location | Touching layout, `project.yml` device family, or `LocationService` |
 | `.claude/rules/android.md` | Android port: parity fixture, platform equivalents, billing, build, Play state | Touching `android/` or Android scripts |
 
 ---

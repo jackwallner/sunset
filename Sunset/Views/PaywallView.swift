@@ -9,6 +9,7 @@ struct PaywallView: View {
     @EnvironmentObject private var store: StoreService
     @State private var selectedIdentifier: String?
     @State private var isRestoring = false
+    @State private var viewHeight: CGFloat = 0
 
     var body: some View {
         NavigationStack {
@@ -117,8 +118,13 @@ struct PaywallView: View {
                     .foregroundStyle(Theme.textSecondary)
                 }
                 .padding(22)
+                .frame(maxWidth: 560)
                 .leadingPaneColumn()
+                // On iPad the offer sits in the middle of the sky instead of
+                // hugging the top with an empty lower half.
+                .frame(maxWidth: .infinity, minHeight: UIDevice.current.userInterfaceIdiom == .pad ? viewHeight : nil)
             }
+            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { viewHeight = $0 }
             .background { SkyBackdrop(score: 92, horizon: 0.13) }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) { Button("Close") { dismiss() }.tint(.white) }
