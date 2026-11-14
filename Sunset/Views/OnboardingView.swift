@@ -259,8 +259,12 @@ struct OnboardingView: View {
                 }
                 Text("·")
                 Link("Terms", destination: SunsetLinks.standardEULA)
+.frame(minWidth: 44, minHeight: 44)
+.contentShape(Rectangle())
                 Text("·")
                 Link("Privacy", destination: SunsetLinks.privacyPolicy)
+.frame(minWidth: 44, minHeight: 44)
+.contentShape(Rectangle())
             }
             .font(.caption)
             .foregroundStyle(Theme.textSecondary)

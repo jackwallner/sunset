@@ -308,7 +308,9 @@ struct TodayView: View {
             if !store.isPro {
                 Button("Get alerted before them") { showPaywall = true }
                     .font(.subheadline.weight(.semibold))
-                    .foregroundStyle(Theme.ember)
+                    .foregroundStyle(Theme.textPrimary)
+                    .frame(minHeight: 44, alignment: .leading)
+                    .contentShape(Rectangle())
             }
         }
     }

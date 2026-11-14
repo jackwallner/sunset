@@ -314,7 +314,7 @@ struct PlusCapsule: View {
     var body: some View {
         Text("Sun+")
             .font(.caption.weight(.bold))
-            .foregroundStyle(.white)
+            .foregroundStyle(Theme.ink)
             .padding(.horizontal, 9)
             .padding(.vertical, 4)
             .background(Theme.accent, in: Capsule())

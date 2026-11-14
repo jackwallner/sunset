@@ -68,6 +68,7 @@ struct OutlookView: View {
                 Text("Every sunrise and sunset score through \(lastDayName(days, forecast: forecast)), plus storm, rainbow and fog alerts.")
                     .font(.subheadline)
                     .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
                     .foregroundStyle(Theme.textSecondary)
                 Button("Unlock with Sun+") { showPaywall = true }
                     .buttonStyle(PrimaryButtonStyle())

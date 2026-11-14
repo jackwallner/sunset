@@ -30,7 +30,7 @@ struct SettingsView: View {
                                 Text("Sun+").font(.headline)
                                 Text("The full week, storm, rainbow and fog alerts")
                                     .font(.subheadline)
-                                    .foregroundStyle(Theme.textSecondary)
+                                    .foregroundStyle(Theme.textPrimary)
                             }
                             Spacer()
                             PlusCapsule()
@@ -53,7 +53,7 @@ struct SettingsView: View {
                     .paneListRow("watch")
                 }
             } header: {
-                Text("Watch").paneListPart("watch")
+                Text("Watch").foregroundStyle(Theme.textPrimary).paneListPart("watch")
             } footer: {
                 Text("Today, the outlook, the widget and alerts follow what you watch.")
                     .paneListPart("watch")
