@@ -54,7 +54,7 @@ struct SettingsView: View {
                     .paneListRow("watch")
                 }
             } header: {
-                Text("Watch").foregroundStyle(Theme.textPrimary).paneListPart("watch")
+                SectionTitle("Watch").paneListPart("watch")
             } footer: {
                 Text("Today, the outlook, the widget and alerts follow what you watch.")
                     .paneListPart("watch")
@@ -82,7 +82,7 @@ struct SettingsView: View {
                 .foregroundStyle(Theme.textPrimary)
                 .paneListRow("alerts")
             } header: {
-                Text("Alerts").foregroundStyle(Theme.textPrimary).paneListPart("alerts")
+                SectionTitle("Alerts").paneListPart("alerts")
             }
 
             Section {
@@ -98,7 +98,7 @@ struct SettingsView: View {
                 }
                 .paneListRow("location")
             } header: {
-                Text("Location").foregroundStyle(Theme.textPrimary).paneListPart("location")
+                SectionTitle("Location").paneListPart("location")
             }
 
             Section {
@@ -121,7 +121,7 @@ struct SettingsView: View {
                 Link("Weather data by Open-Meteo", destination: SunsetLinks.openMeteo)
                     .paneListRow("about")
             } header: {
-                Text("About").foregroundStyle(Theme.textPrimary).paneListPart("about")
+                SectionTitle("About").paneListPart("about")
             }
 
             #if DEBUG
@@ -174,5 +174,20 @@ struct SettingsView: View {
         guard settings.alertsEnabled else { return "Off" }
         if settings.alertsBlocked { return "Notifications off" }
         return "\(settings.effectiveThreshold(isPro: store.isPro))+ · \(SunsetFormat.minutes(settings.effectiveLead(isPro: store.isPro))) before"
+    }
+}
+
+/// A section header on its own dark scrim, so it reads over the bright
+/// horizon glow wherever the list lands on the sky.
+private struct SectionTitle: View {
+    let title: LocalizedStringKey
+    init(_ title: LocalizedStringKey) { self.title = title }
+
+    var body: some View {
+        Text(title)
+            .foregroundStyle(Theme.textPrimary)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 4)
+            .background(Theme.row, in: Capsule())
     }
 }
