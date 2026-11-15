@@ -186,8 +186,8 @@ private struct SectionTitle: View {
     var body: some View {
         Text(title)
             .foregroundStyle(Theme.textPrimary)
-            .padding(.horizontal, 10)
-            .padding(.vertical, 4)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 8)
             .background(Color.black, in: Capsule())
     }
 }
