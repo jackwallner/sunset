@@ -14,12 +14,12 @@ struct PaywallView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 20) {
+                VStack(spacing: 14) {
                     Text("Sun+")
                         .font(.system(size: 56, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                         .shadow(color: .black.opacity(0.18), radius: 12, y: 4)
-                        .padding(.top, 36)
+                        .padding(.top, 12)
                     Text("See further and catch more. Today, tomorrow and your sunrise and sunset alerts stay free.")
                         .multilineTextAlignment(.center)
                         .foregroundStyle(Theme.textSecondary)

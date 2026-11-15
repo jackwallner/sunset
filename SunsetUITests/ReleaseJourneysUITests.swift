@@ -123,9 +123,12 @@ final class ReleaseJourneysUITests: XCTestCase {
         let settled = NSPredicate(format: "value == %@", target)
         // A tap can miss while the row is still settling at accessibility sizes. Retry at a
         // different point of the row, re-reading the value fresh so a retry never toggles it back.
-        for dx in [0.92, 0.85, 0.75] {
+        for dx in [0.92, 0.85, 0.75, 0.92, 0.85] {
             guard (watchSwitch(name, in: app).value as? String) != target else { break }
-            watchSwitch(name, in: app).coordinate(withNormalizedOffset: CGVector(dx: dx, dy: 0.5)).tap()
+            let row = watchSwitch(name, in: app)
+            // Right after a relaunch the first taps can land before the list is hittable.
+            _ = XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "isHittable == true"), object: row)], timeout: 5)
+            row.coordinate(withNormalizedOffset: CGVector(dx: dx, dy: 0.5)).tap()
             let toggle = watchSwitch(name, in: app)
             if XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: settled, object: toggle)], timeout: 6) == .completed { break }
         }
