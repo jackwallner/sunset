@@ -45,7 +45,7 @@ struct SettingsView: View {
                 ForEach(SunEvent.allCases, id: \.self) { event in
                     Toggle(isOn: Binding(
                         get: { settings.watched.contains(event) },
-                        set: { _ in settings.toggle(event) }
+                        set: { on in if on != settings.watched.contains(event) { settings.toggle(event) } }
                     )) {
                         Label(event.title, systemImage: event.symbol)
                     }
@@ -188,6 +188,6 @@ private struct SectionTitle: View {
             .foregroundStyle(Theme.textPrimary)
             .padding(.horizontal, 10)
             .padding(.vertical, 4)
-            .background(Theme.row, in: Capsule())
+            .background(Color.black.opacity(0.72), in: Capsule())
     }
 }
