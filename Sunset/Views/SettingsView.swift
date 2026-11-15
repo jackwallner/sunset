@@ -188,6 +188,6 @@ private struct SectionTitle: View {
             .foregroundStyle(Theme.textPrimary)
             .padding(.horizontal, 10)
             .padding(.vertical, 4)
-            .background(Color.black.opacity(0.72), in: Capsule())
+            .background(Color.black.opacity(0.9), in: Capsule())
     }
 }

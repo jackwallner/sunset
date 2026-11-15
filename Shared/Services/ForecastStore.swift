@@ -82,6 +82,8 @@ final class ForecastStore: ObservableObject {
             errorMessage = nil
             ForecastCache.forecast = fresh
             WidgetCenter.shared.reloadAllTimelines()
+            // The forecast is in; alerts rebuild after loading ends.
+            isLoading = false; inFlight = nil; inFlightLocation = nil
             await rescheduleAlerts()
         } catch {
             guard generation == loadGeneration else { return }

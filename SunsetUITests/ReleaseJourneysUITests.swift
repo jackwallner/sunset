@@ -101,11 +101,12 @@ final class ReleaseJourneysUITests: XCTestCase {
     }
 
     private func watchSwitch(_ name: String, in app: XCUIApplication) -> XCUIElement {
+        // One identifier lookup with the framework's own wait: polling two
+        // snapshot queries timed out on slow runners.
         let byID = app.switches["watch-\(name.lowercased())"].firstMatch
+        if byID.waitForExistence(timeout: 30) { return byID }
         let byLabel = app.switches.matching(NSPredicate(format: "label CONTAINS %@", name)).firstMatch
-        let deadline = Date().addingTimeInterval(15)
-        while !byID.exists, !byLabel.exists, Date() < deadline { Thread.sleep(forTimeInterval: 0.5) }
-        let toggle = byID.exists ? byID : byLabel
+        let toggle = byLabel.waitForExistence(timeout: 15) ? byLabel : byID
         XCTAssertTrue(toggle.exists, "\(name) switch")
         return toggle
     }
