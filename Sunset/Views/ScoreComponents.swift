@@ -286,7 +286,7 @@ struct Card<Content: View>: View {
 extension View {
     /// Frosted glass over the sky: blurred, a touch darker, with a fine
     /// light edge.
-    func glass(cornerRadius: CGFloat = Theme.cardRadius, tint: Double = 0.2) -> some View {
+    func glass(cornerRadius: CGFloat = Theme.cardRadius, tint: Double = 0.36) -> some View {
         background {
             RoundedRectangle(cornerRadius: cornerRadius)
                 .fill(.ultraThinMaterial)
@@ -314,9 +314,9 @@ struct PlusCapsule: View {
     var body: some View {
         Text("Sun+")
             .font(.caption.weight(.bold))
-            .foregroundStyle(Theme.ink)
+            .foregroundStyle(.black)
             .padding(.horizontal, 9)
             .padding(.vertical, 4)
-            .background(Theme.accent, in: Capsule())
+            .background(Theme.gold, in: Capsule())
     }
 }

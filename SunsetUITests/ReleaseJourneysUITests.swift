@@ -19,6 +19,10 @@ final class ReleaseJourneysUITests: XCTestCase {
         XCTAssertTrue(app.buttons["Get Started"].waitForExistence(timeout: 20))
         QA.checkpoint(app, "onboarding-offer", paywall: true)
         tap("Get Started", in: app)
+        // A tap on the small free exit can land while the page settles; retry once.
+        if !tabButton("Today", in: app).waitForExistence(timeout: 8), app.buttons["Get Started"].exists {
+            app.buttons["Get Started"].firstMatch.tap()
+        }
         today("first-today", in: app)
     }
 
@@ -97,8 +101,12 @@ final class ReleaseJourneysUITests: XCTestCase {
     }
 
     private func watchSwitch(_ name: String, in app: XCUIApplication) -> XCUIElement {
-        let toggle = app.switches[name].firstMatch
-        XCTAssertTrue(toggle.waitForExistence(timeout: 15), "\(name) switch")
+        let byID = app.switches["watch-\(name.lowercased())"].firstMatch
+        let byLabel = app.switches.matching(NSPredicate(format: "label CONTAINS %@", name)).firstMatch
+        let deadline = Date().addingTimeInterval(15)
+        while !byID.exists, !byLabel.exists, Date() < deadline { Thread.sleep(forTimeInterval: 0.5) }
+        let toggle = byID.exists ? byID : byLabel
+        XCTAssertTrue(toggle.exists, "\(name) switch")
         return toggle
     }
 

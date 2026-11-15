@@ -288,7 +288,7 @@ struct OnboardingView: View {
         Button(title, action: action)
             .font(.subheadline.weight(.semibold))
             .foregroundStyle(Theme.textSecondary)
-            .frame(maxWidth: .infinity, minHeight: 32)
+            .frame(maxWidth: .infinity, minHeight: 44)
             .contentShape(Rectangle())
     }
 

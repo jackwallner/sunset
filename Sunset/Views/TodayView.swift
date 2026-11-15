@@ -309,7 +309,7 @@ struct TodayView: View {
                 Button("Get alerted before them") { showPaywall = true }
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(Theme.textPrimary)
-                    .frame(minHeight: 44, alignment: .leading)
+                    .frame(maxWidth: .infinity, minHeight: 44, alignment: .leading)
                     .contentShape(Rectangle())
             }
         }

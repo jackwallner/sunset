@@ -7,7 +7,7 @@ enum Theme {
     static let textSecondary = Color.white.opacity(0.86)
     static let hairline = Color.white.opacity(0.18)
     /// A list row over the sky.
-    static let row = Color.black.opacity(0.24)
+    static let row = Color.black.opacity(0.38)
     /// Text on the white primary button.
     static let ink = Color(red: 0.17, green: 0.10, blue: 0.24)
 

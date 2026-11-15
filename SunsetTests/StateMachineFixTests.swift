@@ -67,6 +67,18 @@ final class StateMachineFixTests: XCTestCase {
     private let vancouver = ForecastCache.Location(latitude: 45.63, longitude: -122.52, placeName: "Vancouver, WA")
     private let tokyo = ForecastCache.Location(latitude: 35.68, longitude: 139.69, placeName: "Tokyo")
 
+    /// A canned forecast for the requested place, after a short delay so a
+    /// second fix can land while the first load runs.
+    private func stubStore() -> ForecastStore {
+        ForecastStore(forecast: nil, fetcher: { latitude, longitude in
+            try await Task.sleep(for: .milliseconds(200))
+            return SunsetForecast(
+                latitude: latitude, longitude: longitude, placeName: nil,
+                timeZoneID: "UTC", fetched: .now, days: [], skyEvents: []
+            )
+        })
+    }
+
     private func waitForIdle(_ store: ForecastStore, timeout: Double = 40) async {
         let deadline = Date().addingTimeInterval(timeout)
         try? await Task.sleep(for: .milliseconds(300))
@@ -76,11 +88,10 @@ final class StateMachineFixTests: XCTestCase {
     }
 
     /// Control: with nothing in flight, a fix for a new place loads that place.
-    /// Real Open-Meteo network, as in the audit's repro.
     func testFixWithNothingInFlightLoadsThatPlace() async throws {
-        let store = ForecastStore(forecast: nil)
+        let store = stubStore()
         await store.load(location: vancouver)
-        XCTAssertEqual(try XCTUnwrap(store.forecast, "precondition: network works").latitude, 45.63, accuracy: 0.01)
+        XCTAssertEqual(try XCTUnwrap(store.forecast, "precondition: stub forecast loaded").latitude, 45.63, accuracy: 0.01)
         store.refresh(location: tokyo)
         await waitForIdle(store)
         XCTAssertEqual(try XCTUnwrap(store.forecast).latitude, 35.68, accuracy: 0.01)
@@ -89,7 +100,7 @@ final class StateMachineFixTests: XCTestCase {
     /// Cold start: the cached place (Vancouver) starts a load, then the real
     /// fix (Tokyo) arrives before it finishes. The newer place must win.
     func testFixArrivingDuringLoadIsNotDropped() async throws {
-        let store = ForecastStore(forecast: nil)
+        let store = stubStore()
         store.refresh(location: vancouver, force: true)
         store.refresh(location: tokyo)
         await waitForIdle(store)

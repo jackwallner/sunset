@@ -22,8 +22,17 @@ final class ForecastStore: ObservableObject {
     /// When the forecast the pending alerts were built from was fetched.
     private(set) var alertsPlannedFrom: Date?
 
-    init(forecast: SunsetForecast? = ForecastCache.forecast) {
+    /// Fetches a forecast; tests swap in a stub so they never need the network.
+    private let fetcher: @Sendable (Double, Double) async throws -> SunsetForecast
+
+    init(
+        forecast: SunsetForecast? = ForecastCache.forecast,
+        fetcher: @escaping @Sendable (Double, Double) async throws -> SunsetForecast = {
+            try await ForecastService.fetch(latitude: $0, longitude: $1)
+        }
+    ) {
         self.forecast = forecast
+        self.fetcher = fetcher
         #if DEBUG
         if ProcessInfo.processInfo.arguments.contains("-DemoForecast") {
             self.forecast = DemoForecast.make()
@@ -66,7 +75,7 @@ final class ForecastStore: ObservableObject {
             if generation == loadGeneration { isLoading = false; inFlight = nil; inFlightLocation = nil }
         }
         do {
-            var fresh = try await ForecastService.fetch(latitude: location.latitude, longitude: location.longitude)
+            var fresh = try await fetcher(location.latitude, location.longitude)
             guard generation == loadGeneration else { return }
             fresh.placeName = location.placeName
             forecast = fresh

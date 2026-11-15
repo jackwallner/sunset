@@ -49,6 +49,7 @@ struct SettingsView: View {
                     )) {
                         Label(event.title, systemImage: event.symbol)
                     }
+                    .accessibilityIdentifier("watch-\(event.title.lowercased())")
                     .disabled(settings.watched == [event])
                     .paneListRow("watch")
                 }
@@ -81,7 +82,7 @@ struct SettingsView: View {
                 .foregroundStyle(Theme.textPrimary)
                 .paneListRow("alerts")
             } header: {
-                Text("Alerts").paneListPart("alerts")
+                Text("Alerts").foregroundStyle(Theme.textPrimary).paneListPart("alerts")
             }
 
             Section {
@@ -97,7 +98,7 @@ struct SettingsView: View {
                 }
                 .paneListRow("location")
             } header: {
-                Text("Location").paneListPart("location")
+                Text("Location").foregroundStyle(Theme.textPrimary).paneListPart("location")
             }
 
             Section {
@@ -120,7 +121,7 @@ struct SettingsView: View {
                 Link("Weather data by Open-Meteo", destination: SunsetLinks.openMeteo)
                     .paneListRow("about")
             } header: {
-                Text("About").paneListPart("about")
+                Text("About").foregroundStyle(Theme.textPrimary).paneListPart("about")
             }
 
             #if DEBUG
