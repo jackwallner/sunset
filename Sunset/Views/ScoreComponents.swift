@@ -7,6 +7,7 @@ struct SkyBackdrop: View {
     var event: SunEvent = .sunset
     /// Where the glowing horizon sits, 0 top to 1 bottom.
     var horizon: Double = 0.42
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         GeometryReader { geometry in
@@ -34,8 +35,8 @@ struct SkyBackdrop: View {
             .clipped()
         }
         .ignoresSafeArea()
-        .animation(.easeInOut(duration: 0.6), value: score)
-        .animation(.easeInOut(duration: 0.6), value: horizon)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.6), value: score)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.6), value: horizon)
         .accessibilityHidden(true)
     }
 }
@@ -48,6 +49,7 @@ struct SkyHero: View {
     let title: String
     let placeName: String?
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -57,7 +59,7 @@ struct SkyHero: View {
             HStack(alignment: .lastTextBaseline, spacing: 10) {
                 Text("\(show.score.total)")
                     .font(.system(size: 112, weight: .bold, design: .rounded))
-                    .contentTransition(.numericText())
+                    .contentTransition(reduceMotion ? .identity : .numericText())
                 Text(show.score.grade.rawValue)
                     .font(.system(.title, design: .rounded).weight(.semibold))
                     .padding(.bottom, 18)

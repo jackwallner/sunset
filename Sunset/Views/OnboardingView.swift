@@ -24,6 +24,7 @@ struct OnboardingView: View {
     @EnvironmentObject private var store: StoreService
     @EnvironmentObject private var forecastStore: ForecastStore
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var step = Step(rawValue: LaunchArguments.onboardingStep ?? 0) ?? .welcome
     @State private var isPurchasing = false
     @State private var purchaseError: String?
@@ -44,7 +45,7 @@ struct OnboardingView: View {
             ZStack {
                 page
                     .id(step)
-                    .transition(.asymmetric(
+                    .transition(reduceMotion ? .identity : .asymmetric(
                         insertion: .move(edge: .trailing).combined(with: .opacity),
                         removal: .move(edge: .leading).combined(with: .opacity)
                     ))
@@ -194,7 +195,7 @@ struct OnboardingView: View {
                     .frame(width: item == step ? 22 : 8, height: 8)
             }
         }
-        .animation(.easeInOut(duration: 0.25), value: step)
+        .animation(reduceMotion ? nil : .easeInOut(duration: 0.25), value: step)
         .accessibilityElement()
         .accessibilityLabel("Step \(step.rawValue + 1) of \(Step.allCases.count)")
     }
@@ -356,7 +357,7 @@ struct OnboardingView: View {
         guard !isAdvancing else { return }
         guard let next = Step(rawValue: step.rawValue + 1) else { return finish() }
         isAdvancing = true
-        withAnimation(.easeInOut(duration: 0.3)) { step = next } completion: { isAdvancing = false }
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.3)) { step = next } completion: { isAdvancing = false }
     }
 
     private func purchase() {
@@ -378,7 +379,7 @@ struct OnboardingView: View {
 
     private func finish() {
         guard !settings.hasOnboarded else { return }
-        withAnimation(.easeInOut(duration: 0.3)) { settings.hasOnboarded = true }
+        withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.3)) { settings.hasOnboarded = true }
     }
 
     private static let preview = SunShow(
