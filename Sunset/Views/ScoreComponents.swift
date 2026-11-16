@@ -62,6 +62,9 @@ struct SkyHero: View {
                     .contentTransition(reduceMotion ? .identity : .numericText())
                 Text(show.score.grade.rawValue)
                     .font(.system(.title, design: .rounded).weight(.semibold))
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 4)
+                    .background(.black.opacity(0.55), in: Capsule())
                     .padding(.bottom, 18)
             }
             .foregroundStyle(.white)

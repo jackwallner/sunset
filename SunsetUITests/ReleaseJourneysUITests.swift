@@ -123,16 +123,16 @@ final class ReleaseJourneysUITests: XCTestCase {
         let settled = NSPredicate(format: "value == %@", target)
         // A tap can miss while the row is still settling at accessibility sizes. Retry at a
         // different point of the row, re-reading the value fresh so a retry never toggles it back.
+        let row = watchSwitch(name, in: app)
         for dx in [0.92, 0.85, 0.75, 0.92, 0.85] {
-            guard (watchSwitch(name, in: app).value as? String) != target else { break }
-            let row = watchSwitch(name, in: app)
+            guard (row.value as? String) != target else { break }
             // Right after a relaunch the first taps can land before the list is hittable.
             _ = XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: NSPredicate(format: "isHittable == true"), object: row)], timeout: 5)
             row.coordinate(withNormalizedOffset: CGVector(dx: dx, dy: 0.5)).tap()
-            let toggle = watchSwitch(name, in: app)
-            if XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: settled, object: toggle)], timeout: 6) == .completed { break }
+            if XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: settled, object: row)], timeout: 6) == .completed { break }
         }
-        assertWatch(name, on: on, in: app)
+        let wait = XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: settled, object: row)], timeout: 10)
+        XCTAssertEqual(wait, .completed, "\(name) should be \(on ? "on" : "off")")
     }
 
     /// The welcome page asks for one location fix on the way out.
@@ -157,10 +157,9 @@ final class ReleaseJourneysUITests: XCTestCase {
     /// unfolded Duo, where it is not a `tabBars` element; the Outlook is a
     /// separate pane there, not a tab.
     private func tabButton(_ label: String, in app: XCUIApplication) -> XCUIElement {
-        let bar = app.tabBars.buttons[label].firstMatch
-        if bar.exists { return bar }
-        let capsule = app.buttons.matching(NSPredicate(format: "label == %@", label)).firstMatch
-        return capsule.exists ? capsule : bar
+        // One lookup covers the tab bar and the capsule; two snapshot queries
+        // timed out in a row on slow runners.
+        app.buttons.matching(NSPredicate(format: "label == %@", label)).firstMatch
     }
 
     /// A tap can miss the unfolded Duo's capsule; a short press on the
