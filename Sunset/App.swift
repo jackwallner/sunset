@@ -17,6 +17,7 @@ struct SunsetApp: App {
     var body: some Scene {
         WindowGroup {
             RootView()
+                .modifier(ReduceMotionGuard())
                 #if DEBUG
                 .landscapePreview()
                 #endif
@@ -322,3 +323,15 @@ extension View {
     func landscapePreview() -> some View { modifier(LandscapePreview()) }
 }
 #endif
+
+/// With Reduce Motion on, no SwiftUI animation runs anywhere in the app, not
+/// only the ones that remember to check the setting.
+private struct ReduceMotionGuard: ViewModifier {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    func body(content: Content) -> some View {
+        content.transaction { transaction in
+            if reduceMotion { transaction.animation = nil }
+        }
+    }
+}

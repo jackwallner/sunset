@@ -149,7 +149,10 @@ struct SettingsView: View {
         .clearsPaneBottom()
         .readableColumn()
         .background {
+            // Dimmed so the white labels hold their contrast wherever the
+            // horizon glow lands behind the list.
             SkyBackdrop(score: forecastStore.nextShow?.score.total ?? 70, event: forecastStore.nextShow?.event ?? .sunset, horizon: 0.14)
+                .overlay(Color.black.opacity(0.5).ignoresSafeArea())
         }
         // On iPad the column is centred under the tab bar, so a title pinned
         // to the leading edge would sit apart from it; the tab already names
