@@ -33,8 +33,13 @@ final class AlertSettings: ObservableObject {
             if watched.isEmpty { watched = oldValue; return }
             guard watched != oldValue else { return }
             ForecastCache.watchedEvents = watched
-            WidgetCenter.shared.reloadAllTimelines()
-            Task { await ForecastStore.shared.rescheduleAlerts() }
+            // Widget and alert work follows once the switch has settled, so a
+            // watch toggle never stalls the gesture on a slow device.
+            Task { @MainActor in
+                await Task.yield()
+                WidgetCenter.shared.reloadAllTimelines()
+                await ForecastStore.shared.rescheduleAlerts()
+            }
         }
     }
 
