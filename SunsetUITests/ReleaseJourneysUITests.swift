@@ -101,7 +101,8 @@ final class ReleaseJourneysUITests: XCTestCase {
     }
 
     private func watchSwitch(_ name: String, in app: XCUIApplication) -> XCUIElement {
-        // One identifier lookup with the framework's own wait: polling two
+        // A runner that renders a big display in software can take seconds per query, so the
+        // value waits below allow 40 s. One identifier lookup with the framework's own wait: polling two
         // snapshot queries timed out on slow runners.
         let byID = app.switches["watch-\(name.lowercased())"].firstMatch
         if byID.waitForExistence(timeout: 30) { return byID }
@@ -114,7 +115,7 @@ final class ReleaseJourneysUITests: XCTestCase {
     private func assertWatch(_ name: String, on: Bool, in app: XCUIApplication) {
         let toggle = watchSwitch(name, in: app)
         let settled = NSPredicate(format: "value == %@", on ? "1" : "0")
-        let wait = XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: settled, object: toggle)], timeout: 10)
+        let wait = XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: settled, object: toggle)], timeout: 40)
         XCTAssertEqual(wait, .completed, "\(name) should be \(on ? "on" : "off")")
     }
 
@@ -131,7 +132,7 @@ final class ReleaseJourneysUITests: XCTestCase {
             row.coordinate(withNormalizedOffset: CGVector(dx: dx, dy: 0.5)).tap()
             if XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: settled, object: row)], timeout: 6) == .completed { break }
         }
-        let wait = XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: settled, object: row)], timeout: 10)
+        let wait = XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: settled, object: row)], timeout: 40)
         XCTAssertEqual(wait, .completed, "\(name) should be \(on ? "on" : "off")")
     }
 
