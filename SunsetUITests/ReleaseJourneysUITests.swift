@@ -158,22 +158,11 @@ final class ReleaseJourneysUITests: XCTestCase {
     /// unfolded Duo, where it is not a `tabBars` element; the Outlook is a
     /// separate pane there, not a tab.
     private func tabButton(_ label: String, in app: XCUIApplication) -> XCUIElement {
-        // One lookup covers the tab bar and the capsule; two snapshot queries
-        // timed out in a row on slow runners.
-        app.buttons.matching(NSPredicate(format: "label == %@", label)).firstMatch
+        QA.tab(app, label)
     }
 
-    /// A tap can miss the unfolded Duo's capsule; a short press on the
-    /// button's own coordinate selects it there too.
     private func tapTab(_ label: String, in app: XCUIApplication) {
-        let button = tabButton(label, in: app)
-        XCTAssertTrue(button.waitForExistence(timeout: 15))
-        button.tap()
-        let selected = NSPredicate(format: "isSelected == true")
-        let wait = XCTWaiter().wait(for: [XCTNSPredicateExpectation(predicate: selected, object: button)], timeout: 3)
-        if wait != .completed {
-            button.coordinate(withNormalizedOffset: CGVector(dx: 0.5, dy: 0.5)).press(forDuration: 0.05)
-        }
+        QA.openTab(app, label)
     }
 
     private func checkpoint(_ name: String, button label: String, in app: XCUIApplication, journey: String = #function) {
